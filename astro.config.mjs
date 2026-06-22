@@ -6,6 +6,10 @@ import preact from '@astrojs/preact';
 
 // https://astro.build/config
 export default defineConfig({
+  // GitHub Pages project site. Update `site` to your GitHub username and `base`
+  // to your repo name if they differ.
+  site: 'https://avetavos.github.io',
+  base: '/go-for-typescript-developers',
   output: 'static',
   integrations: [starlight({
       title: 'Go for TypeScript Developers',

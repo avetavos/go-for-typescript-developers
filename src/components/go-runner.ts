@@ -22,15 +22,18 @@ export function loadRuntime(): Promise<void> {
   if (typeof globalThis.goRunWasm === 'function') return Promise.resolve();
   if (loadPromise) return loadPromise;
   loadPromise = (async () => {
-    await loadScript('/wasm_exec.js');
+    // Respect the configured base path (e.g. GitHub Pages project subpath).
+    // Normalize to exactly one trailing slash — BASE_URL may or may not include one.
+    const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+    await loadScript(`${base}wasm_exec.js`);
     const go = new globalThis.Go!();
     let instance: WebAssembly.Instance;
     try {
-      const result = await WebAssembly.instantiateStreaming(fetch('/go-runner.wasm'), go.importObject);
+      const result = await WebAssembly.instantiateStreaming(fetch(`${base}go-runner.wasm`), go.importObject);
       instance = result.instance;
     } catch {
       // fallback for hosts that don't serve application/wasm
-      const bytes = await (await fetch('/go-runner.wasm')).arrayBuffer();
+      const bytes = await (await fetch(`${base}go-runner.wasm`)).arrayBuffer();
       const result = await WebAssembly.instantiate(bytes, go.importObject);
       instance = result.instance;
     }

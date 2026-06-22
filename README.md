@@ -78,6 +78,16 @@ Each lesson MDX file follows this structure:
 6. **Quiz** — `<Quiz questions={...} />` comprehension check
 7. **ProgressTracker** — `<ProgressTracker id="module/slug" />` (always last)
 
+Code snippets are hoisted into `export const` template literals and passed to the
+components by reference (e.g. `export const fooCode = \`...\`` then `<Playground code={fooCode} />`).
+
+> **⚠️ Escaping gotcha:** inside those backtick template literals, escape
+> sequences in your Go/TS code **must be double-backslashed** — write `\\n`, `\\t`,
+> etc. A single `\n` is consumed by JS template-literal parsing and becomes a real
+> newline *before* the code reaches the renderer, which breaks Go string literals
+> ("string literal not terminated"). The line breaks between statements are real
+> newlines; only escape sequences *inside* string literals need doubling.
+
 ## How Runnable Code Works
 
 The Go runner is a build of [yaegi](https://github.com/traefik/yaegi) — a Go interpreter — compiled to WebAssembly. When a reader clicks "Run" in a `<Playground>`:

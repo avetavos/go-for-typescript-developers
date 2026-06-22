@@ -19,7 +19,7 @@ export default defineConfig({
         th: { label: 'ไทย', lang: 'th' },
       },
       customCss: ['./src/styles/custom.css'],
-      social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/' }],
+      social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/avetavos/go-for-typescript-developers' }],
       sidebar: [
         { label: 'Introduction & Setup', items: [{ autogenerate: { directory: 'intro' } }] },
         { label: 'Go 101 — Fundamentals', items: [{ autogenerate: { directory: 'go-101' } }] },

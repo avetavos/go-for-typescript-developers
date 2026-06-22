@@ -100,19 +100,35 @@ The Go runner is a build of [yaegi](https://github.com/traefik/yaegi) — a Go i
 
 ## Deployment
 
-The site is fully static (`output: 'static'` in `astro.config.mjs`). Build output lands in `dist/`. Deploy to any static host:
+The site is fully static (`output: 'static'` in `astro.config.mjs`). Build output lands in `dist/`. Deploy to any static host.
 
-- **GitHub Pages** — push `dist/` or use the Astro GitHub Actions workflow
-- **Netlify** — set build command `npm run build`, publish dir `dist`
+> **Note on hosts:** the in-browser Go runner ships as a ~38 MB `public/go-runner.wasm`
+> (served compressed, ~8 MB). **Cloudflare Pages won't work** — its 25 MiB per-file
+> upload limit rejects the wasm. Use GitHub Pages, Netlify, or Vercel.
+
+### GitHub Pages (configured)
+
+This repo deploys to GitHub Pages via `.github/workflows/deploy.yml` (build with
+`withastro/action`, publish with `actions/deploy-pages`). The prebuilt wasm is
+committed, so CI needs **no Go toolchain**.
+
+One-time setup:
+
+1. Create a GitHub repo and push (`main` branch).
+2. **Settings → Pages → Build and deployment → Source: GitHub Actions.**
+3. Confirm the base path in `astro.config.mjs` matches your setup:
+   - **Project site** (`https://USER.github.io/REPO/`): `site: 'https://USER.github.io'`, `base: '/REPO'` (currently `avetavos` / `go-for-typescript-developers`).
+   - **User/org site** (`USER.github.io` repo) or **custom domain**: set `site` and **remove `base`** (served at root).
+
+The base path is wired through the runtime: the WASM loader resolves
+`go-runner.wasm` / `wasm_exec.js` via `import.meta.env.BASE_URL`, and the landing
+pages' links include the base. If you change `base`, update the hardcoded links in
+`src/content/docs/{en,th}/index.mdx` (hero actions + cards) to match.
+
+### Other static hosts (served at root — no `base` needed)
+
+If deploying to Netlify, Vercel static, or a custom domain, **remove the `base`
+option** from `astro.config.mjs` (and revert the landing-page links to `/en/...`):
+
+- **Netlify** — build command `npm run build`, publish dir `dist`
 - **Vercel** — static preset, no serverless functions needed
-- **Cloudflare Pages** — build command `npm run build`, output `dist`
-
-Before deploying, set the `site` option in `astro.config.mjs` to your production URL to silence the sitemap warning and generate correct canonical URLs:
-
-```js
-// astro.config.mjs
-export default defineConfig({
-  site: 'https://your-domain.com',
-  // ...
-});
-```

@@ -111,7 +111,7 @@ func main() {
 	err = findUser(-1)
 	var ve *ValidationError
 	if errors.As(err, &ve) {
-		fmt.Printf("bad field: %s — %s\n", ve.Field, ve.Message)
+		fmt.Printf("bad field: %s — %s\\n", ve.Field, ve.Message)
 	}
 }`;
 

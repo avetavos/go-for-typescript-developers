@@ -52,7 +52,7 @@ func worker(ctx context.Context, id int, wg *sync.WaitGroup) {
     defer wg.Done()
     select {
     case <-ctx.Done(): // unblocks when cancel() is called
-        fmt.Printf("Worker %d cancelled: %v\n", id, ctx.Err())
+        fmt.Printf("Worker %d cancelled: %v\\n", id, ctx.Err())
     }
 }
 
@@ -180,7 +180,7 @@ func worker(ctx context.Context, id int, wg *sync.WaitGroup) {
 	defer wg.Done()
 	select {
 	case <-ctx.Done():
-		fmt.Printf("Worker %d stopped: %v\n", id, ctx.Err())
+		fmt.Printf("Worker %d stopped: %v\\n", id, ctx.Err())
 	}
 }
 

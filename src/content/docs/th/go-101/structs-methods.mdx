@@ -89,11 +89,11 @@ func (r *Rectangle) Scale(factor float64) {
 
 func main() {
 	rect := Rectangle{Width: 4, Height: 3}
-	fmt.Printf("Area: %.1f\n", rect.Area())
-	fmt.Printf("Perimeter: %.1f\n", rect.Perimeter())
+	fmt.Printf("Area: %.1f\\n", rect.Area())
+	fmt.Printf("Perimeter: %.1f\\n", rect.Perimeter())
 
 	rect.Scale(2)
-	fmt.Printf("After scaling: %.1f x %.1f\n", rect.Width, rect.Height)
+	fmt.Printf("After scaling: %.1f x %.1f\\n", rect.Width, rect.Height)
 }`;
 
 <Playground client:visible code={playgroundStructCode} />

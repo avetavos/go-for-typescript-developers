@@ -94,7 +94,7 @@ func (r Rect) Area() float64      { return r.Width * r.Height }
 func (r Rect) Perimeter() float64 { return 2 * (r.Width + r.Height) }
 
 func describe(s Shape) {
-	fmt.Printf("Area: %.2f, Perimeter: %.2f\n", s.Area(), s.Perimeter())
+	fmt.Printf("Area: %.2f, Perimeter: %.2f\\n", s.Area(), s.Perimeter())
 }
 
 func main() {

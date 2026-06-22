@@ -41,7 +41,7 @@ t := reflect.TypeOf(u)
 
 for i := 0; i < t.NumField(); i++ {
     f := t.Field(i)
-    fmt.Printf("%s: %s\n", f.Name, f.Type)
+    fmt.Printf("%s: %s\\n", f.Name, f.Type)
 }
 // Name: string
 // Age: int`;

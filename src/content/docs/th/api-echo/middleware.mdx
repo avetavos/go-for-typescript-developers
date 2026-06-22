@@ -29,7 +29,7 @@ app.use(requestLogger);`;
 export const goMiddleware = `// Echo middleware
 func RequestLogger(next echo.HandlerFunc) echo.HandlerFunc {
     return func(c echo.Context) error {
-        fmt.Printf("%s %s\n", c.Request().Method, c.Request().URL.Path)
+        fmt.Printf("%s %s\\n", c.Request().Method, c.Request().URL.Path)
         return next(c)   // ส่งต่อ
     }
 }

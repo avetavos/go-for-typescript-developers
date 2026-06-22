@@ -83,7 +83,7 @@ import (
 
 func task(name string, wg *sync.WaitGroup) {
 	defer wg.Done()
-	fmt.Printf("Task %s running\n", name)
+	fmt.Printf("Task %s running\\n", name)
 }
 
 func main() {

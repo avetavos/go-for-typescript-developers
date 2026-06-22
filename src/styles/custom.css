@@ -12,3 +12,5 @@
 .quiz__q { border:1px solid var(--sl-color-gray-5); border-radius:6px; margin:.5rem 0; padding:.25rem .75rem; }
 .quiz label { display:block; padding:.15rem .25rem; cursor:pointer; } .quiz label.ok { color:var(--sl-color-green-high); font-weight:600; } .quiz label.bad { color:var(--sl-color-red-high); }
 .quiz__score { font-weight:700; }
+.pt { margin:2rem 0; padding:.5rem 1rem; border-radius:6px; border:1px solid var(--sl-color-accent); background:var(--sl-color-bg); cursor:pointer; color:inherit; }
+.pt--done { background:var(--sl-color-accent); color:#001; }

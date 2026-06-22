@@ -4,8 +4,6 @@ import starlight from '@astrojs/starlight';
 
 import preact from '@astrojs/preact';
 
-import vercel from '@astrojs/vercel';
-
 // https://astro.build/config
 export default defineConfig({
   output: 'static',
@@ -28,6 +26,4 @@ export default defineConfig({
         { label: 'Tooling, Testing & Deployment', items: [{ autogenerate: { directory: 'tooling' } }] },
       ],
       }), preact()],
-
-  adapter: vercel(),
 });

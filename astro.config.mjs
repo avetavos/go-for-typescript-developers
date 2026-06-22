@@ -10,7 +10,7 @@ import vercel from '@astrojs/vercel';
 export default defineConfig({
   output: 'static',
   integrations: [starlight({
-      title: 'My Docs',
+      title: 'Go for TypeScript Developers',
       defaultLocale: 'en',
       locales: {
         en: { label: 'English', lang: 'en' },

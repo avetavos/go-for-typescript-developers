@@ -7,6 +7,7 @@ import TsGo from '../../../../components/TsGo.tsx';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
+import Mermaid from '../../../../components/Mermaid.astro';
 
 ## src/ vs cmd/ + internal/
 
@@ -14,24 +15,20 @@ TypeScript projects almost universally put source code in a `src/` directory. Be
 
 Go has a well-established community standard that is worth learning early. Most Go projects you encounter on GitHub follow the same skeletal structure:
 
-```bash
-myapp/
-├── cmd/
-│   └── myapp/
-│       └── main.go        # entry point binary
-├── internal/
-│   ├── handler/
-│   │   └── user.go
-│   ├── service/
-│   │   └── user.go
-│   └── repository/
-│       └── user.go
-├── pkg/
-│   └── logger/
-│       └── logger.go
-├── go.mod
-└── go.sum
-```
+export const layoutTree = `flowchart TD
+  ROOT["myapp/"] --> CMD["cmd/"]
+  CMD --> CMDAPP["myapp/"]
+  CMDAPP --> MAIN["main.go (entry point binary)"]
+  ROOT --> INT["internal/"]
+  INT --> HAND["handler/user.go"]
+  INT --> SVC["service/user.go"]
+  INT --> REPO["repository/user.go"]
+  ROOT --> PKG["pkg/"]
+  PKG --> LOG["logger/logger.go"]
+  ROOT --> MOD["go.mod"]
+  ROOT --> SUM["go.sum"]`;
+
+<Mermaid code={layoutTree} title="Idiomatic Go project layout" />
 
 export const tsLayoutCode = `// Typical TypeScript / Node project
 src/

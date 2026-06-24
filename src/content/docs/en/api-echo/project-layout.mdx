@@ -14,33 +14,33 @@ A TypeScript/Node project carries `package.json`, a build tool, a `dist/` output
 
 export const tsLayout = `// Express / NestJS project tree
 my-api/
-├── package.json
-├── tsconfig.json
-├── src/
-│   ├── main.ts
-│   ├── app.module.ts       ← NestJS root module
-│   ├── books/
-│   │   ├── books.controller.ts
-│   │   ├── books.service.ts
-│   │   └── books.dto.ts
-│   └── middleware/
-│       └── logger.middleware.ts
-└── node_modules/`;
+  package.json
+  tsconfig.json
+  src/
+    main.ts
+    app.module.ts          // NestJS root module
+    books/
+      books.controller.ts
+      books.service.ts
+      books.dto.ts
+    middleware/
+      logger.middleware.ts
+  node_modules/`;
 
 export const goLayout = `// Echo project tree
 books-api/
-├── go.mod
-├── go.sum
-├── main.go                 ← entry point; wire everything here
-├── internal/
-│   ├── handler/
-│   │   └── books.go        ← HTTP handlers (parse, validate, call service)
-│   ├── service/
-│   │   └── books.go        ← business logic
-│   └── store/
-│       └── books.go        ← database queries
-└── model/
-    └── book.go             ← shared structs / domain types`;
+  go.mod
+  go.sum
+  main.go                  // entry point; wire everything here
+  internal/
+    handler/
+      books.go             // HTTP handlers (parse, validate, call service)
+    service/
+      books.go             // business logic
+    store/
+      books.go             // database queries
+  model/
+    book.go                // shared structs / domain types`;
 
 <TsGo client:visible ts={tsLayout} go={goLayout} />
 

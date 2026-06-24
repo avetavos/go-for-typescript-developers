@@ -14,33 +14,33 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 export const tsLayout = `// Express / NestJS project tree
 my-api/
-├── package.json
-├── tsconfig.json
-├── src/
-│   ├── main.ts
-│   ├── app.module.ts       ← NestJS root module
-│   ├── books/
-│   │   ├── books.controller.ts
-│   │   ├── books.service.ts
-│   │   └── books.dto.ts
-│   └── middleware/
-│       └── logger.middleware.ts
-└── node_modules/`;
+  package.json
+  tsconfig.json
+  src/
+    main.ts
+    app.module.ts          // NestJS root module
+    books/
+      books.controller.ts
+      books.service.ts
+      books.dto.ts
+    middleware/
+      logger.middleware.ts
+  node_modules/`;
 
 export const goLayout = `// Echo project tree
 books-api/
-├── go.mod
-├── go.sum
-├── main.go                 ← entry point; เชื่อมทุกอย่างที่นี่
-├── internal/
-│   ├── handler/
-│   │   └── books.go        ← HTTP handler (parse, validate, เรียก service)
-│   ├── service/
-│   │   └── books.go        ← business logic
-│   └── store/
-│       └── books.go        ← database query
-└── model/
-    └── book.go             ← struct / domain type ที่ใช้ร่วมกัน`;
+  go.mod
+  go.sum
+  main.go                  // entry point; เชื่อมทุกอย่างที่นี่
+  internal/
+    handler/
+      books.go             // HTTP handler (parse, validate, เรียก service)
+    service/
+      books.go             // business logic
+    store/
+      books.go             // database query
+  model/
+    book.go                // struct / domain type ที่ใช้ร่วมกัน`;
 
 <TsGo client:visible ts={tsLayout} go={goLayout} />
 

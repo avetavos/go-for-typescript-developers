@@ -11,7 +11,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## ตัวแปรใน TypeScript เทียบกับ Go
 
-ใน TypeScript คุณมี `let` สำหรับตัวแปรที่เปลี่ยนค่าได้, `const` สำหรับการ bind ค่าที่เปลี่ยนไม่ได้ และ type inference ผ่าน `:` คุณยังคุ้นเคยกับค่าที่เริ่มต้นเป็น `undefined` ก่อนการกำหนดค่าด้วย
+ใน TypeScript คุณมี `let` สำหรับตัวแปรที่เปลี่ยนค่าได้, `const` สำหรับ binding แบบ immutable และ type inference ผ่าน `:` คุณยังคุ้นกับค่าที่เป็น `undefined` ก่อนถูกกำหนดค่าด้วย
 
 Go มีกลไกที่คล้ายกันแต่มีกฎที่สะอาดกว่า และมีแนวคิดหนึ่งที่ TypeScript ไม่มีคำตอบโดยตรง นั่นคือ **zero values**
 
@@ -33,7 +33,7 @@ const MAX = 100`;
 
 ## Type inference ด้วย :=
 
-โอเปอเรเตอร์ `:=` คือตัวหลักของ Go สำหรับตัวแปรในระดับ local มันทั้งประกาศและกำหนดค่าในขั้นตอนเดียว — ไม่ต้องมี `let` ไม่ต้องระบุ type annotation เมื่อ type ชัดเจนอยู่แล้ว
+โอเปอเรเตอร์ `:=` คือตัวหลักของ Go สำหรับตัวแปรในระดับ local ทั้งประกาศและกำหนดค่าในขั้นตอนเดียว — ไม่ต้องมี `let` ไม่ต้องระบุ type annotation เมื่อ type ชัดเจนอยู่แล้ว
 
 export const tsInferCode = `let score = 42;        // number
 let ratio = 3.14;      // number
@@ -49,7 +49,7 @@ active := true       // bool`;
 
 ## Constants
 
-ค่าคงที่ใน Go ทำงานเหมือน `const` ใน TypeScript — เปลี่ยนแปลงไม่ได้ และถูกประเมินค่าตอน compile time Go ยังมี `iota` สำหรับสร้างลำดับแบบ enum ที่เพิ่มค่าอัตโนมัติ (จะกล่าวถึงภายหลัง)
+ค่าคงที่ใน Go ทำงานเหมือน `const` ใน TypeScript — เป็น immutable และประเมินค่าตอน compile time Go ยังมี `iota` สำหรับสร้างลำดับแบบ enum ที่เพิ่มค่าอัตโนมัติ (จะกล่าวถึงภายหลัง)
 
 export const tsConstCode = `const PI = 3.14159;
 const APP_NAME = "MyApp";`;
@@ -97,7 +97,7 @@ var s string  // s == ""
 var b bool    // b == false
 ```
 
-สิ่งนี้ทำให้โปรแกรม Go คาดเดาได้ — คุณจะไม่เผลอไปทำงานกับ `undefined` โดยไม่ตั้งใจ
+ทำให้โปรแกรม Go คาดเดาได้ — คุณจะไม่เผลอไปยุ่งกับ `undefined` โดยไม่ตั้งใจ
 
 </GoOnly>
 

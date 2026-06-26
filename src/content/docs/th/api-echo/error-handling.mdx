@@ -10,7 +10,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## Error as value — philosophy ของ Go
 
-TypeScript ใช้ `throw` และ `try/catch` Go ถือว่า error เป็น return value ธรรมดา: ทุกฟังก์ชันที่อาจ fail จะคืน `(result, error)` คุณตรวจสอบ error อย่างชัดเจน — compiler ไม่ให้คุณเพิกเฉยโดยไม่รู้ตัว Echo ต่อยอดนี้ตามธรรมชาติ: handler ที่คืน error ที่ไม่เป็น nil จะ trigger error handler ของ Echo
+TypeScript ใช้ `throw` กับ `try/catch` ส่วน Go ถือว่า error เป็น return value ธรรมดา: ทุกฟังก์ชันที่อาจ fail จะคืน `(result, error)` คุณต้องเช็ค error อย่างชัดเจน — compiler ไม่ยอมให้เพิกเฉยแบบเงียบ ๆ Echo ต่อยอดแนวคิดนี้แบบธรรมชาติ: handler ที่คืน error ที่ไม่เป็น nil จะ trigger error handler ของ Echo
 
 export const tsErrorThrow = `// TypeScript / Express — throw-based
 async function getBook(id: string): Promise<Book> {
@@ -100,7 +100,7 @@ func createBook(c echo.Context) error {
 
 ## Central error handler
 
-Echo ให้คุณแทน default error handler ด้วย `e.HTTPErrorHandler` นี่คือที่ที่คุณ log error, แปลง domain error เป็น HTTP code และทำให้ response envelope สม่ำเสมอ
+Echo ให้คุณแทน default error handler ด้วย `e.HTTPErrorHandler` ตรงนี้คือจุดที่คุณจะ log error, แปลง domain error เป็น HTTP code และทำให้ response envelope สม่ำเสมอ
 
 export const tsErrMiddleware = `// Express — error middleware (4 argument, ต้องอยู่ท้ายสุด)
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
@@ -136,7 +136,7 @@ e.HTTPErrorHandler = customErrorHandler`;
 
 <GoOnly title="Sentinel error — เทียบเท่า custom exception ของ Go">
 
-กำหนด sentinel error ระดับ package เพื่อแทน failure mode ที่รู้จัก Handler และ service สามารถตรวจสอบด้วย `errors.Is`:
+ประกาศ sentinel error ระดับ package ไว้แทน failure mode ที่รู้จัก แล้ว handler กับ service ก็เช็คมันได้ด้วย `errors.Is`:
 
 ```go
 // store/errors.go

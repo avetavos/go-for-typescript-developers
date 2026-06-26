@@ -10,13 +10,13 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## Handler signature
 
-ใน Express handler รับ `(req, res, next)` ใน Echo ทุก handler มี signature ที่เป็นมาตรฐานเดียว:
+ใน Express handler รับ `(req, res, next)` ส่วนใน Echo ทุก handler ใช้ signature มาตรฐานเดียวกัน:
 
 ```go
 func(c echo.Context) error
 ```
 
-`echo.Context` รวม request, response writer, path parameter, query parameter และ helper method ไว้ด้วยกัน คืนค่า `nil` เมื่อสำเร็จ หรือคืน `error` เพื่อให้ Echo จัดการ response ที่ fail
+`echo.Context` รวม request, response writer, path parameter, query parameter และ helper method ไว้ด้วยกัน คืน `nil` เมื่อสำเร็จ หรือคืน `error` เพื่อให้ Echo จัดการ response กรณีล้มเหลว
 
 export const tsHandler = `// Express handler
 app.get('/books/:id', (req, res, next) => {
@@ -60,7 +60,7 @@ e.DELETE("/books/:id", deleteBook)`;
 
 ## Path parameter
 
-`c.Param("name")` คืนค่า string ของ segment ที่มีชื่อ syntax ด้วย colon `:name` เหมือนกับ Express
+`c.Param("name")` คืนค่า string ของ segment ที่ตั้งชื่อไว้ ใช้ colon `:name` เหมือนกับ Express
 
 export const tsParam = `// Express
 app.get('/users/:id/posts/:postId', (req, res) => {
@@ -82,7 +82,7 @@ e.GET("/users/:id/posts/:postId", func(c echo.Context) error {
 
 ## Query parameter
 
-`c.QueryParam("name")` อ่านค่า query เดียว `c.QueryParams()` คืน `url.Values` (เป็น `map[string][]string`) สำหรับทั้งหมด
+`c.QueryParam("name")` อ่านค่า query ตัวเดียว ส่วน `c.QueryParams()` คืนทั้งหมดเป็น `url.Values` (คือ `map[string][]string`)
 
 export const tsQuery = `// Express
 app.get('/books', (req, res) => {
@@ -105,7 +105,7 @@ e.GET("/books", func(c echo.Context) error {
 
 ## ผูก handler เข้ากับ struct (แบบ NestJS controller)
 
-NestJS controller ใช้ class ใน Go รูปแบบ idiomatic คือ struct ที่ method เป็น handler และ dependency injection เกิดขึ้นผ่าน field ของ struct
+NestJS controller เป็น class ส่วนใน Go รูปแบบ idiomatic คือ struct ที่ method ของมันคือ handler โดย dependency injection ทำผ่าน field ของ struct
 
 export const tsController = `// NestJS controller
 @Controller('books')

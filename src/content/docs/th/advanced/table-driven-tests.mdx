@@ -10,9 +10,9 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## Jest `it.each` vs Go table-driven tests
 
-ใน Jest คุณใช้ `it.each` หรือ `describe.each` เมื่อต้องการรัน assertion logic เดิมซ้ำกับ inputs หลายอัน โดยไม่ต้องคัดลอก test functions Go ไม่มี `it.each` ในตัว — แต่ community ตกลงกัน idiom สากลแทน: slice ของ anonymous structs ("table") ที่วนลูปใน test function เดียว โดยแต่ละ case รันเป็น **subtest** ผ่าน `t.Run`
+ใน Jest คุณหยิบ `it.each` หรือ `describe.each` มาใช้เมื่อต้องรัน assertion logic เดิมซ้ำกับ input หลาย ๆ ชุด โดยไม่ต้อง copy-paste ตัว test function Go ไม่มี `it.each` มาให้ในตัว — แต่ community ลงตัวกันที่ idiom เดียวที่ใช้กันทั่วไป: slice ของ anonymous struct ("table") ที่วนลูปอยู่ใน test function เดียว แล้วรันแต่ละ case เป็น **subtest** ผ่าน `t.Run`
 
-> หมายเหตุเกี่ยวกับ Playground: `testing` package ต้องการ binary context ของ `go test` บล็อกโค้ดด้านล่างแสดงไฟล์ test จริง — รัน locally ด้วย `go test ./...`
+> หมายเหตุเรื่อง Playground: `testing` package ต้องรันใน binary context ของ `go test` บล็อกโค้ดด้านล่างคือไฟล์ test จริง — รันบนเครื่องคุณด้วย `go test ./...`
 
 ## เปรียบเทียบ: ทดสอบฟังก์ชันเดิม
 
@@ -96,11 +96,11 @@ func TestDivide(t *testing.T) {
 }
 ```
 
-conventions หลัก:
-- `t.Errorf` mark ว่า fail แต่ยังคง continue test
-- `t.Fatalf` mark ว่า fail และหยุด subtest ปัจจุบันทันที
-- `t.Parallel()` ภายใน `t.Run` อนุญาตให้ subtests รันพร้อมกัน (ปลอดภัยเมื่อ cases เป็นอิสระ)
-- field `name` ในแต่ละ case กลายเป็น subtest label (`TestDivide/normal`, `TestDivide/divide_by_zero`)
+convention สำคัญ:
+- `t.Errorf` ทำเครื่องหมายว่า fail แต่ test ยังรันต่อ
+- `t.Fatalf` ทำเครื่องหมายว่า fail แล้วหยุด subtest ปัจจุบันทันที
+- `t.Parallel()` ภายใน `t.Run` ให้ subtest รันพร้อมกันได้ (ปลอดภัยเมื่อแต่ละ case เป็นอิสระต่อกัน)
+- field `name` ของแต่ละ case จะกลายเป็น label ของ subtest (`TestDivide/normal`, `TestDivide/divide_by_zero`)
 
 ## รัน specific subtests
 
@@ -159,7 +159,7 @@ func TestDivide(t *testing.T) {
 
 <GoOnly title="Testify — ไลบรารี assertion ที่เป็น optional">
 
-`testing` package มาตรฐานของ Go ไม่มี DSL แบบ `expect(...).toBe(...)` หากคุณพบว่า `t.Errorf` verbose เกินไป community มักใช้ [`github.com/stretchr/testify/assert`](https://github.com/stretchr/testify):
+`testing` package มาตรฐานของ Go ไม่มี DSL แบบ `expect(...).toBe(...)` ถ้าคุณรู้สึกว่า `t.Errorf` ยืดยาวเกินไป community มักใช้ [`github.com/stretchr/testify/assert`](https://github.com/stretchr/testify):
 
 ```go
 import "github.com/stretchr/testify/assert"
@@ -171,13 +171,13 @@ func TestAdd(t *testing.T) {
 }
 ```
 
-Testify เป็น optional — standard library เพียงพอสำหรับ projects ส่วนใหญ่ table-driven pattern ทำงานเหมือนกันทั้งกับและไม่มีมัน
+Testify เป็นแค่ตัวเลือกเสริม — standard library เพียงพอสำหรับโปรเจกต์ส่วนใหญ่อยู่แล้ว และ table-driven pattern ก็ทำงานเหมือนเดิมไม่ว่าจะใช้มันหรือไม่
 
 </GoOnly>
 
 export const quizQuestionsTableTests = [
   { q: 'ใน Go table-driven test อะไรที่สร้าง named subtest สำหรับแต่ละ case?', options: ['t.Case()', 't.Run()', 'testing.Sub()', 't.Parallel()'], answer: 1 },
-  { q: 'ความแตกต่างระหว่าง t.Errorf และ t.Fatalf คืออะไร?', options: ['Errorf log; Fatalf panic', 'Errorf mark ว่า fail และ continue; Fatalf mark ว่า fail และหยุด test ปัจจุบัน', 'พวกมันเหมือนกัน', 'Fatalf skip test; Errorf fail มัน'], answer: 1 },
+  { q: 'ความแตกต่างระหว่าง t.Errorf และ t.Fatalf คืออะไร?', options: ['Errorf log; Fatalf panic', 'Errorf ทำเครื่องหมาย fail แล้วรันต่อ; Fatalf ทำเครื่องหมาย fail แล้วหยุด test ปัจจุบัน', 'ทั้งสองเหมือนกัน', 'Fatalf skip test; Errorf ทำให้ fail'], answer: 1 },
   { q: 'วิธีรัน subtest ชื่อ "divide_by_zero" ใน TestDivide?', options: ['go test -sub TestDivide/divide_by_zero', 'go test -run TestDivide/divide_by_zero', 'go test --filter divide_by_zero', 'go test -only TestDivide'], answer: 1 },
   { q: 'Table ใน Go table-driven test มักถูกกำหนดเป็น:', options: ['map[string]any', 'slice ของ anonymous structs', 'JSON file', 'exported TestCase type'], answer: 1 },
 ];

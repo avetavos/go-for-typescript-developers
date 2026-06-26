@@ -16,7 +16,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 2. `node_modules/` dependencies ทั้งหมด (หรือ bundled ไว้)
 3. native addon binary ที่ถูกต้องสำหรับ target OS/CPU (เช่น `bcrypt`, `sharp`)
 
-การ deploy ไปยัง architecture ต่างกัน — เช่น คอมไพล์บน Mac `x86_64` แล้ว deploy ไปยัง AWS Graviton server แบบ ARM — ต้องการ environment ที่ตรงกันในเครื่อง หรือ Docker build ที่ target platform ที่ถูกต้อง
+การ deploy ข้าม architecture — เช่น คอมไพล์บน Mac `x86_64` แล้ว deploy ไป AWS Graviton server แบบ ARM — ต้องมี environment ที่ตรงกันในเครื่อง หรือ Docker build ที่ target platform ให้ถูก
 
 ## Go cross-compilation ด้วย environment variables สองตัว
 
@@ -47,7 +47,7 @@ GOOS=windows GOARCH=amd64 go build -o bin/app.exe ./cmd/app
 GOOS=darwin GOARCH=arm64 go build -o bin/app-darwin-arm64 ./cmd/app
 ```
 
-รันสิ่งเหล่านี้ใน terminal คุณจะเห็น binary ปรากฏใน `bin/` ทันที cross-compiled จากเครื่อง host ของคุณโดยไม่ต้องใช้เครื่องมือเพิ่มเติม
+ลองรันคำสั่งพวกนี้ใน terminal คุณจะเห็น binary โผล่ใน `bin/` ทันที cross-compiled จากเครื่อง host ของคุณโดยไม่ต้องใช้เครื่องมือเพิ่ม
 
 ### Release script: build สำหรับหลาย target
 
@@ -125,7 +125,7 @@ ssh server "/usr/local/bin/myapp"`;
 
 Go binary ที่คอมไพล์แล้วเป็น self-contained อย่างสมบูรณ์ มันรวม Go runtime (goroutine scheduler, garbage collector) ไว้แบบ statically linked ภายใน binary เอง ไม่มีอะไรต้องติดตั้งบนเครื่องเป้าหมาย
 
-สิ่งนี้มีผลในทางปฏิบัติ:
+ข้อนี้ส่งผลในทางปฏิบัติหลายอย่าง:
 
 - **Lambda / serverless:** อัปโหลด binary เป็น zip ไม่ต้องมี layer หรือ runtime config นอกจากเลือก `provided.al2023`
 - **Edge devices / IoT:** Copy ไฟล์เดียวผ่าน `scp` ไม่มี package manager ไม่ต้องการ connectivity ไปยัง npm ตอน deploy

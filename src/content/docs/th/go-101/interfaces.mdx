@@ -10,7 +10,7 @@ import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 
 ## Interfaces: เป็น structural แต่ implicit
 
-TypeScript ใช้ **structural typing** — ถ้า type มีรูปร่างที่ถูกต้อง มันก็เข้ากันได้ interface ของ Go ทำงานในแบบเดียวกัน แต่มีความแตกต่างสำคัญหนึ่งอย่าง: **คุณไม่ต้องเขียน `implements` เลย** ถ้า type หนึ่งมีเมธอดครบทุกตัวที่ interface ต้องการ มันก็ satisfy interface นั้นโดยอัตโนมัติ สิ่งนี้เรียกว่า **implicit satisfaction**
+TypeScript ใช้ **structural typing** — ถ้า type มีรูปร่างที่ถูกต้อง มันก็เข้ากันได้ interface ของ Go ทำงานในแบบเดียวกัน แต่มีความแตกต่างสำคัญหนึ่งอย่าง: **คุณไม่ต้องเขียน `implements` เลย** ถ้า type หนึ่งมี method ครบทุกตัวที่ interface ต้องการ มันก็ satisfy interface นั้นโดยอัตโนมัติ เรียกว่า **implicit satisfaction**
 
 ## การนิยามและการ satisfy interface
 
@@ -45,9 +45,9 @@ func sayHello(g Greeter) {
 
 <TsGo client:visible ts={tsInterfaceCode} go={goInterfaceCode} />
 
-## พลังของมัน: แยกการนิยามออกจากการ implement
+## จุดแข็ง: แยกการนิยามออกจากการ implement
 
-เพราะการ satisfy เป็นแบบ implicit interface จึงสามารถถูกนิยามไว้ใน package ที่ **ใช้งาน** มันได้ ไม่ใช่ใน package ที่ให้ implementation นั่นหมายความว่าผู้เขียน library ไม่จำเป็นต้องรู้เกี่ยวกับ interface ของคุณ — ถ้า type ของเขามีเมธอดที่ถูกต้อง มันก็ใช้งานได้
+เพราะการ satisfy เป็นแบบ implicit interface จึงนิยามไว้ใน package ที่ **ใช้งาน** มันได้ ไม่ใช่ใน package ที่ให้ implementation นั่นแปลว่าผู้เขียน library ไม่ต้องรู้จัก interface ของคุณเลย — ถ้า type ของเขามี method ครบ ก็ใช้งานได้
 
 export const tsDepsCode = `// TypeScript — interface often lives with the class
 interface Logger {

@@ -11,15 +11,15 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## คุณคิดเป็น type อยู่แล้ว — Go ตอบแทนความสามารถนั้น
 
-ถ้าคุณเขียน TypeScript อยู่ตอนนี้ คุณเข้าใจคุณค่าของ static type, compiler error, และ interface ที่ออกแบบมาอย่างจงใจอยู่แล้ว Go พาแนวคิดนั้นไปอีกขั้น: ไม่มีการลบ type ตอน runtime, ไม่มีขั้นตอนคอมไพล์แยกที่ "ข้ามได้" ในระหว่าง develop, และไม่มีโฟลเดอร์ `node_modules` ที่เต็มไปด้วย dependency หลายพันตัว
+ถ้าตอนนี้คุณเขียน TypeScript อยู่ คุณเข้าใจคุณค่าของ static type, compiler error และ interface ที่ออกแบบมาอย่างตั้งใจดีอยู่แล้ว Go ต่อยอดสัญชาตญาณนั้นไปอีกขั้น: ไม่มีการลบ type ตอน runtime, ไม่มีขั้นตอนคอมไพล์แยกที่ "ข้าม" ได้ตอน develop และไม่มีโฟลเดอร์ `node_modules` ที่อัดแน่นด้วย dependency นับพันตัว
 
-คอร์สนี้สมมติว่าคุณคุ้นเคยกับ TypeScript และ Node.js อยู่แล้ว ทุกแนวคิดจะอธิบายผ่านการเปรียบเทียบ — สิ่งที่คุณรู้แล้ว กับวิธีที่ Go ทำสิ่งเดียวกัน (หรือเหตุผลที่ Go ทำต่างออกไป)
+คอร์สนี้ถือว่าคุณคุ้นเคยกับ TypeScript และ Node.js อยู่แล้ว ทุกแนวคิดอธิบายผ่านการเปรียบเทียบ — สิ่งที่คุณรู้อยู่แล้ว กับวิธีที่ Go ทำแบบเดียวกัน (หรือเหตุผลที่ Go ทำต่างออกไป)
 
 ## ทำไมต้องเรียน Go?
 
 ### คอมไพล์เป็น binary ตัวเดียว
 
-TypeScript คอมไพล์เป็น JavaScript ซึ่งยังต้องการ Node.js runtime เพื่อรัน Go คอมไพล์ตรงไปเป็น native machine code binary คุณส่งไฟล์เดียว ไม่ต้องการ runtime บน target machine
+TypeScript คอมไพล์เป็น JavaScript ซึ่งยังต้องมี Node.js runtime ถึงจะรันได้ ส่วน Go คอมไพล์ตรงเป็น binary ระดับ native machine code คุณส่งแค่ไฟล์เดียว ไม่ต้องมี runtime บนเครื่องปลายทาง
 
 export const tsDistCode = `// ส่ง: node dist/index.js
 // ต้องการ: Node.js runtime ติดตั้งไว้แล้ว
@@ -33,15 +33,15 @@ export const goDistCode = `// ส่ง: ./myapp (binary เดียว, ~5 MB)
 
 ### Static type — ไม่มีเซอร์ไพรส์ตอน runtime
 
-Type ของ TypeScript มีอยู่แค่ตอน development เท่านั้น และถูกลบออกก่อนที่โค้ดจะรัน Type ของ Go ถูก enforce โดย compiler และยังคงอยู่ตอน runtime โปรแกรมที่คอมไพล์ผ่านใน Go นั้น type-safe ตลอดการทำงาน
+Type ของ TypeScript มีอยู่แค่ตอน development และถูกลบทิ้งก่อนโค้ดจะรัน ส่วน type ของ Go ถูก enforce โดย compiler และยังอยู่ตอน runtime โปรแกรม Go ที่คอมไพล์ผ่านจึง type-safe ตลอดการทำงาน
 
 ### เริ่มต้นเร็วและ throughput สูง
 
-Node.js (V8) เร็ว แต่มี JIT warm-up time และ garbage collector ที่ปรับแต่งสำหรับ server ที่รันนานๆ Go เริ่มต้นใน millisecond, จัดการ concurrent connection หลายแสนรายการผ่าน goroutine และ GC มี pause ต่ำกว่า millisecond สำหรับ CLI, microservice, และเครื่องมือระดับ system ประสิทธิภาพของ Go เป็นเรื่องยากที่จะเอาชนะ
+Node.js (V8) เร็ว แต่มี JIT warm-up time และ garbage collector ที่จูนมาสำหรับ server ที่รันยาวๆ ส่วน Go เริ่มทำงานในระดับ millisecond, รองรับ concurrent connection หลักแสนผ่าน goroutine และ GC มี pause ต่ำกว่า millisecond สำหรับงาน CLI, microservice และเครื่องมือระดับ system แล้ว ประสิทธิภาพของ Go หาตัวจับยาก
 
 ### Concurrency ระดับ first-class ด้วย goroutine
 
-Node.js ทำงานแบบ single-threaded และใช้ event loop สำหรับ async I/O Go ใช้ goroutine — lightweight thread ที่ Go runtime จัดการแบบ multiplex บน OS thread จริงๆ คุณเขียนโค้ดที่ดูเหมือน sequential และ runtime จัดการ parallelism ให้ เรา preview สิ่งนี้ใน mental model lesson และครอบคลุมเชิงลึกในบทต่อๆ ไป
+Node.js ทำงานแบบ single-threaded และใช้ event loop สำหรับ async I/O ส่วน Go ใช้ goroutine — lightweight thread ที่ Go runtime คอย multiplex ลงบน OS thread จริง คุณเขียนโค้ดที่ดูเหมือนทำงานแบบ sequential แล้วปล่อยให้ runtime จัดการ parallelism ให้ เราจะ preview เรื่องนี้ในบท mental model และลงลึกในบทถัดๆ ไป
 
 export const tsConcurrentCode = `// TypeScript: async/await + event loop
 async function fetchAll(urls: string[]) {
@@ -71,7 +71,7 @@ func fetchAll(urls []string) []any {
 
 ### Error แบบ explicit แทน exception
 
-TypeScript โยน exception คุณครอบโค้ดด้วย `try/catch` และหวังว่าจะไม่มีอะไรหลุดรอด Go คืน error เป็นค่าธรรมดา ทุก function ที่อาจล้มเหลวจะบอกใน return type และคุณจัดการ error ทันทีที่ call site — ไม่มีอะไรให้ "ลืม"
+TypeScript ใช้การโยน exception คุณครอบโค้ดด้วย `try/catch` แล้วได้แต่หวังว่าจะไม่มีอะไรหลุดรอด ส่วน Go คืน error เป็นค่าธรรมดา ทุก function ที่อาจล้มเหลวจะประกาศไว้ใน return type และคุณจัดการ error ได้ทันทีตรง call site — ไม่มีอะไรให้ "ลืม"
 
 export const tsErrorCode = `// TypeScript: exception สามารถ bubble ได้อย่างเงียบๆ
 try {
@@ -92,11 +92,11 @@ processData(data)`;
 
 ## คอร์สนี้ครอบคลุมอะไรบ้าง
 
-คอร์สนี้พาคุณจากความรู้ Go เป็นศูนย์ไปสู่การเขียน Go แบบ idiomatic พร้อม production โดยใช้ประสบการณ์ TypeScript ของคุณเป็นสะพาน นี่คือสิ่งที่เราครอบคลุม:
+คอร์สนี้พาคุณจาก Go ระดับศูนย์ไปสู่การเขียน Go แบบ idiomatic พร้อมใช้งาน production โดยใช้ประสบการณ์ TypeScript ของคุณเป็นสะพาน นี่คือสิ่งที่เราจะครอบคลุม:
 
 | Module | หัวข้อ |
 |--------|--------|
-| **Intro** (module นี้) | ทำไมต้อง Go, การเปลี่ยน mindset, setup, hello world, layout ของโปรเจกต์ |
+| **Intro** (module นี้) | ทำไมต้อง Go, การปรับ mindset, setup, hello world, layout ของโปรเจกต์ |
 | **Go 101** | Variables, functions, control flow, errors, structs, interfaces, collections, packages |
 | *(เร็วๆ นี้)* | Goroutines, channels, HTTP servers, databases, testing |
 
@@ -105,9 +105,9 @@ processData(data)`;
 - ทุกแนวคิดแสดงเป็นการเปรียบเทียบ TypeScript vs Go แบบ side-by-side
 - Playground ที่รันได้ช่วยให้คุณทดลองได้โดยตรงในเบราว์เซอร์
 - Quiz ช่วยตอกย้ำแนวคิดสำคัญ
-- แนวคิดเฉพาะ Go (ไม่มีใน TypeScript) จะถูกระบุให้ชัดเจน
+- แนวคิดที่มีเฉพาะใน Go (ไม่มีใน TypeScript) เราจะระบุให้ชัดเจน
 
-คุณไม่ต้องติดตั้งอะไรเพื่อทำตาม — playground รัน Go ในเบราว์เซอร์ เมื่อพร้อมจะตั้งค่า local environment บท setup จะพาคุณผ่านขั้นตอนนั้น
+คุณไม่ต้องติดตั้งอะไรเลยก็ทำตามได้ — playground รัน Go ให้ในเบราว์เซอร์ และเมื่อพร้อมตั้งค่า local environment บท setup จะพาคุณทำทีละขั้น
 
 export const playgroundIndexCode = `package main
 

@@ -15,7 +15,7 @@ Generics ของ TypeScript ใช้ **structural typing** — type ใดก
 
 Generics ของ Go (เพิ่มเข้ามาใน Go 1.18) เรียบง่ายและชัดเจนกว่า ทุก type parameter ต้องผ่าน **interface constraint** และ Go ไม่มี conditional types, mapped types หรือ template literal types
 
-## ฟังก์ชัน generic พื้นฐาน
+## Generic function พื้นฐาน
 
 syntax คล้ายกัน: ใช้วงเล็บเหลี่ยมสำหรับ type parameters
 
@@ -64,7 +64,7 @@ func Contains[T comparable](slice []T, item T) bool {
 
 ## Union type constraints ด้วย ~
 
-syntax ของ constraint ใน Go ใช้ตัว body ของ interface คุณสามารถระบุ concrete types ด้วย `|` เพื่อทำ type union ได้ และ `~T` หมายถึง "type ใดก็ตามที่มี underlying type เป็น T" (ครอบคลุม custom types อย่าง `type MyInt int`)
+constraint ใน Go เขียน syntax อยู่ใน body ของ interface คุณระบุ concrete type ด้วย `|` เพื่อทำ type union ได้ และ `~T` หมายถึง "type ใดก็ตามที่มี underlying type เป็น T" (ครอบคลุม custom type อย่าง `type MyInt int`)
 
 export const tsUnionCode = `// TypeScript — conditional type for numeric union
 type Numeric = number | bigint;
@@ -126,7 +126,7 @@ export const goNoAdvancedCode = `// Go — none of these exist; alternatives:
 
 <TsGo client:visible ts={tsAdvancedCode} go={goNoAdvancedCode} />
 
-## ฟังก์ชัน Map และ Filter แบบ generic
+## Map และ Filter แบบ generic
 
 export const tsMapFilterCode = `// TypeScript — map and filter are built into Array
 const doubled = [1, 2, 3].map(n => n * 2);
@@ -216,7 +216,7 @@ func main() {
 
 <GoOnly title="comparable — The Equality Constraint">
 
-ใน Go ไม่ใช่ทุก type ที่รองรับ `==` ทั้ง slices, maps และ functions ไม่ใช่ comparable หากคุณเขียนฟังก์ชัน generic ที่ใช้ `==` คุณต้องเพิ่ม constraint `comparable` เข้าไป ไม่อย่างนั้น compiler จะปฏิเสธ
+ใน Go ไม่ใช่ทุก type ที่รองรับ `==` ทั้ง slice, map และ function ล้วนไม่ใช่ comparable ถ้าคุณเขียน generic function ที่ใช้ `==` คุณต้องเพิ่ม constraint `comparable` เข้าไป ไม่งั้น compiler จะ reject
 
 ```go
 // Without comparable — compile error: cannot use == with T
@@ -242,7 +242,7 @@ TypeScript ไม่มีแนวคิดที่เทียบเท่า
 
 <GoOnly title="Type Inference in Go Generics">
 
-Go สามารถอนุมาน (infer) type parameters จาก argument ของฟังก์ชันได้ในหลายกรณี ดังนั้นคุณจึงแทบไม่ต้องเขียนมันออกมาตรง ๆ:
+Go สามารถ infer type parameters จาก argument ของ function ได้ในหลายกรณี คุณจึงแทบไม่ต้องเขียนมันออกมาตรง ๆ:
 
 ```go
 // Explicit — verbose, rarely needed

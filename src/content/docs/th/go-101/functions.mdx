@@ -59,7 +59,7 @@ result, err := divide(10, 2)`;
 
 ## Variadic functions
 
-variadic ของ Go ทำงานเหมือน rest parameters ของ TypeScript เป๊ะๆ ใช้ `...T` ในรายการ parameter ส่วนภายในฟังก์ชันมันจะเป็น slice
+variadic ของ Go ทำงานเหมือน rest parameters ของ TypeScript เป๊ะๆ ใช้ `...T` ในรายการ parameter ส่วนภายในฟังก์ชันมันคือ slice
 
 export const tsVariadicCode = `function sum(...nums: number[]): number {
     return nums.reduce((a, b) => a + b, 0);
@@ -122,7 +122,7 @@ func main() {
 
 <GoOnly title="Named Return Values">
 
-Go อนุญาตให้คุณตั้งชื่อตัวแปรที่จะคืนค่าใน signature ของฟังก์ชันได้ จากนั้น body ของฟังก์ชันสามารถใช้ `return` เปล่าๆ เพื่อคืนค่าที่ชื่อเหล่านั้นถืออยู่ ณ ขณะนั้น สิ่งนี้มีประโยชน์ในด้านการอธิบายโค้ด และสำหรับฟังก์ชันสั้นๆ ที่ความหมายของแต่ละค่าที่คืนชัดเจนอยู่แล้ว
+Go ให้คุณตั้งชื่อตัวแปรที่จะคืนค่าไว้ใน signature ของฟังก์ชันได้ จากนั้น body ใช้ `return` เปล่าๆ เพื่อคืนค่าที่ชื่อเหล่านั้นถืออยู่ ณ ตอนนั้น วิธีนี้มีประโยชน์ในแง่การสื่อความหมายของโค้ด และเหมาะกับฟังก์ชันสั้นๆ ที่ความหมายของแต่ละค่าคืนชัดเจนอยู่แล้ว
 
 ```go
 func minMax(nums []int) (min, max int) {
@@ -135,7 +135,7 @@ func minMax(nums []int) (min, max int) {
 }
 ```
 
-ใช้ named returns อย่างประหยัด เพราะมันอาจลดความชัดเจนในฟังก์ชันที่ยาวขึ้น
+ใช้ named returns อย่างประหยัด เพราะอาจลดความชัดเจนในฟังก์ชันที่ยาวขึ้น
 
 </GoOnly>
 

@@ -11,9 +11,9 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## Error เป็น value ไม่ใช่ exception
 
-TypeScript (และ JavaScript) ใช้ `throw`/`try`/`catch` ในการจัดการ error — exception จะส่งต่อขึ้นไปตาม call stack แบบมองไม่เห็น Go ใช้แนวทางที่ต่างออกไป: **error เป็นเพียง value** ฟังก์ชันที่อาจล้มเหลวจะคืน `error` เป็นค่าสุดท้ายที่คืนกลับมา ผู้เรียกเป็นคนตัดสินใจว่าจะทำอย่างไรกับมันทันที
+TypeScript (และ JavaScript) ใช้ `throw`/`try`/`catch` ในการจัดการ error — exception จะส่งต่อขึ้นไปตาม call stack แบบมองไม่เห็น Go ใช้แนวทางที่ต่างออกไป: **error เป็นเพียง value** ฟังก์ชันที่อาจล้มเหลวจะคืน `error` เป็นค่าสุดท้าย ผู้เรียกตัดสินใจได้ทันทีว่าจะจัดการกับมันยังไง
 
-ตอนแรกมันอาจรู้สึกเยิ่นเย้อ แต่หลังจากผ่านไปสักพักคุณจะชื่นชมว่าทุกเส้นทางที่อาจล้มเหลวนั้นชัดเจนและตามรอยได้
+ตอนแรกอาจรู้สึกว่าเยิ่นเย้อ แต่พอใช้ไปสักพักคุณจะชอบที่ทุกเส้นทางที่อาจล้มเหลวนั้นชัดเจนและตามรอยได้
 
 ## รูปแบบพื้นฐาน
 
@@ -119,7 +119,7 @@ func main() {
 
 <GoOnly title="การ wrap error ด้วย %w">
 
-verb `%w` ใน `fmt.Errorf` จะ **wrap** error โดยเก็บตัวต้นฉบับไว้ เพื่อให้ผู้เรียกสามารถ unwrap มันได้ด้วย `errors.Is` และ `errors.As`
+verb `%w` ใน `fmt.Errorf` จะ **wrap** error โดยเก็บตัวต้นฉบับไว้ เพื่อให้ผู้เรียก unwrap มันได้ด้วย `errors.Is` และ `errors.As`
 
 ```go
 original := errors.New("connection refused")
@@ -136,7 +136,7 @@ errors.Is(wrapped, original) // true — unwraps the chain
 
 <GoOnly title="panic / recover — ทางเลือกสุดท้ายของ Go">
 
-Go มีกลไก `panic` สำหรับสถานการณ์ที่กู้คืนไม่ได้จริงๆ (เช่น index out of bounds) การเรียก `recover()` ภายในฟังก์ชันที่ถูก defer สามารถดักจับ panic ได้ แต่ต่างจาก exception ของ TypeScript ตรงที่ **panic ไม่ได้มีไว้สำหรับ error flow ปกติ** — ให้ใช้การคืน `error` สำหรับความล้มเหลวที่คาดการณ์ได้
+Go มีกลไก `panic` สำหรับสถานการณ์ที่กู้คืนไม่ได้จริงๆ (เช่น index out of bounds) การเรียก `recover()` ภายในฟังก์ชันที่ defer ไว้จะดักจับ panic ได้ แต่ต่างจาก exception ของ TypeScript ตรงที่ **panic ไม่ได้มีไว้สำหรับ error flow ปกติ** — ให้ใช้การคืน `error` สำหรับความล้มเหลวที่คาดการณ์ได้
 
 ```go
 defer func() {

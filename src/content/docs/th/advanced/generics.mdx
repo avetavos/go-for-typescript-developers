@@ -11,9 +11,9 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## TypeScript generics vs Go generics
 
-TypeScript generics แพร่หลายมาก — คุณเขียน `Array<T>`, `Promise<T>`, `Record<K, V>` ทุกวัน Go เพิ่ม generics ใน 1.18 ด้วย syntax ที่คล้ายกันแต่มีโมเดล constraint ที่แตกต่าง
+TypeScript generics อยู่ทุกที่ — คุณเขียน `Array<T>`, `Promise<T>`, `Record<K, V>` กันทุกวัน Go เพิ่ม generics เข้ามาใน 1.18 syntax คล้ายกัน แต่โมเดล constraint ต่างกัน
 
-ความแตกต่างหลัก: TypeScript ใช้ **structural typing** สำหรับ generics (`T extends { length: number }`) Go ใช้ **constraint interfaces** — interface ที่มีชื่อซึ่งแสดงรายการ type ที่อนุญาต (หรือ method sets) อย่างชัดเจน สิ่งนี้ทำให้ Go generics ชัดเจนขึ้นแต่ก็ verbose มากขึ้นด้วย
+ความต่างที่สำคัญ: TypeScript ใช้ **structural typing** กับ generics (`T extends { length: number }`) ส่วน Go ใช้ **constraint interface** — interface ที่มีชื่อ ซึ่งระบุชัดเจนว่ารับ type ไหนได้บ้าง (หรือต้องมี method set อะไร) ทำให้ generics ของ Go ชัดเจนและคาดเดาง่ายกว่า แลกกับความ verbose ที่มากขึ้น
 
 export const tsGenericCode = `// TypeScript — structural constraint
 function identity<T>(value: T): T {
@@ -61,7 +61,7 @@ func (s *Stack[T]) Pop() (T, bool) {
 
 ## Constraint interfaces
 
-constraint `any` หมายถึง "type ใดก็ได้" — เทียบเท่า `interface{}` ใน generics แต่ Go ให้คุณเขียน constraints ที่ซับซ้อนกว่าโดยใช้ interface ที่ระบุ **underlying types** ด้วย operator `~`
+constraint `any` หมายถึง "type อะไรก็ได้" — เทียบเท่า `interface{}` ในโลกของ generics แต่ Go ให้คุณเขียน constraint ที่ละเอียดกว่านั้นได้ ด้วย interface ที่ระบุ **underlying type** ผ่าน operator `~`
 
 export const tsConstraintCode = `// TypeScript — union type constraint
 type Numeric = number | bigint;
@@ -85,11 +85,11 @@ y := Add(1.5, 2.5)     // float64`;
 
 <TsGo client:visible ts={tsConstraintCode} go={goConstraintCode} />
 
-syntax `~int` หมายถึง "type ใดก็ตามที่มี **underlying type** เป็น `int`" — ดังนั้น custom type `type MyID int` ของคุณก็ตรงตาม `~int` หากไม่มี `~` เฉพาะ `int` เท่านั้นที่จะตรง
+syntax `~int` หมายถึง "type ใดก็ตามที่มี **underlying type** เป็น `int`" ดังนั้น custom type อย่าง `type MyID int` ก็เข้าเงื่อนไข `~int` ด้วย ถ้าไม่มี `~` จะตรงเฉพาะ type `int` ตรง ๆ เท่านั้น
 
 ## constraint `comparable`
 
-TypeScript เปรียบเทียบสิ่งใดก็ได้ด้วย `===` operator `==` ของ Go ใช้ได้เฉพาะกับ type ที่ **comparable** เท่านั้น (ไม่ใช่ slices, maps หรือ functions) constraint ในตัว `comparable` แสดงออกถึงสิ่งนี้:
+TypeScript เทียบอะไรก็ได้ด้วย `===` ส่วน operator `==` ของ Go ใช้ได้เฉพาะกับ type ที่ **comparable** เท่านั้น (ไม่ใช่ slice, map หรือ function) constraint `comparable` ที่มีมาในตัวสื่อถึงข้อจำกัดนี้:
 
 export const tsComparableCode = `// TypeScript — == ใช้ได้กับทุกอย่าง
 function contains<T>(arr: T[], val: T): boolean {
@@ -112,7 +112,7 @@ func Contains[T comparable](slice []T, val T) bool {
 
 ## รวม method sets กับ type unions
 
-constraint interface สามารถรวมทั้ง method requirements และ type unions:
+constraint interface รวมทั้ง method requirement และ type union ไว้ด้วยกันได้:
 
 ```go
 type Stringer interface {
@@ -127,7 +127,7 @@ type StringableNumber interface {
 }
 ```
 
-ในทางปฏิบัติ constraints ส่วนใหญ่เป็น pure method sets (classic interfaces) หรือ pure type unions (การดำเนินการตัวเลข/เรียงลำดับ)
+ในทางปฏิบัติ constraint ส่วนใหญ่เป็น method set ล้วน ๆ (classic interface) หรือไม่ก็ type union ล้วน ๆ (งานคำนวณตัวเลข/การเรียงลำดับ)
 
 ## ตัวอย่างในโลกจริง: Map และ Filter
 
@@ -169,7 +169,7 @@ func Filter[T any](s []T, fn func(T) bool) []T {
 | ต้องการ operations เช่น `==` ข้าม unknown types | ชุด type เปิดกว้างและขยายได้ |
 | เขียน utility functions (Map, Filter, Min, Max) | ต้องการเพียง "รับอะไรก็ตามที่มี method X" |
 
-plain interface ง่ายกว่าเสมอ ใช้ generics เมื่อไม่อย่างนั้นคุณต้องใช้ `any` และทำ type assertions ที่ call site
+plain interface ง่ายกว่าเสมอ หยิบ generics มาใช้เมื่อทางเลือกที่เหลืออยู่คือใช้ `any` แล้วไปทำ type assertion เอาที่ call site
 
 </GoOnly>
 

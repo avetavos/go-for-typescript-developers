@@ -10,15 +10,15 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## Node.js profiling vs Go pprof
 
-ใน Node.js คุณมี `node --prof` (V8 CPU profiler), `node --inspect` (Chrome DevTools) และเครื่องมือเช่น `clinic.js` (clinic doctor, clinic flame) สำหรับ heap และ event-loop analysis ทั้งหมดเป็น out-of-process หรือต้องการ wrap start command
+ใน Node.js คุณมี `node --prof` (V8 CPU profiler), `node --inspect` (Chrome DevTools) และเครื่องมืออย่าง `clinic.js` (clinic doctor, clinic flame) สำหรับวิเคราะห์ heap และ event loop ทั้งหมดทำงานแบบ out-of-process หรือไม่ก็ต้อง wrap คำสั่ง start
 
-Go มาพร้อม `runtime/pprof` ใน standard library และ `net/http/pprof` สำหรับ live HTTP-based profiling — ไม่ต้องใช้เครื่องมือภายนอกในการ collection และคำสั่ง `go tool pprof` จัดการ analysis
+Go มาพร้อม `runtime/pprof` ใน standard library และ `net/http/pprof` สำหรับ profiling ผ่าน HTTP แบบ live — เก็บ profile ได้โดยไม่ต้องพึ่งเครื่องมือภายนอก และคำสั่ง `go tool pprof` ก็จัดการการวิเคราะห์ให้
 
-> หมายเหตุเกี่ยวกับ Playground: pprof ต้องการการเขียน profile files ไปยัง disk และรัน `go tool pprof` บล็อกโค้ดด้านล่างเป็นไฟล์จริง — รัน locally
+> หมายเหตุเรื่อง Playground: pprof ต้องเขียนไฟล์ profile ลง disk แล้วรัน `go tool pprof` บล็อกโค้ดด้านล่างคือไฟล์จริง — รันบนเครื่องคุณ
 
-## สองวิธีในการ collect profiles
+## สองวิธีในการเก็บ profile
 
-### 1. File-based (สำหรับ scripts หรือ benchmarks)
+### 1. File-based (สำหรับ script หรือ benchmark)
 
 ```go
 // main.go
@@ -57,7 +57,7 @@ func main() {
 }
 ```
 
-### 2. HTTP endpoint (สำหรับ long-running servers)
+### 2. HTTP endpoint (สำหรับ server ที่รันยาว ๆ)
 
 ```go
 // main.go
@@ -79,11 +79,11 @@ func main() {
 }
 ```
 
-endpoints ที่มี:
+endpoint ที่มีให้:
 - `http://localhost:6060/debug/pprof/` — index
 - `http://localhost:6060/debug/pprof/profile?seconds=30` — CPU profile 30 วินาที
 - `http://localhost:6060/debug/pprof/heap` — heap snapshot
-- `http://localhost:6060/debug/pprof/goroutine` — goroutine stacks ทั้งหมด
+- `http://localhost:6060/debug/pprof/goroutine` — stack ของทุก goroutine
 - `http://localhost:6060/debug/pprof/trace?seconds=5` — execution trace
 
 export const nodeProfilingCode = `// Node.js — เครื่องมือหลายอย่าง ทั้งหมดภายนอก
@@ -153,8 +153,8 @@ go tool pprof mem.out
 ```
 
 heap profile แสดง:
-- **alloc_objects / alloc_space** — total allocations ตั้งแต่ program start
-- **inuse_objects / inuse_space** — objects/bytes ที่กำลังใช้งาน (หลัง GC)
+- **alloc_objects / alloc_space** — allocation รวมทั้งหมดตั้งแต่โปรแกรมเริ่มรัน
+- **inuse_objects / inuse_space** — object/byte ที่ยังถูกใช้อยู่ (หลัง GC)
 
 ## Benchmarks + pprof ด้วยกัน
 
@@ -169,12 +169,12 @@ go tool pprof mem.out
 
 <GoOnly title="คำเตือนด้านความปลอดภัย: อย่า expose pprof ใน production">
 
-`net/http/pprof` expose live goroutine dump, heap snapshot และ CPU profiles — เพียงพอที่จะ reconstruct internal data structures **อย่า expose port 6060 (หรือ port ใดก็ตามที่ serve pprof) บน public interface**
+`net/http/pprof` เปิดเผยทั้ง goroutine dump แบบ live, heap snapshot และ CPU profile — มากพอที่จะใช้ประกอบโครงสร้างข้อมูลภายในกลับขึ้นมาได้ **อย่าเปิด port 6060 (หรือ port ไหนก็ตามที่ serve pprof) ออกสู่ public interface**
 
-รูปแบบที่ปลอดภัย:
-- Bind เฉพาะ `127.0.0.1:6060` และใช้ SSH tunnel เพื่อเข้าถึง
+แนวทางที่ปลอดภัย:
+- bind ไว้ที่ `127.0.0.1:6060` เท่านั้น แล้วเข้าถึงผ่าน SSH tunnel
 - วางไว้หลัง internal VPN หรือ management interface แยกต่างหาก
-- Register handler แบบ conditional เฉพาะเมื่อ `DEBUG=true` ใน environment
+- register handler แบบมีเงื่อนไข เฉพาะตอนที่ `DEBUG=true` ใน environment
 
 ```go
 if os.Getenv("DEBUG") == "true" {
@@ -195,13 +195,13 @@ curl -s "http://localhost:6060/debug/pprof/trace?seconds=5" > trace.out
 go tool trace trace.out
 ```
 
-execution trace คือ view ที่ละเอียดที่สุด: แสดง goroutine start/stop ทุกครั้ง, GC pauses, network blocks และ system calls — คล้ายกับสิ่งที่ `clinic doctor` ทำสำหรับ event loop ของ Node
+execution trace คือมุมมองที่ละเอียดที่สุด: แสดงทุกครั้งที่ goroutine start/stop, ทุก GC pause, ทุกครั้งที่ block รอ network และ system call — คล้ายกับที่ `clinic doctor` ทำให้ event loop ของ Node
 
 export const quizQuestionsPprof = [
   { q: 'blank import ใดที่ register HTTP endpoints /debug/pprof/?', options: ['"runtime/pprof"', '"net/http/pprof"', '"debug/pprof"', '"os/pprof"'], answer: 1 },
   { q: 'ใน pprof output คอลัมน์ "flat" แสดงถึงอะไร?', options: ['เวลาที่ใช้ในฟังก์ชันนี้บวกกับทุกฟังก์ชันที่มันเรียก', 'เวลาที่ใช้ในฟังก์ชันนี้เท่านั้น ไม่รวม callees', 'Bytes ทั้งหมดที่ allocate โดยฟังก์ชันนี้', 'จำนวนครั้งที่ฟังก์ชันนี้ถูกเรียก'], answer: 1 },
   { q: 'คำสั่งใดที่เปิด interactive flame graph web UI สำหรับ profile file?', options: ['go pprof -ui cpu.out', 'go tool pprof -http=:8080 cpu.out', 'go tool trace cpu.out', 'go run pprof cpu.out'], answer: 1 },
-  { q: 'ทำไมถึงไม่ควร expose pprof endpoints บน public interface?', options: ['มันทำให้ server ช้าลงภายใต้ load', 'มัน expose heap snapshots และ goroutine dumps ที่สามารถรั่วข้อมูล internal ที่ sensitive', 'ต้องการ root permissions ในการอ่าน', 'มัน disable garbage collector'], answer: 1 },
+  { q: 'ทำไมถึงไม่ควร expose pprof endpoints บน public interface?', options: ['มันทำให้ server ช้าลงภายใต้ load', 'มันเปิดเผย heap snapshot และ goroutine dump ที่อาจรั่วข้อมูลภายในที่ sensitive ได้', 'ต้องการ root permission ในการอ่าน', 'มัน disable garbage collector'], answer: 1 },
 ];
 
 <Quiz client:visible id="advanced/pprof-profiling" questions={quizQuestionsPprof} />

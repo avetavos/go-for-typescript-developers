@@ -11,13 +11,13 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## JavaScript: concurrency model ด้วย async/await
 
-JavaScript เป็น single-threaded concurrency มาจาก event loop: เมื่อ async operation (network, I/O) เสร็จ callback จะถูก schedule `async/await` คือ syntactic sugar บน Promise — ทำให้โค้ด async อ่านเหมือน synchronous แต่ยังคงมีแค่ thread เดียวที่รัน JavaScript ของผู้ใช้ในเวลาหนึ่ง
+JavaScript เป็น single-threaded ความ concurrent มาจาก event loop เมื่อ async operation (network, I/O) เสร็จ callback จะถูก schedule เข้าคิว `async/await` เป็นแค่ syntactic sugar บน Promise ทำให้โค้ด async อ่านเหมือน synchronous แต่ก็ยังมีแค่ thread เดียวที่รันโค้ด JavaScript ของเราได้ในแต่ละช่วงเวลา
 
 Go ใช้แนวทางที่แตกต่างอย่างสิ้นเชิง: **goroutine** คือ lightweight thread ที่ concurrent จริงๆ และ Go runtime schedule พวกมันบน OS thread หลายตัว คุณสามารถรัน goroutine ได้หลายล้านตัวบนเครื่องทั่วไป
 
 ## การเปิด goroutine
 
-keyword `go` เปิด function ใน goroutine ใหม่ — execution context ที่ถูก schedule อย่างอิสระและเบาน้ำหนัก มัน return ทันที; goroutine รัน concurrently
+keyword `go` เปิด function ใน goroutine ใหม่ ซึ่งเป็น execution context ที่เบาและถูก schedule แยกอิสระ คำสั่งนี้ return ทันที แล้ว goroutine ก็รัน concurrent ต่อไป
 
 export const tsAsyncCode = `// TypeScript — async/await (event loop, single thread)
 async function fetchUser(id: number): Promise<User> {
@@ -81,7 +81,7 @@ func main() {
 
 ## Channel — สื่อสารระหว่าง goroutine
 
-Channel คือ conduit ที่มี type สำหรับส่งค่าระหว่าง goroutine คุณ `send` ค่าด้วย `<-` และ `receive` ค่าด้วย `<-` Channel synchronize sender และ receiver — การ send block จนกว่าจะมีคนรับ และในทางกลับกัน (สำหรับ unbuffered channel)
+Channel คือท่อส่งข้อมูลที่มี type สำหรับส่งค่าระหว่าง goroutine คุณ `send` ค่าด้วย `<-` และ `receive` ค่าด้วย `<-` Channel จะ synchronize ระหว่าง sender กับ receiver คือการ send จะ block จนกว่าจะมีคนรับ และการ receive ก็ block จนกว่าจะมีคนส่ง (สำหรับ unbuffered channel)
 
 export const tsChannelCode = `// TypeScript — ไม่มี channel primitive ใน native
 // ใกล้ที่สุดคือ queue + event emitter หรือ stream
@@ -154,7 +154,7 @@ OS thread ทั่วไปใช้ stack memory 1–8 MB Go runtime เริ
 
 - **Goroutine หลายล้านตัว** สามารถอยู่ร่วมกันบนเครื่องทั่วไปได้
 - การสร้าง goroutine ถูกมาก — microsecond และ KB ไม่กี่ KB
-- การ block goroutine (เช่น รอ I/O) ไม่ block OS thread scheduler park goroutine และรันตัวอื่นแทน
+- การ block goroutine (เช่น รอ I/O) ไม่ได้ block OS thread แต่ scheduler จะ park goroutine นั้นไว้แล้วไปรันตัวอื่นแทน
 
 เทียบกับ Node.js: JavaScript thread เดียวจัดการ callback ทั้งหมดผ่าน event loop Goroutine ของ Go รัน parallel จริงๆ บน multi-core hardware โดยไม่ต้องกำหนดค่าเพิ่มเติม
 

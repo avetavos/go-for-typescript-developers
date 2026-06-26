@@ -16,7 +16,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 - **ESLint** ตรวจจับรูปแบบที่น่าสงสัยและบังคับใช้ convention
 - **tsc** (type-checker) รายงาน type error
 
-Go รวมสิ่งนี้ไว้ในเครื่องมือที่เป็นส่วนหนึ่งของการติดตั้ง Go มาตรฐาน โดยมี linter ของ third-party (`staticcheck` หรือ `golangci-lint`) ที่ชุมชนนำมาใช้กันอย่างแพร่หลาย
+Go ยุบทั้งหมดนี้ไว้ในเครื่องมือที่เป็นส่วนหนึ่งของการติดตั้ง Go มาตรฐาน เสริมด้วย linter จาก third-party (`staticcheck` หรือ `golangci-lint`) ที่ชุมชนใช้กันแทบทุกที่
 
 ## gofmt — formatter แบบมีความเห็นชัดเจน
 
@@ -61,9 +61,9 @@ go fmt ./...
 `go vet` คือ static analyser ที่มาพร้อมกับ Go มันค้นหาบักจริง ๆ ไม่ใช่แค่ปัญหา style เช่น:
 
 - การส่ง type ผิดให้ format string ของ `fmt.Printf`
-- โค้ดที่ไม่สามารถถึงได้หลัง `return`
-- struct tag ที่รูปแบบผิด
-- Mutex ที่ถูก copy โดยค่า
+- โค้ดที่รันไปไม่ถึงหลัง `return`
+- struct tag ที่เขียนผิดรูปแบบ
+- การ copy mutex แบบ by value
 
 ```bash
 go vet ./...
@@ -93,7 +93,7 @@ go vet ./...
 
 ## staticcheck และ golangci-lint
 
-`go vet` จับบักที่ชัดเจนที่สุด สำหรับการตรวจสอบที่ครอบคลุมกว่า — exports ที่ไม่ถูกใช้, การใช้ deprecated API, โค้ดที่ทำให้เรียบง่ายได้ — ชุมชนพึ่งพา:
+`go vet` จับบักที่ชัดเจนที่สุด ส่วนการตรวจที่ครอบคลุมกว่า — exports ที่ไม่ถูกใช้, การใช้ deprecated API, โค้ดที่เขียนให้สั้นลงได้ — ชุมชนจะพึ่ง:
 
 - **staticcheck** (`honnef.co/go/tools`) — linter แบบ focused ที่มี signal สูง
 - **golangci-lint** — meta-linter ที่รัน linter หลายตัวพร้อมกัน รวมถึง `staticcheck`, `errcheck`, `gosimple` และอื่น ๆ
@@ -125,7 +125,7 @@ linters-settings:
     go: "1.22"
 ```
 
-> รันสิ่งเหล่านี้ใน terminal หลังจากติดตั้ง golangci-lint ไม่มีเวอร์ชันที่รันในเบราว์เซอร์สำหรับ linter
+> รันคำสั่งพวกนี้ใน terminal หลังติดตั้ง golangci-lint ตัว linter ไม่มีเวอร์ชันที่รันบนเบราว์เซอร์
 
 <GoOnly title="Style เดียว — ไม่มีการทะเลาะเรื่อง style อีกต่อไป">
 
@@ -133,7 +133,7 @@ linters-settings:
 
 ใน TypeScript แต่ละ project มี Prettier config, ESLint config และบางครั้งมีการผสมทั้งสองแบบเอง แรงเสียดทานในการ onboard เพิ่มขึ้นทุกครั้งที่มี config file ใหม่ที่นักพัฒนาต้องเรียนรู้
 
-Go หลีกเลี่ยงสิ่งนี้ทั้งหมด Style คือภาษา Pull request ไม่เคยถูกบล็อกด้วยการ nitpick เรื่องการจัดรูปแบบ
+Go ตัดปัญหานี้ทิ้งไปทั้งหมด Style เป็นส่วนหนึ่งของภาษา และ pull request ไม่เคยติดอยู่กับการ nitpick เรื่อง format
 
 </GoOnly>
 

@@ -102,7 +102,7 @@ func main() {
 
 <GoOnly title="การตรวจสอบการมีอยู่ของคีย์ใน map">
 
-ใน TypeScript การเข้าถึงคีย์ที่ไม่มีอยู่จะคืนค่า `undefined` แต่ใน Go การเข้าถึงคีย์ที่ไม่มีอยู่ใน map จะคืน **zero value** ของ type ของค่านั้น ในการแยกแยะระหว่าง "คีย์มีอยู่แต่ค่าเป็น zero value" กับ "คีย์ไม่มีอยู่" ให้ใช้รูปแบบสองค่า:
+ใน TypeScript การเข้าถึงคีย์ที่ไม่มีอยู่จะคืนค่า `undefined` แต่ใน Go การเข้าถึงคีย์ที่ไม่มีอยู่ใน map จะคืน **zero value** ของ type ของค่านั้น หากต้องแยกระหว่าง "คีย์มีอยู่แต่ค่าเป็น zero value" กับ "คีย์ไม่มีอยู่" ให้ใช้รูปแบบสองค่า:
 
 ```go
 scores := map[string]int{"alice": 0}
@@ -112,7 +112,7 @@ val, ok := scores["alice"]   // val == 0, ok == true  (present!)
 val, ok  = scores["bob"]     // val == 0, ok == false (absent)
 ```
 
-สำนวน `ok` เป็น idiomatic ของ Go — คุณจะเห็นมันกับ type assertion และการรับค่าจาก channel ด้วย
+สำนวน `ok` เป็น idiomatic ของ Go — คุณจะเห็นมันกับ type assertion และการรับค่าจาก channel เช่นกัน
 
 </GoOnly>
 

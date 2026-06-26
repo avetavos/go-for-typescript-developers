@@ -145,13 +145,13 @@ type User struct {
 }
 ```
 
-คุณสามารถบอกได้ทันทีจาก identifier ใดๆ ว่ามันเป็นส่วนหนึ่งของ public API ของ package หรือไม่ เพียงแค่อ่านโค้ด
+แค่อ่านโค้ด คุณก็ดูจาก identifier ใดๆ ได้ทันทีว่ามันเป็นส่วนหนึ่งของ public API ของ package หรือไม่
 
 </GoOnly>
 
 <GoOnly title="init() — การ initialize ของ package">
 
-แต่ละ package ของ Go สามารถมีฟังก์ชัน `init()` ที่รันโดยอัตโนมัติเมื่อ package ถูก import ครั้งแรก ก่อน `main()` คุณไม่สามารถเรียก `init()` ได้โดยตรง
+แต่ละ package ของ Go มีฟังก์ชัน `init()` ได้ ซึ่งจะรันอัตโนมัติเมื่อ package ถูก import ครั้งแรก ก่อน `main()` คุณเรียก `init()` เองโดยตรงไม่ได้
 
 ```go
 package db

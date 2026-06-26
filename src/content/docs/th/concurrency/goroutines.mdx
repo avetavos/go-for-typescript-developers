@@ -11,7 +11,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## Async Functions vs Goroutines
 
-ใน TypeScript เมื่อคุณต้องการรันโค้ดแบบ asynchronous คุณใช้ `async/await`:
+ใน TypeScript คุณมาร์ค function เป็น `async` แล้ว `await` ผลลัพธ์ ทุกครั้งที่เจอ `await` function จะหยุดพักและคืน control ให้ event loop แต่ทุกอย่างยังรันบน thread เดียว:
 
 ```typescript
 async function processUser(id: number) {
@@ -22,13 +22,13 @@ async function processUser(id: number) {
 await processUser(1);
 ```
 
-ใน Go คุณเพิ่ม keyword `go` ด้านหน้า function call ใดก็ได้เพื่อรันมันใน goroutine แยกต่างหาก:
+ใน Go คุณเติม keyword `go` หน้า function call ใดก็ได้ call นั้นจะถูก dispatch เป็น **goroutine** — หน่วยทำงานน้ำหนักเบาที่รันอิสระ จัดการโดย Go runtime ไม่ต้องมี `async` ที่ตัว function และไม่ต้อง `await` ตอนเรียก:
 
 ```go
 go processUser(1) // รันในพื้นหลังทันที — ไม่ต้อง async keyword
 ```
 
-ความแตกต่างสำคัญ: JavaScript `async` function ยังคงรันบน thread เดียว แต่ goroutine รันบน thread จริงที่ Go runtime จัดการ
+จุดต่างที่สำคัญ: `async` function ของ JavaScript ยังรันบน thread เดียว แต่ goroutine รันแบบ parallel บน OS thread คนละตัวได้จริง
 
 ## การสร้าง Goroutines
 
@@ -74,17 +74,17 @@ func main() {
 
 ## sync.WaitGroup — รอ Goroutines ให้เสร็จ
 
-`sync.WaitGroup` เป็นวิธีหลักในการรอ goroutines ทำงานเสร็จ ทำงานเหมือน `Promise.all` แต่ใช้ counter:
+`sync.WaitGroup` เป็นเครื่องมือหลักของ Go สำหรับรอ goroutines กลุ่มหนึ่งให้เสร็จ ทำงานคล้าย `Promise.all` แต่ใช้ counter แทน array:
 
 1. `wg.Add(n)` — เพิ่ม counter ก่อน launch goroutine
-2. `wg.Done()` — ลด counter เมื่อ goroutine เสร็จ (มักใช้กับ `defer`)
-3. `wg.Wait()` — block จนกว่า counter เป็น 0
+2. `wg.Done()` — ลด counter เมื่อ goroutine เสร็จ (เกือบทุกครั้งใช้คู่กับ `defer`)
+3. `wg.Wait()` — block จนกว่า counter จะเป็น 0
 
-> **สำคัญ:** ต้อง `wg.Add(1)` ก่อน `go f()` เสมอ ไม่ใช่ข้างใน goroutine เพราะ goroutine อาจยังไม่ได้รันตอนที่ WaitGroup ถูก Wait
+> **กฎ:** เรียก `wg.Add(1)` *ก่อน* `go f()` เสมอ อย่าเรียกข้างใน goroutine เพราะ scheduler อาจไปถึง `wg.Wait()` ก่อนที่ goroutine จะเริ่มรันด้วยซ้ำ ทำให้ `Wait` คืนค่าทันทีทั้งที่งานยังค้างอยู่
 
 ## Anonymous Goroutines
 
-เหมือน arrow functions ใน JS คุณสามารถ launch goroutine แบบ anonymous ได้:
+เหมือน immediately-invoked arrow function ใน JS คุณ launch goroutine แบบ anonymous inline ได้เลย:
 
 export const tsAnonCode = `// TypeScript: immediately invoked async
 (async () => {
@@ -102,14 +102,14 @@ go func() {
 
 <GoOnly title="Goroutines มีน้ำหนักเบาแค่ไหน?">
 
-OS thread ปกติใช้ stack ประมาณ 1–8MB และมี overhead จาก kernel context switching
+OS thread มาตรฐานจอง stack ขนาดคงที่ 1–8MB และต้องอาศัย kernel context switch ทุกครั้งที่ reschedule
 
-Goroutine ต่างกันอย่างสิ้นเชิง:
-- Stack เริ่มต้นเพียง **2KB** และขยายได้ dynamic ตามต้องการ
-- Scheduled โดย **Go runtime scheduler** (M:N threading) — ไม่ใช่ kernel โดยตรง
-- สร้างได้หลักแสนถึงล้านตัวในแอปเดียว
+Goroutine ต่างออกไปในทุกมิติ:
+- Stack เริ่มต้นแค่ **2KB** แล้วขยายเองแบบ dynamic ตามต้องการ — ไม่เปลือง memory
+- Go runtime scheduler เป็นคน schedule ให้ (M:N threading) — การสลับส่วนใหญ่ไม่ต้องยุ่งกับ kernel
+- Go server จริง ๆ รัน goroutine หลักหมื่นตัวพร้อมกันได้สบาย
 
-เปรียบเทียบกับ Worker Threads ของ Node.js ที่สร้าง OS thread จริงหนึ่งตัวต่อ worker
+เทียบกับ Worker Threads ของ Node.js ที่จอง OS thread จริงเต็มตัว (พร้อม V8 isolate เต็ม ๆ) ต่อ worker หนึ่งตัว
 
 </GoOnly>
 

@@ -37,7 +37,7 @@ fmt.Println(u.Name)`;
 
 ## Methods บน struct
 
-ใน TypeScript เมธอดอยู่ภายใน `class` แต่ใน Go คุณผูกเมธอดเข้ากับ type ใดก็ได้โดยการระบุ **receiver** ไว้ก่อนชื่อฟังก์ชัน
+ใน TypeScript method อยู่ภายใน `class` แต่ใน Go คุณผูก method เข้ากับ type ใดก็ได้ด้วยการระบุ **receiver** ไว้หน้าชื่อฟังก์ชัน
 
 export const tsMethodCode = `class User {
     constructor(
@@ -100,9 +100,9 @@ func main() {
 
 <GoOnly title="Value Receivers เทียบกับ Pointer Receivers">
 
-**value receiver** (`func (u User) Greet()`) จะได้รับสำเนาของ struct เมธอดจึงไม่สามารถเปลี่ยนแปลงตัวต้นฉบับได้
+**value receiver** (`func (u User) Greet()`) จะได้รับสำเนาของ struct method จึงเปลี่ยนแปลงตัวต้นฉบับไม่ได้
 
-**pointer receiver** (`func (u *User) SetName(name string)`) จะได้รับ pointer ไปยัง struct และ **สามารถ** เปลี่ยนแปลงมันได้
+**pointer receiver** (`func (u *User) SetName(name string)`) จะได้รับ pointer ไปยัง struct และเปลี่ยนแปลงมันได้
 
 ```go
 // Value receiver — reads, does not mutate
@@ -116,7 +116,7 @@ func (u *User) Birthday() {
 }
 ```
 
-**กฎง่ายๆ:** ถ้ามีเมธอดใดบน type หนึ่งที่ต้องเปลี่ยนแปลงค่า ให้ใช้ pointer receiver สำหรับเมธอด **ทั้งหมด** บน type นั้นเพื่อความสม่ำเสมอ
+**กฎง่ายๆ:** ถ้ามี method ใดบน type หนึ่งที่ต้องเปลี่ยนแปลงค่า ให้ใช้ pointer receiver กับ method **ทั้งหมด** บน type นั้นเพื่อความสม่ำเสมอ
 
 `this` ของ TypeScript เป็น reference เสมอ — ส่วน Go ทำให้ความแตกต่างระหว่าง copy กับ pointer ชัดเจนใน signature
 
@@ -144,7 +144,7 @@ fmt.Println(d.Speak()) // "Rex speaks" — promoted from Animal
 export const quizQuestionsStructs = [
   { q: 'คีย์เวิร์ดใดที่ใช้นิยาม struct ใน Go?', options: ['struct', 'type ... struct', 'class', 'object'], answer: 1 },
   { q: 'ควรใช้ pointer receiver เมื่อ:', options: ['คุณต้องการอ่านค่า struct', 'คุณต้องการเปลี่ยนแปลงค่า struct', 'struct มีขนาดเล็ก', 'คุณต้องการคัดลอก struct'], answer: 1 },
-  { q: 'อะไรคือสิ่งเทียบเท่ากับ this ของ JavaScript ภายในเมธอดใน Go?', options: ['this', 'self', 'ตัวแปร receiver ที่ตั้งชื่อ', 'super'], answer: 2 },
+  { q: 'อะไรคือสิ่งเทียบเท่ากับ this ของ JavaScript ภายใน method ใน Go?', options: ['this', 'self', 'ตัวแปร receiver ที่ตั้งชื่อ', 'super'], answer: 2 },
   { q: 'Go นำโค้ดกลับมาใช้ซ้ำได้อย่างไรโดยไม่มี inheritance?', options: ['Mixins', 'Embedding', 'Decorators', 'Prototypes'], answer: 1 },
 ];
 

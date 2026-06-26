@@ -16,7 +16,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 2. `node_modules/` (สำหรับ NestJS app ทั่วไปอาจถึง 300–600 MB)
 3. output `.js` ที่คอมไพล์แล้ว
 
-ผลลัพธ์มักเป็น image ขนาด 500 MB–1 GB ที่ส่ง development dependency tree ทั้งหมดไปยัง production คุณลดสิ่งนี้ด้วย `.dockerignore`, `--omit=dev` และ multi-stage builds แต่ Node runtime เองไม่มีทางหายไปได้
+ผลลัพธ์มักเป็น image ขนาด 500 MB–1 GB ที่ขน development dependency tree ทั้งก้อนขึ้น production คุณลดขนาดได้ด้วย `.dockerignore`, `--omit=dev` และ multi-stage builds แต่ตัว Node runtime เองไม่มีทางหายไป
 
 Go คอมไพล์เป็น **binary เดียวแบบ statically-linked** โดยไม่ต้องพึ่ง runtime Docker image สุดท้ายสามารถ build `FROM scratch` — base image ที่ว่างเปล่าจริง ๆ — ที่มีแค่ binary ของคุณ Go production image ทั่วไปมีขนาด **5–20 MB**
 
@@ -131,11 +131,11 @@ ENTRYPOINT ["/app/server"]`;
 
 <GoOnly title="FROM scratch — image ที่ว่างเปล่า">
 
-คุณสามารถไปไกลกว่า `distroless` และใช้ `FROM scratch` ซึ่งเป็น Docker image ที่ว่างเปล่าอย่างสมบูรณ์ binary ของคุณคือไฟล์เดียวใน container
+คุณไปไกลกว่า `distroless` ได้อีกขั้นด้วยการใช้ `FROM scratch` ซึ่งเป็น Docker image ที่ว่างเปล่าทั้งหมด binary ของคุณคือไฟล์เดียวใน container
 
-สิ่งนี้ทำงานได้เพราะ Go binary แบบ statically linked — มันพกพาทุกอย่างที่ต้องการไว้ใน ELF/Mach-O/PE file เดียว ไม่มี dynamic linker, ไม่มี libc, ไม่มี shared libraries
+ที่ทำได้แบบนี้เพราะ Go binary ถูก link แบบ static — มันพกทุกอย่างที่ต้องใช้ไว้ใน ELF/Mach-O/PE file เดียว ไม่มี dynamic linker, ไม่มี libc, ไม่มี shared libraries
 
-Trade-off คือ `scratch` ไม่มี shell และไม่มี CA certificates ดังนั้นคุณต้อง `COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/` ถ้าแอปทำ HTTPS calls ขาออก `distroless/static` จัดการสิ่งนี้ให้คุณ ซึ่งเป็นเหตุผลที่มันเป็นตัวเลือกที่ใช้งานได้จริงกว่าสำหรับ service ส่วนใหญ่
+Trade-off คือ `scratch` ไม่มี shell และไม่มี CA certificates ดังนั้นถ้าแอปยิง HTTPS calls ขาออก คุณต้อง `COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/` เอง ส่วน `distroless/static` จัดการให้แล้ว จึงเป็นตัวเลือกที่ใช้งานจริงได้สะดวกกว่าสำหรับ service ส่วนใหญ่
 
 </GoOnly>
 

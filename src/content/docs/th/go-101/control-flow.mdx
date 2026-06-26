@@ -11,7 +11,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## Control flow: ส่วนใหญ่คุ้นเคย มีหนึ่งเรื่องที่น่าแปลกใจ
 
-TypeScript มี `if`, `for`, `for...of`, `for...in`, `while`, `do...while` และ `switch` ส่วน Go มี `if`, `for` และ `switch` — และ **`for` ทำหน้าที่ของลูปทุกประเภท** ไม่มีคีย์เวิร์ด `while` พอคุณได้เห็นแล้ว คุณจะชื่นชอบความเรียบง่ายของมัน
+TypeScript มี `if`, `for`, `for...of`, `for...in`, `while`, `do...while` และ `switch` ส่วน Go มี `if`, `for` และ `switch` — และ **`for` ทำหน้าที่ของลูปทุกประเภท** ไม่มีคีย์เวิร์ด `while` พอได้ลองใช้ คุณจะชอบความเรียบง่ายของมัน
 
 ## if / else
 
@@ -67,7 +67,7 @@ for i, item := range items { ... }`;
 
 ## switch
 
-`switch` ของ Go **ไม่** fall through โดยอัตโนมัติ (ต่างจาก JavaScript/TypeScript ที่ต้องใส่ `break`) แต่ละ case เป็นอิสระต่อกัน คุณสามารถใช้ `fallthrough` อย่างชัดเจนได้ถ้าต้องการพฤติกรรมแบบเดิม
+`switch` ของ Go **ไม่** fall through โดยอัตโนมัติ (ต่างจาก JavaScript/TypeScript ที่ต้องใส่ `break`) แต่ละ case เป็นอิสระต่อกัน ถ้าต้องการพฤติกรรมแบบเดิม ใส่ `fallthrough` เองได้
 
 export const tsSwitchCode = `switch (day) {
     case "Mon":
@@ -95,7 +95,7 @@ default:
 
 ## range
 
-`range` วนซ้ำผ่าน slices, maps, strings และ channels สำหรับ slice มันจะให้ทั้ง index และ value ใช้ `_` เพื่อทิ้งค่าใดค่าหนึ่งได้
+`range` วนซ้ำผ่าน slices, maps, strings และ channels สำหรับ slice จะให้ทั้ง index และ value ใช้ `_` เพื่อทิ้งค่าใดค่าหนึ่งได้
 
 export const tsRangeCode = `const nums = [10, 20, 30];
 
@@ -158,7 +158,7 @@ if err := doSomething(); err != nil {
 // err is not in scope here
 ```
 
-วิธีนี้ทำให้ตัวแปร error มีขอบเขตที่จำกัดอย่างรัดกุม และเป็นสำนวนของ Go ที่คุณจะเห็นได้บ่อยมาก
+วิธีนี้จำกัดขอบเขตของตัวแปร error ไว้อย่างรัดกุม และเป็นสำนวนของ Go ที่คุณจะเห็นบ่อยมาก
 
 </GoOnly>
 

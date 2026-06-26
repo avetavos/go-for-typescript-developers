@@ -11,7 +11,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## Binding — อ่าน request body
 
-ใน Express คุณเข้าถึง `req.body` (หลังจาก `express.json()`) ใน Echo, `c.Bind(&target)` ทำสิ่งเดียวกัน: อ่าน `Content-Type` header และ decode body เข้า struct ที่ส่งไป นอกจากนี้ยังสามารถ bind path param และ query param ได้หาก field ใน struct มี tag ที่ถูกต้อง
+ใน Express คุณเข้าถึง `req.body` (หลังจาก `express.json()`) ส่วนใน Echo `c.Bind(&target)` ทำงานแบบเดียวกัน: อ่าน `Content-Type` header แล้ว decode body เข้า struct ที่ส่งไป และยัง bind path param กับ query param ได้ด้วยถ้า field ใน struct มี tag ที่ถูกต้อง
 
 export const tsBinding = `// Express + TypeScript
 interface CreateBookDTO {
@@ -46,7 +46,7 @@ func createBook(c echo.Context) error {
 
 ## Struct tag — ระบบ annotation ของ Go
 
-Struct tag คือ string literal ที่แนบกับ field ทำงานคล้าย TypeScript decorator แต่ไม่มีการ execute โค้ด — อ่านตอน runtime ผ่าน reflection `json:"name"` ควบคุม serialization; `validate:"rule"` อ่านโดย library validator
+Struct tag คือ string literal ที่แนบกับ field ทำงานคล้าย TypeScript decorator แต่ไม่ได้รันโค้ด — มันถูกอ่านตอน runtime ผ่าน reflection `json:"name"` ควบคุม serialization ส่วน `validate:"rule"` ถูกอ่านโดย validator library
 
 export const tsDecorators = `// TypeScript class-validator
 import { IsString, IsInt, Min, IsNotEmpty } from 'class-validator';
@@ -114,7 +114,7 @@ func main() {
 
 ## Validation ด้วย go-playground/validator
 
-Echo ไม่มี validation built-in แต่เปิดเผย `e.Validator` วิธีมาตรฐานคือเชื่อมกับ `go-playground/validator`
+Echo ไม่มี validation มาให้ในตัว แต่เปิด `e.Validator` ไว้ให้เสียบ validator เอง วิธีมาตรฐานคือเสียบ `go-playground/validator` เข้าไป
 
 export const tsClassValidator = `// NestJS global validation pipe
 import { ValidationPipe } from '@nestjs/common';

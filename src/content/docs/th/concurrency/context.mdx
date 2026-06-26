@@ -11,7 +11,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## AbortController vs context.Context
 
-ใน TypeScript/Web API คุณใช้ `AbortController` เพื่อยกเลิก fetch requests:
+ใน browser/Node.js คุณใช้ `AbortController` เพื่อยกเลิก `fetch` หรือ operation ใด ๆ ที่รับ `AbortSignal`:
 
 ```typescript
 const controller = new AbortController();
@@ -19,11 +19,11 @@ setTimeout(() => controller.abort(), 5000); // timeout 5 วินาที
 const res = await fetch(url, { signal: controller.signal });
 ```
 
-ใน Go `context.Context` เป็น mechanism สำคัญสำหรับ cancellation, deadlines และ timeouts ที่ส่งต่อผ่าน call chain ทั้งหมด
+ใน Go `context.Context` ทำหน้าที่เดียวกัน — และไปไกลกว่านั้น มันเป็น interface มาตรฐานที่พก cancellation signal, deadline (ถ้ามี) และ request-scoped value ติดตัวไปด้วย คุณส่งมันเป็น argument แรกของทุก I/O function ใน call chain เพื่อให้การ cancel ที่ด้านบนสุดส่งต่อลงไปทั้งสายโดยอัตโนมัติ
 
 ## context.WithCancel
 
-`context.WithCancel` สร้าง context ที่ยกเลิกได้ด้วยการเรียก cancel function:
+`context.WithCancel` คืน context ใหม่พร้อม cancel function การเรียก cancel จะ close channel `ctx.Done()` ซึ่งทุก goroutine ที่ฟัง context นั้นอยู่จะเห็น:
 
 export const tsAbortCode = `// TypeScript: AbortController
 const controller = new AbortController();
@@ -76,7 +76,7 @@ func main() {
 
 ## context.WithTimeout
 
-สำหรับ operations ที่มี deadline:
+สำหรับ operation ที่ต้องเสร็จภายใน deadline ใช้ `context.WithTimeout` Go จะ cancel context ให้อัตโนมัติเมื่อ timer หมดเวลา:
 
 export const tsTimeoutCode = `// TypeScript: timeout ด้วย Promise.race
 async function withTimeout<T>(
@@ -163,11 +163,11 @@ func main() {
 
 <GoOnly title="กฎการใช้ Context ใน Go">
 
-1. **Context เป็น argument แรกเสมอ** — `func Do(ctx context.Context, ...)`
-2. **อย่าเก็บ context ใน struct** — ส่งผ่าน function arguments
-3. **defer cancel() เสมอ** — ป้องกัน resource leak แม้ context จะ cancel ก่อน
-4. **ใช้ context.Background()** ที่ top level; ใช้ context.TODO() เมื่อยังไม่แน่ใจ
-5. **context.WithValue ใช้สำหรับ request-scoped data เท่านั้น** ไม่ใช่สำหรับ optional parameters
+1. **Context เป็น argument แรกเสมอ** — `func Do(ctx context.Context, ...)` เป็น convention ไม่ใช่กฎของ compiler
+2. **อย่าเก็บ context ใน struct** — ส่งผ่าน function argument เพื่อให้ lifetime ชัดเจน
+3. **defer cancel() เสมอ** — ถึงจะรู้ว่า timeout จะทำงานก่อน การ defer cancel ก็กัน goroutine leak ใน `WithTimeout`/`WithDeadline`
+4. **ใช้ `context.Background()` ที่ entry point** และ `context.TODO()` เมื่อรู้ว่าควรมี context แต่ยังไม่ได้ wire เข้าไป
+5. **`context.WithValue` ใช้กับ request-scoped metadata เท่านั้น** (trace ID, user ID) ไม่ใช่ optional parameter ของ function
 
 </GoOnly>
 

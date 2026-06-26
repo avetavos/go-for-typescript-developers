@@ -11,20 +11,20 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## JavaScript ทำงานแบบ single-threaded — Go ทำงานแบบ multi-threaded จริง ๆ
 
-ในฐานะนักพัฒนา TypeScript/Node.js คุณคุ้นเคยกับ **event loop** ที่ทำงานบน thread เดียว โค้ด JS ทั้งหมดรันบน thread เดียวกัน และ "concurrency" ที่คุณเห็นนั้นคือการสลับ context ระหว่าง callbacks, Promises, และ async/await — ไม่ใช่การรันแบบคู่ขนานจริง ๆ
+ในฐานะนักพัฒนา TypeScript/Node.js คุณใช้ชีวิตอยู่กับ **event loop** โค้ด JS ทั้งหมดรันบน thread เดียว และ "concurrency" ที่คุณเห็นคือการสลับ context ไปมาระหว่าง callbacks, Promises และ async/await — ไม่ใช่ parallelism จริง
 
-Go แตกต่างกันอย่างสิ้นเชิง: **goroutines** รันบน OS threads จริงผ่าน scheduler ของ Go runtime ทำให้สามารถดำเนินการได้พร้อมกันหลายอย่างบน CPU หลาย core ได้จริง
+Go ต่างออกไปโดยสิ้นเชิง Go runtime จะ schedule **goroutines** ลงบน OS threads จริงหลายตัว goroutine หลายตัวจึงรันพร้อมกันได้จริงบน CPU คนละ core โดยไม่ต้องพึ่ง Worker Threads
 
 ## Concurrency ≠ Parallelism
 
-Rob Pike (ผู้สร้าง Go) อธิบายไว้อย่างชัดเจน:
+Rob Pike (หนึ่งในผู้สร้าง Go) อธิบายไว้ได้ชัดเจนว่า:
 
-- **Concurrency** คือการ*จัดการ*หลายสิ่งพร้อมกัน (โครงสร้าง)
-- **Parallelism** คือการ*ทำ*หลายสิ่งพร้อมกันจริง ๆ (การดำเนินการ)
+- **Concurrency** คือการ*จัดการ*หลายสิ่งพร้อมกัน — เป็นเรื่องของโครงสร้าง
+- **Parallelism** คือการ*ทำ*หลายสิ่งพร้อมกันจริง — เป็นเรื่องของการรัน
 
-ตัวอย่าง: เชฟที่สับผักในขณะที่น้ำกำลังเดือด = concurrent (จัดการหลายอย่าง) เชฟสองคนทำงานพร้อมกันในครัวเดียวกัน = parallel (ทำหลายอย่างพร้อมกันจริง)
+เชฟที่สับผักไปตอนที่น้ำกำลังเดือด = concurrent (จัดการหลายอย่างพร้อมกัน) ส่วนเชฟสองคนทำงานเคียงข้างกันในครัวเดียว = parallel (ทำหลายอย่างพร้อมกันจริง)
 
-Node.js เก่งเรื่อง concurrency (I/O พร้อมกัน) แต่ไม่สามารถ parallel จริงได้โดยไม่ใช้ Worker Threads หรือหลาย process Go รองรับทั้งสองอย่างได้ตามธรรมชาติ
+Node.js เก่งเรื่อง concurrency (non-blocking I/O) แต่ทำ parallelism จริงไม่ได้ถ้าไม่ใช้ Worker Threads หรือแยกหลาย process ส่วน Go รองรับทั้งสองอย่างได้ในตัว
 
 ## โมเดล concurrency เปรียบเทียบ
 
@@ -76,15 +76,13 @@ func main() {
 
 <GoOnly title="ทำไม Go ถึง Concurrent โดยธรรมชาติ">
 
-Go ถูกออกแบบมาตั้งแต่ต้นให้รองรับ concurrency ผ่านหลักการ **CSP (Communicating Sequential Processes)** ของ Tony Hoare
-
-คำแนะนำสำคัญจาก Go team:
+Go ออกแบบมารองรับ concurrency ตั้งแต่วันแรก บนหลักการ **CSP (Communicating Sequential Processes)** ของ Tony Hoare หลักคิดที่ Go team ยึดถือคือ:
 
 > "Don't communicate by sharing memory; share memory by communicating."
 
-หมายความว่า แทนที่จะใช้ lock เพื่อปกป้อง shared data ให้ใช้ channels เพื่อส่งข้อมูลระหว่าง goroutines แทน
+หมายความว่าแทนที่จะใช้ lock ปกป้อง shared data ให้ส่งข้อมูลระหว่าง goroutines ผ่าน channels แทน — channel เป็นทั้งช่องทางสื่อสารและกลไก synchronization ในตัว
 
-Goroutines มีน้ำหนักเบามาก — stack เริ่มต้นเพียง 2KB (เทียบกับ OS thread ที่ ~1MB) ทำให้สามารถสร้างได้หลักแสนตัวในแอปเดียว
+Goroutines เบามาก — stack เริ่มต้นแค่ **2KB** แล้วขยายเองตามต้องการ (เทียบกับ OS thread ที่ ~1MB) โปรแกรม Go เดียวจึงรัน goroutine ได้หลักแสนตัวพร้อมกัน
 
 </GoOnly>
 

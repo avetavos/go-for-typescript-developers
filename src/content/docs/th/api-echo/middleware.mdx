@@ -10,7 +10,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## เปรียบเทียบโมเดล middleware
 
-Express middleware คือ `(req, res, next) => void` เรียก `next()` เพื่อส่งต่อ หรือเรียก `res.json()` เพื่อตัดจบ Echo ใช้แนวคิด pipeline เดียวกันแต่ใช้ error-return pattern และ closure ของ Go:
+Express middleware คือ `(req, res, next) => void` เรียก `next()` เพื่อส่งต่อ หรือเรียก `res.json()` เพื่อจบ request เลย ส่วน Echo ใช้แนวคิด pipeline เดียวกันแต่อาศัย error-return pattern และ closure ของ Go:
 
 ```go
 // Middleware signature ของ Echo
@@ -77,7 +77,7 @@ e.Use(authMiddleware)        // 3 — ตรวจสอบ auth หลังจ
 
 ## Middleware ระดับ route และ group
 
-ใน Express ส่ง middleware โดยตรงไปยัง route Echo รองรับด้วย `.Use` บน group
+ใน Express คุณส่ง middleware เข้าไปที่ route ได้ตรง ๆ ส่วน Echo ทำแบบเดียวกันได้ด้วย `.Use` บน group
 
 export const tsRouteMiddleware = `// Express — per-route middleware
 app.get('/admin', authMiddleware, adminHandler);
@@ -138,7 +138,7 @@ func RequireAuth(next echo.HandlerFunc) echo.HandlerFunc {
 
 <GoOnly title="การเก็บค่าใน context">
 
-`c.Set(key, value)` เก็บค่าใด ๆ ใน context ที่ scoped ตาม request ดึงกลับด้วย `c.Get(key)` เหมือน `req.user = claims` ใน Express แต่ต้องทำการ type assertion:
+`c.Set(key, value)` เก็บค่าอะไรก็ได้ลงใน context ที่ scoped ตาม request ดึงกลับด้วย `c.Get(key)` เหมือน `req.user = claims` ใน Express แต่ต้อง type assert เอง:
 
 ```go
 claims := c.Get("user").(*MyClaims)

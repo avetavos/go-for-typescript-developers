@@ -11,9 +11,9 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## Runtime types: TypeScript vs Go
 
-ใน TypeScript คุณตรวจสอบ type metadata ที่ runtime ได้ผ่าน `reflect-metadata` และ decorators — แต่นี่เป็น opt-in, ต้องใช้ `experimentalDecorators` และ `emitDecoratorMetadata` ใน `tsconfig.json`, และ metadata ถูก attach ด้วยตนเองโดย decorator functions JavaScript ลบข้อมูล type เกือบทั้งหมดที่ runtime; decorators คือ workaround ไม่ใช่ language primitive
+ใน TypeScript คุณตรวจ type metadata ที่ runtime ได้ผ่าน `reflect-metadata` และ decorator — แต่ต้อง opt-in เอง: เปิด `experimentalDecorators` กับ `emitDecoratorMetadata` ใน `tsconfig.json` และ metadata ก็ต้อง attach ด้วยมือจาก decorator function เอง JavaScript ลบข้อมูล type ออกเกือบหมดตอน runtime decorator จึงเป็นแค่ workaround ไม่ใช่ language primitive
 
-Go ถูก compile แต่ไม่เหมือน TypeScript มันเก็บข้อมูล type เต็มรูปแบบที่ runtime ผ่าน `reflect` package ค่าทุกค่าใน Go รู้ type ของตัวเองที่ runtime — ไม่ต้อง annotations, ไม่ต้อง build flags
+Go เป็นภาษา compile เหมือนกัน แต่ต่างจาก TypeScript ตรงที่เก็บข้อมูล type ไว้ครบที่ runtime ผ่าน `reflect` package ทุกค่าใน Go รู้ type ของตัวเองตอน runtime — ไม่ต้องมี annotation ไม่ต้องตั้ง build flag
 
 export const tsReflectCode = `// TypeScript — ต้องใช้ reflect-metadata + decorator compiler flags
 import 'reflect-metadata';
@@ -50,7 +50,7 @@ for i := 0; i < t.NumField(); i++ {
 
 ## Struct tags
 
-Struct tags คือ string literals ที่ฝังอยู่ในการประกาศ field พวกมันมองไม่เห็นที่ compile time และอ่านได้เฉพาะที่ runtime ผ่าน `reflect` นี่คือวิธีที่ `encoding/json`, `database/sql` scanners และไลบรารี validation เช่น `go-playground/validator` รู้ว่า JSON key ใด map กับ field ใด
+Struct tag คือ string literal ที่ฝังอยู่ในการประกาศ field มองไม่เห็นตอน compile time และอ่านได้เฉพาะตอน runtime ผ่าน `reflect` นี่คือวิธีที่ `encoding/json`, scanner ของ `database/sql` และ validation library อย่าง `go-playground/validator` รู้ว่า JSON key ไหน map กับ field ไหน
 
 export const tsTagCode = `// TypeScript — class-validator ใช้ decorators
 import { IsEmail, IsString, Min } from 'class-validator';
@@ -78,9 +78,9 @@ type CreateUserDTO struct {
 
 <TsGo client:visible ts={tsTagCode} go={goTagCode} />
 
-## อ่าน struct tags ที่ runtime
+## อ่าน struct tag ที่ runtime
 
-pattern canonical สำหรับอ่าน tags คือ `reflect.Type.Field(i).Tag.Get("key")`:
+pattern มาตรฐานสำหรับอ่าน tag คือ `reflect.Type.Field(i).Tag.Get("key")`:
 
 ```go
 func printJSONTags(v any) {
@@ -98,7 +98,7 @@ func printJSONTags(v any) {
 
 ## reflect.Value vs reflect.Type
 
-`reflect.TypeOf` ให้ **type descriptor** (kind, fields, methods) `reflect.ValueOf` ให้ **boxed value** ที่คุณตรวจสอบและ — อย่างระมัดระวัง — เปลี่ยนแปลงได้
+`reflect.TypeOf` ให้ **type descriptor** (kind, field, method) ส่วน `reflect.ValueOf` ให้ **boxed value** ที่คุณตรวจดูได้ และ — ถ้าระวังพอ — แก้ค่าได้ด้วย
 
 ```go
 u := User{Name: "Alice", Age: 30}
@@ -121,19 +121,19 @@ fmt.Println(u.Name) // Bob
 
 <GoOnly title="เมื่อใดไม่ควรใช้ reflect">
 
-Reflection ใน Go ทรงพลังแต่มีต้นทุนจริง:
+Reflection ใน Go ทรงพลัง แต่ก็มีต้นทุนจริง:
 
-- **Performance:** การเรียก `reflect` ช้ากว่าการเข้าถึง field โดยตรงมาก อย่าใช้ reflection ใน hot loops
-- **Type safety สูญหายที่ boundary:** โค้ดที่ใช้ `reflect.Value.Set*` ข้าม compiler Panics แทนที่ compile errors
-- **Readability:** โค้ดที่ใช้ reflection หนักกว่าอ่านและ refactor
+- **Performance:** การเรียก `reflect` ช้ากว่าการเข้าถึง field ตรง ๆ มาก อย่าใช้ reflection ใน hot loop
+- **Type safety หายไปตรง boundary:** โค้ดที่ใช้ `reflect.Value.Set*` ข้ามการตรวจของ compiler ความผิดพลาดที่ควรเป็น compile error จะกลายเป็น panic แทน
+- **Readability:** โค้ดที่ใช้ reflection เยอะ ๆ อ่านยากและ refactor ยากกว่า
 
 **ใช้ reflection เมื่อ:**
-- เขียนโค้ดระดับ framework (ORMs, JSON codecs, validators, dependency injection)
-- Implement generic serializers ที่ต้องจัดการ struct shapes ที่ไม่รู้จักที่ runtime
+- เขียนโค้ดระดับ framework (ORM, JSON codec, validator, dependency injection)
+- เขียน generic serializer ที่ต้องรับมือกับ struct รูปแบบที่ไม่รู้ล่วงหน้าตอน runtime
 
 **อย่าใช้ reflection เมื่อ:**
-- คุณรู้ types ที่ compile time — ใช้ generics หรือ interfaces แทน
-- ฟังก์ชันถูกเรียกใน tight loop — benchmark ก่อน
+- คุณรู้ type ตั้งแต่ compile time — ใช้ generics หรือ interface แทน
+- ฟังก์ชันถูกเรียกใน tight loop — benchmark ดูก่อน
 
 </GoOnly>
 

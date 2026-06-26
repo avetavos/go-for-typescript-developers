@@ -1,6 +1,6 @@
 ---
 title: Value vs Reference Semantics
-description: เข้าใจว่า Go struct และ array ถูก copy (value type) ในขณะที่ slice และ map แชร์ข้อมูลพื้นฐาน (reference type) — ความแตกต่างสำคัญจาก JavaScript ที่ object เป็น reference เสมอ
+description: เข้าใจว่า Go struct และ array ถูก copy (value type) ส่วน slice และ map แชร์ข้อมูลเบื้องล่าง (reference type) — ความแตกต่างสำคัญจาก JavaScript ที่ object เป็น reference เสมอ
 ---
 
 import TsGo from '../../../../components/TsGo.tsx';
@@ -58,7 +58,7 @@ fmt.Println(arr1[0]) // 1 — ไม่เปลี่ยน`;
 
 ## Slice และ Map เป็น reference type
 
-Slice และ map เก็บ pointer ภายในไปยังข้อมูลพื้นฐาน การ assign ให้ตัวแปรใหม่จะ **แชร์** pointer นั้น — ทั้งสองตัวแปรอ้างถึง array หรือ hash table เดิม
+Slice และ map เก็บ pointer ภายในไปยังข้อมูลเบื้องล่าง การ assign ให้ตัวแปรใหม่จะ **แชร์** pointer นั้น ทั้งสองตัวแปรจึงอ้างถึง array หรือ hash table เดิม
 
 export const tsSliceCode = `// TypeScript — array (เหมือน object ทั้งหมด) เป็น reference
 const s1 = [1, 2, 3];
@@ -94,7 +94,7 @@ fmt.Println(s1[0]) // 99 — s1 ไม่เปลี่ยน`;
 
 ## ส่งให้ function
 
-กฎเดิมใช้ได้เมื่อส่งค่าให้ function argument ของ struct มาเป็น copy ส่วน argument ของ slice/map แชร์ header
+กฎเดียวกันนี้ใช้ได้ตอนส่งค่าเข้า function โดย argument ที่เป็น struct จะมาเป็น copy ส่วน argument ที่เป็น slice/map จะแชร์ header
 
 export const tsFuncCode = `// TypeScript — object ส่งเป็น reference เสมอ
 function mutate(obj: { x: number }) {
@@ -181,7 +181,7 @@ type sliceHeader struct {
 }
 ```
 
-เมื่อคุณ assign slice ให้ตัวแปรอื่น Go จะ copy header นี้ — ดังนั้นทั้งสองตัวแปรแชร์ `Data` pointer เดิม นั่นคือเหตุผลที่การ mutate element มองเห็นได้ผ่านทั้งสอง แต่ `append` อาจ allocate underlying array ใหม่เมื่อ capacity หมด ซึ่งทำให้ header สองตัวแยกออกจากกันและการแก้ไขหยุดแชร์ นี่คือความแตกต่างที่ละเอียดแต่สำคัญ
+เมื่อคุณ assign slice ให้ตัวแปรอื่น Go จะ copy header นี้ ทั้งสองตัวแปรจึงแชร์ `Data` pointer เดิม นั่นคือเหตุผลที่การ mutate element มองเห็นได้ผ่านทั้งสองตัว แต่ `append` อาจ allocate underlying array ใหม่เมื่อ capacity เต็ม ทำให้ header สองตัวแยกจากกัน และการแก้ไขก็ไม่แชร์กันอีก นี่คือความแตกต่างที่เล็กแต่สำคัญ
 
 ```go
 a := []int{1, 2, 3}
@@ -195,7 +195,7 @@ fmt.Println(a[0]) // อาจยังเป็น 1 — b อาจมี back
 
 <GoOnly title="nil Slice vs Empty Slice">
 
-nil slice (`var s []int`) และ empty slice (`s := []int{}`) ทำงานเหมือนกันสำหรับ operation ส่วนใหญ่ — `len(s)` เป็น 0 ทั้งคู่, `range s` วนซ้ำศูนย์ครั้ง — แต่ไม่เท่ากัน nil slice มี nil Data pointer ส่วน empty slice มี non-nil Data pointer ไปยัง zero-length array เมื่อ marshal เป็น JSON นั้น `json.Marshal` encode nil slice เป็น `null` และ empty slice เป็น `[]` ความแตกต่างนี้สำคัญใน API response
+nil slice (`var s []int`) และ empty slice (`s := []int{}`) ทำงานเหมือนกันสำหรับ operation ส่วนใหญ่ — `len(s)` เป็น 0 ทั้งคู่, `range s` วนซ้ำศูนย์ครั้ง — แต่ไม่เท่ากัน nil slice มี nil Data pointer ส่วน empty slice มี non-nil Data pointer ที่ชี้ไปยัง zero-length array และเมื่อ marshal เป็น JSON `json.Marshal` จะ encode nil slice เป็น `null` แต่ encode empty slice เป็น `[]` ความแตกต่างนี้สำคัญมากใน API response
 
 ```go
 var nilSlice []int

@@ -10,7 +10,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## ทำไมต้อง Echo?
 
-ถ้าคุณมาจาก Node.js คุณคงคุ้นเคยกับแนวคิดของ HTTP framework แบบเบา: ฟังก์ชันที่แมป path + verb ไปยัง handler, pipeline ของ middleware และวิธี serialize JSON ให้ **Echo** คือ framework แบบนั้นสำหรับ Go
+ถ้าคุณมาจาก Node.js คุณคงคุ้นเคยกับแนวคิดของ HTTP framework แบบเบาอยู่แล้ว: ฟังก์ชันที่แมป path + verb ไปยัง handler, middleware pipeline และวิธี serialize JSON **Echo** คือ framework แบบนั้นของ Go
 
 | สิ่งที่ต้องการ | Node.js / Express | Go / Echo |
 |---|---|---|
@@ -81,7 +81,7 @@ func main() {
 
 <GoOnly title="รันโค้ดนี้บนเครื่องของคุณ">
 
-Echo ต้องการ network port และ Go module พร้อม dependency จากภายนอก browser playground ไม่สามารถรัน Echo ได้ ดังนั้นตัวอย่างทั้งหมดในบทนี้ต้องรันบนเครื่องของคุณเอง:
+Echo ต้องใช้ network port จริงและ Go module ที่มี third-party dependency ตัว playground ในเบราว์เซอร์รัน Echo ไม่ได้ ตัวอย่างทั้งหมดในบทนี้จึงต้องรันบนเครื่องของคุณเอง:
 
 ```bash
 mkdir books-api && cd books-api

@@ -11,7 +11,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## Promise Pool vs Worker Pool
 
-ใน TypeScript เมื่อต้องการจำกัดจำนวน concurrent operations คุณสร้าง Promise pool:
+ใน TypeScript เมื่อต้องการจำกัดจำนวน concurrent operation (เช่น "เรียก API พร้อมกันไม่เกิน 3 ตัว") คุณมักหยิบ library อย่าง `p-limit` มาใช้ หรือเขียน Promise pool เอง:
 
 ```typescript
 async function processWithPool<T>(
@@ -33,7 +33,7 @@ async function processWithPool<T>(
 }
 ```
 
-ใน Go worker pool ใช้ goroutines + channels ซึ่งเป็น pattern ที่ clean และมีประสิทธิภาพกว่า
+ใน Go worker pool เป็น pattern ที่ idiomatic ใช้แค่ stdlib และอ่านง่ายกว่า: goroutine จำนวนคงที่ (workers) แต่ละตัวดึงงานจาก jobs channel ตัวเดียวกัน channel ทำหน้าที่เป็น concurrent-safe queue ส่วน `close(jobs)` เป็นสัญญาณว่าจะไม่มีงานเข้ามาอีก
 
 ## Worker Pool Pattern พื้นฐาน
 
@@ -96,6 +96,8 @@ func main() {
 
 ## Pipeline Pattern — ต่อ Workers เป็น Chain
 
+Channel ต่อกันเป็น pipeline ได้อย่างเป็นธรรมชาติ: output channel ของ stage หนึ่งกลายเป็น input channel ของ stage ถัดไป เทียบได้กับการ chain async generator ใน JS
+
 export const tsPipelineCode = `// TypeScript: pipeline ด้วย async generators
 async function* stage1(input: AsyncIterable<number>) {
   for await (const n of input) yield n * 2;
@@ -141,14 +143,14 @@ func main() {
 
 <GoOnly title="เหตุใด Worker Pool ถึง Idiomatic ใน Go">
 
-Go ออกแบบ concurrency primitives ให้เหมาะกับ worker pool pattern โดยธรรมชาติ:
+concurrency primitives ของ Go เข้ากับ worker pool ได้อย่างเป็นธรรมชาติ:
 
-- **Channel as queue** — jobs channel ทำหน้าที่เป็น concurrent-safe queue โดยอัตโนมัติ
-- **for range on channel** — worker loop clean โดยไม่ต้องมี explicit loop control
-- **close(jobs) เป็น signal** — ส่ง signal ว่างานหมดแล้วโดยไม่ต้องส่ง sentinel value
-- **WaitGroup** — รอ workers ทั้งหมดเสร็จก่อน close results
+- **Channel เป็น concurrent-safe queue** — ไม่ต้องใช้ mutex channel จัดคิวการเข้าถึงให้เอง
+- **for range บน channel** — worker วน loop สะอาด ๆ จนกว่า channel จะถูก close โดยไม่ต้องมี done flag
+- **close(jobs) เป็น shutdown signal** — แทนที่จะส่ง sentinel value N ตัว แค่ close ครั้งเดียวก็บอกทุก worker พร้อมกัน
+- **WaitGroup + close(results)** — pool รอ worker ทุกตัวเสร็จ แล้ว close results channel จากนั้น collector ค่อยไล่อ่านได้อย่างปลอดภัย
 
-Pattern นี้ scale ได้ดีมาก — เพิ่ม numWorkers เพื่อใช้ CPU cores มากขึ้น, ลดเพื่อจำกัด resource usage
+scale ได้ง่ายมาก — เพิ่ม `numWorkers` เพื่อใช้ CPU core มากขึ้น หรือลดลงเพื่อ throttle การใช้ resource ภายนอก (เช่น จำกัดจำนวน database connection)
 
 </GoOnly>
 

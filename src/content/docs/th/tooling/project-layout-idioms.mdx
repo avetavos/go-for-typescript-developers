@@ -13,7 +13,7 @@ import Mermaid from '../../../../components/Mermaid.astro';
 
 TypeScript project เกือบทั้งหมดวาง source code ไว้ใน `src/` นอกจากนั้นโครงสร้างขึ้นอยู่กับคุณ — NestJS มี convention ของตัวเอง, Next.js มีของตัวเอง, และ Express project ธรรมดาอาจดูแตกต่างไปโดยสิ้นเชิง
 
-Go มีมาตรฐานชุมชนที่ได้รับการยอมรับซึ่งควรเรียนรู้ตั้งแต่ต้น Go project ส่วนใหญ่ที่คุณพบบน GitHub ใช้โครงสร้างหลักเดียวกัน:
+Go มีมาตรฐานชุมชนที่ยอมรับกันทั่วไปและควรเรียนรู้ตั้งแต่เนิ่น ๆ Go project ส่วนใหญ่ที่คุณเจอบน GitHub ใช้โครงสร้างหลักเดียวกัน:
 
 export const layoutTree = `flowchart TD
   ROOT["myapp/"] --> CMD["cmd/"]
@@ -75,11 +75,11 @@ cmd/
     main.go    # go build ./cmd/worker  → ได้ binary ./worker
 ```
 
-สิ่งนี้มีประโยชน์เพราะ Go module เดียวสามารถสร้าง binary ได้หลายตัว ไม่มี convention เทียบเท่าใน Node — คุณมักจะใช้ workspaces แยกกันหรือ repository แยกกัน
+ข้อนี้มีประโยชน์เพราะ Go module เดียวสร้าง binary ได้หลายตัว ฝั่ง Node ไม่มี convention เทียบเท่า — คุณมักต้องแยก workspaces หรือแยก repository
 
 ## internal/ — ความเป็น private ที่ compiler บังคับใช้
 
-directory `internal/` ถูก **Go compiler บังคับใช้เอง** โค้ดภายใน `internal/` สามารถ import ได้เฉพาะโค้ดในต้นไม้ parent ของ `internal/` directory นั้น
+directory `internal/` ถูก **Go compiler บังคับใช้เอง** โค้ดใน `internal/` จะ import ได้จากโค้ดที่อยู่ใน parent tree ของ `internal/` directory นั้นเท่านั้น
 
 ```bash
 # ด้วย layout นี้:
@@ -96,11 +96,11 @@ import "myapp/internal/service"   // จาก github.com/other/proj ✗
 # compiler error: use of internal package not allowed
 ```
 
-สิ่งนี้ให้ visibility boundary ที่แข็งซึ่ง TypeScript ไม่สามารถบังคับใช้ได้ — แม้แต่ `private` class members ก็เป็นแค่ convention ที่ tsc บังคับใช้ ไม่ใช่ runtime
+นี่คือ visibility boundary ที่เข้มงวดซึ่ง TypeScript บังคับใช้ไม่ได้ — แม้แต่ `private` ใน class ก็เป็นแค่ convention ที่ tsc บังคับ ไม่ใช่ตอน runtime
 
 ## pkg/ — shared code แบบ optional
 
-`pkg/` สำหรับโค้ดที่คุณต้องการให้ consumer ภายนอก import ได้อย่างชัดเจน ให้นึกถึงมันเป็น public API surface ของคุณ — ตรงข้ามกับ `internal/` หลายทีมข้ามไป `pkg/` เลยและวาง shared utilities ไว้ใน named packages ที่ root โดยตรง
+`pkg/` ไว้สำหรับโค้ดที่คุณตั้งใจให้ consumer ภายนอก import ได้ ให้นึกถึงมันเป็น public API surface ของคุณ — ตรงข้ามกับ `internal/` หลายทีมข้าม `pkg/` ไปเลยและวาง shared utilities ไว้ใน named packages ที่ root โดยตรง
 
 ## Convention การตั้งชื่อ package
 
@@ -119,7 +119,7 @@ package user_service   # underscore
 package handlers       # plural (minor แต่พบบ่อย)
 ```
 
-ชื่อ package คือสิ่งที่ caller เขียน: `handler.NewUser(...)`, `service.CreateOrder(...)` ให้สั้นเพื่อให้ชื่อแบบ fully-qualified อ่านได้ตามธรรมชาติ
+ชื่อ package คือสิ่งที่ caller เขียน: `handler.NewUser(...)`, `service.CreateOrder(...)` ตั้งให้สั้นเข้าไว้ เพื่อให้ชื่อแบบ fully-qualified อ่านลื่น
 
 > ไม่มี snippet ที่รันได้ที่นี่ — ทั้งหมดเป็นพฤติกรรมของ filesystem และ compiler ลองสร้าง layout ด้านบนใน terminal: `mkdir -p cmd/myapp internal/service && touch cmd/myapp/main.go internal/service/user.go go.mod`
 
@@ -127,9 +127,9 @@ package handlers       # plural (minor แต่พบบ่อย)
 
 TypeScript มี `private`, `protected` และ module-level visibility แต่ทั้งหมดนี้เป็น TypeScript conventions ที่ compile-time ใน runtime (JavaScript) module ใด ๆ ก็ `require()` ไฟล์ใด ๆ ใน `node_modules` ได้
 
-directory `internal/` ของ Go ถูกบังคับใช้โดย Go toolchain ไม่ใช่ linter หรือ type-system convention ถ้า module ภายนอกพยายาม import path ที่มี `/internal/` compiler จะปฏิเสธการ build นี่คือการรับประกันเชิงโครงสร้างที่คุณไม่สามารถ bypass ได้โดยไม่ตั้งใจ
+directory `internal/` ของ Go ถูกบังคับใช้โดย Go toolchain ไม่ใช่ linter หรือ type-system convention ถ้า module ภายนอกพยายาม import path ที่มี `/internal/` compiler จะปฏิเสธการ build นี่คือการรับประกันเชิงโครงสร้างที่คุณจะ bypass แบบไม่ตั้งใจไม่ได้
 
-มันเป็น idiomatic วิธีที่จะบอกว่า "โค้ดนี้เป็น implementation detail ของ module นี้และไม่ใช่ส่วนหนึ่งของ public API"
+มันเป็นวิธีแบบ idiomatic ที่จะบอกว่า "โค้ดนี้เป็น implementation detail ของ module นี้ ไม่ใช่ส่วนหนึ่งของ public API"
 
 </GoOnly>
 

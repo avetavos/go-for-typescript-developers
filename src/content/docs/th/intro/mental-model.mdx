@@ -11,11 +11,11 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## ปรับ gear จาก TypeScript มา Go
 
-ก่อนจะเขียน Go แม้แต่บรรทัดเดียว มันช่วยได้มากถ้าจะ "ลืม" นิสัย Node/TypeScript บางอย่าง Go ไม่ใช่ "TypeScript ที่ไม่มีเบราว์เซอร์" — มันเป็นชุดของ trade-off ที่แตกต่างกันและถูกเลือกมาอย่างจงใจ บทนี้จะพาคุณผ่านการเปลี่ยนแปลง mindset 5 อย่างที่สำคัญที่สุด
+ก่อนจะเขียน Go แม้แต่บรรทัดเดียว การ "ลืม" นิสัยแบบ Node/TypeScript บางอย่างจะช่วยได้มาก Go ไม่ใช่ "TypeScript ที่ไม่มีเบราว์เซอร์" — แต่เป็นชุด trade-off คนละแบบที่เลือกมาอย่างตั้งใจ บทนี้จะพาคุณผ่านการปรับ mindset 5 อย่างที่สำคัญที่สุด
 
 ## 1. Compiled vs Interpreted (ไม่มี `node` ที่ runtime)
 
-TypeScript คือ source → JS → runtime (Node.js) คุณเกือบจะรัน TypeScript ผ่าน runtime process เสมอ Go คอมไพล์เป็น native binary เมื่อ build แล้ว `./myapp` รันตรงบน OS โดยไม่ต้องพึ่ง runtime
+TypeScript คือ source → JS → runtime (Node.js) คุณแทบจะรัน TypeScript ผ่าน runtime process เสมอ ส่วน Go คอมไพล์เป็น native binary เมื่อ build เสร็จ `./myapp` รันตรงบน OS โดยไม่ต้องพึ่ง runtime
 
 export const tsRuntimeCode = `// TypeScript workflow
 // tsc src/index.ts --outDir dist
@@ -29,11 +29,11 @@ export const goRuntimeCode = `// Go workflow
 
 <TsGo client:visible ts={tsRuntimeCode} go={goRuntimeCode} />
 
-สิ่งนี้สำคัญสำหรับ Docker image (Go image สามารถเป็น `FROM scratch`), Lambda cold start, และการแจกจ่าย CLI — คุณส่งไฟล์เดียว
+เรื่องนี้สำคัญมากกับ Docker image (Go image เป็น `FROM scratch` ได้), Lambda cold start และการแจกจ่าย CLI — เพราะคุณส่งแค่ไฟล์เดียว
 
 ## 2. Static Binary vs `node_modules`
 
-โปรเจกต์ TypeScript มี `package.json` และโฟลเดอร์ `node_modules` ที่อาจหนักหลายร้อย megabyte Go ใช้ระบบ module (`go.mod`) โดย dependency จะถูกดาวน์โหลดตอน build time และคอมไพล์รวม *เข้าไปใน* binary ไม่มีสิ่งเทียบเท่า `node_modules` บน server
+โปรเจกต์ TypeScript มี `package.json` และโฟลเดอร์ `node_modules` ที่อาจหนักหลายร้อย megabyte ส่วน Go ใช้ระบบ module (`go.mod`) โดยดาวน์โหลด dependency ตอน build time แล้วคอมไพล์รวม *เข้าไปใน* binary เลย จึงไม่มีอะไรเทียบเท่า `node_modules` บน server
 
 export const tsDepsCode = `// package.json
 {
@@ -58,9 +58,9 @@ require (
 
 ## 3. Goroutine vs Event Loop
 
-Node.js ทำงานแบบ single-threaded ความสามารถ concurrency ของมันมาจาก event loop: async operation ถูกส่งออกไปให้ libuv และ callback (หรือ Promise) จะรันเมื่อมันเสร็จ คุณไม่เคยรัน JavaScript callback สองตัวพร้อมกัน
+Node.js ทำงานแบบ single-threaded ความสามารถด้าน concurrency มาจาก event loop: async operation ถูกส่งต่อไปให้ libuv แล้ว callback (หรือ Promise) จะรันเมื่อทำงานเสร็จ คุณจึงไม่มีทางรัน JavaScript callback สองตัวพร้อมกัน
 
-Go ใช้ goroutine — lightweight concurrent function Go runtime จะ multiplex goroutine หลายพันตัวบน OS thread จริงๆ (GOMAXPROCS) Goroutine สองตัวสามารถรันแบบ parallel จริงๆ บนเครื่อง multi-core
+ส่วน Go ใช้ goroutine — concurrent function แบบ lightweight โดย Go runtime จะ multiplex goroutine หลายพันตัวลงบน OS thread จริง (GOMAXPROCS) goroutine สองตัวจึงรันแบบ parallel ได้จริงบนเครื่อง multi-core
 
 export const tsEventLoopCode = `// TypeScript: async/await, single thread
 async function doWork() {
@@ -79,11 +79,11 @@ func doWork(ch chan int) {
 
 <TsGo client:visible ts={tsEventLoopCode} go={goGoroutineCode} />
 
-Goroutine และ channel จะครอบคลุมเชิงลึกในบทต่อไป สำหรับตอนนี้ mental model คือ: Go concurrency เป็น parallel โดยค่าเริ่มต้น ไม่ใช่แค่ async
+เราจะลงลึกเรื่อง goroutine และ channel ในบทถัดไป สำหรับตอนนี้ขอแค่จำ mental model ไว้ว่า: concurrency ของ Go เป็น parallel โดยค่าเริ่มต้น ไม่ใช่แค่ async
 
 ## 4. Error แบบ Explicit vs Exception
 
-นี่คือนิสัยที่ยากที่สุดที่ต้องเลิก ใน TypeScript/JavaScript ทุกอย่างสามารถ throw ได้ คุณป้องกันด้วย `try/catch` แต่คุณไม่สามารถบอกได้จาก signature ของ function ว่ามันจะ throw หรือไม่ ใน Go error คือ return value — เป็นส่วนหนึ่งของ contract ของ function
+นี่คือนิสัยที่เลิกยากที่สุด ใน TypeScript/JavaScript ทุกอย่าง throw ได้หมด คุณป้องกันด้วย `try/catch` แต่ดูจาก signature ของ function ไม่ออกเลยว่ามันจะ throw ไหม ส่วนใน Go error คือ return value — เป็นส่วนหนึ่งของ contract ของ function
 
 export const tsThrowCode = `// TypeScript: function ใดๆ ก็ throw ได้
 function parseConfig(raw: string): Config {
@@ -115,7 +115,7 @@ if err != nil {
 
 ## 5. ความเรียบง่าย — วิธีเดียวที่ idiomatic
 
-TypeScript มีหลายวิธีในการทำสิ่งเดียวกัน: class, prototype, function, decorator, หลาย module format ชุมชนถกเถียงเรื่อง pattern ตลอดเวลา วัฒนธรรมของ Go คิดตรงข้าม: มักมีวิธีเดียวที่ idiomatic บังคับโดย `gofmt` (automatic formatting), `go vet` (static analysis), และ convention ของชุมชน ถ้านักพัฒนา Go สองคนเขียน function เดียวกันโดยอิสระ โค้ดของพวกเขาจะดูเกือบเหมือนกัน
+TypeScript มีหลายวิธีทำสิ่งเดียวกัน: class, prototype, function, decorator และ module format หลายแบบ ชุมชนจึงถกเถียงเรื่อง pattern กันไม่จบ ส่วนวัฒนธรรมของ Go คิดตรงข้าม: มักมีวิธี idiomatic อยู่วิธีเดียว บังคับด้วย `gofmt` (automatic formatting), `go vet` (static analysis) และ convention ของชุมชน ถ้านักพัฒนา Go สองคนเขียน function เดียวกันแยกกัน โค้ดที่ได้จะหน้าตาเกือบเหมือนกัน
 
 export const tsStyleCode = `// TypeScript: หลาย style ที่ valid
 class UserService {
@@ -144,7 +144,7 @@ func (s *UserService) GetUser(ctx context.Context, id string) (User, error) {
 
 <GoOnly title="gofmt — การ format โค้ดไม่ใช่ตัวเลือก">
 
-ใน TypeScript คุณเลือกระหว่าง Prettier, ESLint, StandardJS, หรือไม่มี formatter เลย ใน Go นั้น `gofmt` มาพร้อมกับ toolchain และเป็น formatter อย่างเป็นทางการตัวเดียว ไม่มีการเถียงเรื่อง style — โค้ดของทุกคนดูเหมือนกัน editor ส่วนใหญ่รัน `gofmt` เมื่อ save อัตโนมัติ
+ใน TypeScript คุณต้องเลือกระหว่าง Prettier, ESLint, StandardJS หรือไม่ใช้ formatter เลย ส่วนใน Go `gofmt` มาพร้อม toolchain อยู่แล้วและเป็น formatter อย่างเป็นทางการเพียงตัวเดียว ไม่มีการเถียงเรื่อง style — โค้ดของทุกคนหน้าตาเหมือนกัน editor ส่วนใหญ่รัน `gofmt` ให้อัตโนมัติตอน save
 
 ```go
 // ก่อน gofmt

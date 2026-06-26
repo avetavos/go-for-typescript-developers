@@ -11,7 +11,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## โปรแกรม Go แรกของคุณ
 
-ใน TypeScript/Node.js คุณสร้างไฟล์, export หรือรันโค้ดที่ top-level, และ `node` รันมัน Go ต้องการให้ทุกโปรแกรมที่รันได้ปฏิบัติตามโครงสร้างที่เฉพาะเจาะจง: การประกาศ `package main` และ entry point `func main()` มาเปรียบเทียบกัน
+ใน TypeScript/Node.js คุณสร้างไฟล์, export หรือเขียนโค้ดไว้ที่ top-level แล้ว `node` ก็รันให้ ส่วน Go กำหนดให้ทุกโปรแกรมที่รันได้ต้องมีโครงสร้างเฉพาะ: ประกาศ `package main` และมี entry point `func main()` มาเทียบกัน
 
 export const tsHelloCode = `// hello.ts
 console.log("Hello, World!");
@@ -36,15 +36,15 @@ func main() {
 
 **`package main`**
 
-ทุกไฟล์ Go เริ่มต้นด้วยการประกาศ `package` Package ที่ชื่อ `main` พิเศษ — มันทำเครื่องหมายว่าเป็นโปรแกรมที่รันได้ (ไม่ใช่ library) คิดว่ามันเทียบเท่ากับไฟล์ที่เป็น entry `"main"` ใน `package.json`
+ทุกไฟล์ Go เริ่มด้วยการประกาศ `package` และ package ชื่อ `main` นั้นพิเศษ — มันบอกว่านี่คือโปรแกรมที่รันได้ (ไม่ใช่ library) คิดเสียว่าเทียบเท่ากับไฟล์ที่ field `"main"` ใน `package.json` ชี้ไปหา
 
 **`import "fmt"`**
 
-Go import เป็นแบบ explicit และต่อไฟล์ `fmt` คือ standard library package สำหรับ formatted I/O — เทียบเท่ากับ `console` ของ Go คุณ import โดยใช้ full package path string (ใส่ quote) Import ที่ไม่ได้ใช้คือ compile error
+การ import ของ Go เป็นแบบ explicit และทำทีละไฟล์ `fmt` คือ standard library package สำหรับงาน formatted I/O — เทียบได้กับ `console` ในโลก Go คุณ import ด้วย full package path แบบ string (ต้องใส่ quote) และ import ที่ไม่ได้ใช้จะกลายเป็น compile error
 
 **`func main()`**
 
-Function `main` คือ entry point ทุกโปรแกรม Go ที่รันได้ต้องมี `func main()` หนึ่งตัวพอดีใน `main` package ไม่มี argument — command-line argument เข้าถึงได้ผ่าน `os.Args`
+Function `main` คือ entry point ทุกโปรแกรม Go ที่รันได้ต้องมี `func main()` เพียงตัวเดียวใน package `main` และมันไม่รับ argument — ถ้าต้องการ command-line argument ให้เข้าถึงผ่าน `os.Args`
 
 export const tsEntryCode = `// TypeScript: หลาย entry style
 // 1. Top-level code (scripts)
@@ -67,7 +67,7 @@ func main() {
 
 ## fmt.Println vs console.log
 
-`fmt.Println` คือ equivalent ตรงที่สุดของ `console.log` Package `fmt` ยังมี `fmt.Printf` สำหรับ format string (เหมือน `printf` ใน C หรือ template literal ใน JS) และ `fmt.Sprintf` สำหรับสร้าง string โดยไม่ print
+`fmt.Println` คือสิ่งที่ใกล้เคียง `console.log` ที่สุด นอกจากนี้ package `fmt` ยังมี `fmt.Printf` สำหรับ format string (เหมือน `printf` ใน C หรือ template literal ใน JS) และ `fmt.Sprintf` สำหรับสร้าง string โดยไม่ print ออกมา
 
 export const tsLogCode = `// TypeScript logging
 console.log("Hello");                    // ง่ายๆ
@@ -85,7 +85,7 @@ msg := fmt.Sprintf("Hello, %s!", name)  // สร้าง string`;
 
 ## Format verb
 
-`fmt.Printf` ใช้ format verb แทน template literal เหล่าที่ใช้บ่อยที่สุด:
+`fmt.Printf` ใช้ format verb แทน template literal ตัวที่ใช้บ่อยมีดังนี้:
 
 | Verb | ความหมาย | เทียบเท่า TypeScript |
 |------|---------|---------------------|
@@ -99,7 +99,7 @@ msg := fmt.Sprintf("Hello, %s!", name)  // สร้าง string`;
 
 <GoOnly title="Import ที่ไม่ได้ใช้คือ compile error">
 
-ใน TypeScript import ที่ไม่ได้ใช้สร้าง warning (หรือไม่มีอะไร ขึ้นกับ tsconfig) ใน Go import ที่ไม่ได้ใช้คือ **compile error** สิ่งนี้ทำให้ไฟล์ Go สะอาด แต่อาจทำให้สะดุดเมื่อคุณกำลัง explore โค้ด
+ใน TypeScript import ที่ไม่ได้ใช้จะเป็นแค่ warning (หรือไม่เป็นอะไรเลย ขึ้นกับ tsconfig) แต่ใน Go import ที่ไม่ได้ใช้คือ **compile error** ข้อบังคับนี้ทำให้ไฟล์ Go สะอาดอยู่เสมอ แต่ก็อาจสะดุดได้ตอนคุณกำลังลองแก้โค้ดเล่น
 
 ```go
 import (
@@ -113,13 +113,13 @@ func main() {
 }
 ```
 
-การแก้ไข: ลบ import ออกหรือใช้ blank identifier `_` เป็น side-effect import (พบน้อย ใช้สำหรับ `init()` side effect เท่านั้น):
+วิธีแก้: ลบ import นั้นออก หรือใช้ blank identifier `_` เพื่อทำเป็น side-effect import (เจอไม่บ่อย ใช้เฉพาะเวลาต้องการ side effect จาก `init()` เท่านั้น):
 
 ```go
 import _ "github.com/lib/pq" // side-effect: register pq driver
 ```
 
-Editor Go ส่วนใหญ่ (VS Code + gopls) ลบ import ที่ไม่ได้ใช้อัตโนมัติเมื่อ save
+Editor สำหรับ Go ส่วนใหญ่ (VS Code + gopls) จะลบ import ที่ไม่ได้ใช้ให้อัตโนมัติตอน save
 
 </GoOnly>
 

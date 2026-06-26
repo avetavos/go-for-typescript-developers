@@ -10,7 +10,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## เปรียบเทียบโครงสร้าง
 
-โปรเจกต์ TypeScript/Node มี `package.json`, build tool, โฟลเดอร์ `dist/` และ `node_modules` โปรเจกต์ Go เรียบง่ายกว่า: `go.mod` ประกาศ module และ dependency โดยไม่มีโฟลเดอร์ output แยกต่างหาก — `go build` สร้าง binary ไฟล์เดียว
+โปรเจกต์ TypeScript/Node มี `package.json`, build tool, โฟลเดอร์ `dist/` และ `node_modules` ส่วนโปรเจกต์ Go เรียบง่ายกว่า: `go.mod` ประกาศ module และ dependency ไม่มีโฟลเดอร์ output แยกต่างหาก — `go build` สร้าง binary ไฟล์เดียว
 
 export const tsLayout = `// Express / NestJS project tree
 my-api/
@@ -73,7 +73,7 @@ require (
 
 ## main.go — เชื่อมแอปพลิเคชัน
 
-ใน NestJS, `main.ts` เรียก `NestFactory.create` ใน Echo, `main.go` เรียก `echo.New()`, ลงทะเบียน middleware และ route แล้วเรียก `e.Start` ทุกอย่างเป็น Go code ที่ชัดเจน — ไม่มี decorator ไม่มี DI container
+ใน NestJS `main.ts` เรียก `NestFactory.create` ส่วนใน Echo `main.go` เรียก `echo.New()` ลงทะเบียน middleware กับ route แล้วเรียก `e.Start` ทุกอย่างเป็น Go code ที่ชัดเจน — ไม่มี decorator ไม่มี DI container
 
 export const tsMainTs = `// NestJS main.ts
 import { NestFactory } from '@nestjs/core';
@@ -125,7 +125,7 @@ func main() {
 
 <GoOnly title="ทำไมต้องใช้ internal/?">
 
-โฟลเดอร์ `internal/` เป็น feature ของภาษา Go: package ที่อยู่ข้างในสามารถ import ได้เฉพาะโค้ดใน module เดียวกันเท่านั้น นี่คือวิธี idiomatic ที่ทำให้ handler, service และ store เป็น private — เทียบเท่ากับการ mark NestJS module เป็น non-exported หากพยายาม import `github.com/you/books-api/internal/handler` จากภายนอก module จะเกิด error ตอน compile
+โฟลเดอร์ `internal/` เป็น feature ของภาษา Go: package ที่อยู่ข้างในจะถูก import ได้จากโค้ดภายใน module เดียวกันเท่านั้น นี่คือวิธี idiomatic ที่ทำให้ handler, service และ store เป็น private — เทียบเท่ากับการ mark NestJS module เป็น non-exported ถ้าพยายาม import `github.com/you/books-api/internal/handler` จากนอก module จะ error ตอน compile
 
 </GoOnly>
 

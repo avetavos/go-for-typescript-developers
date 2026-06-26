@@ -10,7 +10,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## npm vs Go modules
 
-ถ้าคุณรู้จัก npm คุณเข้าใจ Go modules 90% แล้ว ทั้งสองระบบใช้ semantic versioning, lock files และ manifest file mental model map ได้ชัดเจน — แต่กลไกแตกต่างกันในวิธีที่สำคัญ
+ถ้าคุณรู้จัก npm ก็เท่ากับเข้าใจ Go modules ไปแล้ว 90% ทั้งสองระบบใช้ semantic versioning, lock file และ manifest file เหมือนกัน mental model จึง map กันได้ลงตัว — แต่กลไกเบื้องหลังต่างกันในจุดสำคัญ
 
 export const npmManifestCode = `// package.json
 {
@@ -43,7 +43,7 @@ require (
 
 ## go.mod — manifest
 
-`go.mod` เทียบเท่า `package.json` มี 3 fields ที่ต้องมี:
+`go.mod` เทียบเท่า `package.json` มี field ที่ต้องมี 3 ตัว:
 
 ```
 module github.com/myorg/my-app   ← module path (import prefix)
@@ -51,25 +51,25 @@ go 1.21                          ← minimum Go version
 require (...)                    ← direct dependencies
 ```
 
-ความแตกต่างหลักจาก `package.json`:
-- module path คือ string คล้าย URL, มักตรงกับ VCS repo path
-- ไม่มี `devDependencies` dependencies ทั้งหมดอยู่ใน `require` Go linker รวมเฉพาะ packages ที่ binary ที่กำลัง build นำเข้า
-- syntax range `^` ไม่มี คุณ pin version ที่แน่นอน (เช่น `v1.9.1`)
+จุดที่ต่างจาก `package.json`:
+- module path เป็น string คล้าย URL มักตรงกับ path ของ repo บน VCS
+- ไม่มี `devDependencies` dependency ทุกตัวอยู่ใน `require` แต่ Go linker จะรวมเฉพาะ package ที่ binary นั้น ๆ import จริง ๆ
+- ไม่มี syntax range แบบ `^` คุณ pin version แบบเป๊ะ ๆ (เช่น `v1.9.1`)
 
 ## go.sum — lock file
 
-`go.sum` เทียบเท่า `package-lock.json` บันทึก cryptographic hashes สำหรับทุก dependency version:
+`go.sum` เทียบเท่า `package-lock.json` เก็บ cryptographic hash ของทุก dependency แต่ละ version:
 
 ```
 github.com/gin-gonic/gin v1.9.1 h1:4idEAncQnU5cB7BerypkHKpy7LtzLuviaCYD2h8zebo=
 github.com/gin-gonic/gin v1.9.1/go.mod h1:hPrL7YrpYKXt5YId3A/Tnip5kqbEAP+KLuI3SUcPTeU=
 ```
 
-สอง hash lines ต่อ dependency:
-- `h1:...` — hash ของ module zip content
-- `/go.mod h1:...` — hash ของเฉพาะ `go.mod` file
+แต่ละ dependency มี hash 2 บรรทัด:
+- `h1:...` — hash ของเนื้อหา module zip
+- `/go.mod h1:...` — hash ของเฉพาะไฟล์ `go.mod`
 
-ทั้งสองต้อง match ทุกเครื่องและใน CI — `go mod verify` ตรวจสิ่งนี้ คุณ commit `go.sum` ไปยัง version control (เหมือนกับ `package-lock.json`)
+ทั้งคู่ต้องตรงกันทุกเครื่องและใน CI — `go mod verify` คอยตรวจให้ และคุณควร commit `go.sum` เข้า version control ด้วย (เหมือน `package-lock.json`)
 
 ## คำสั่ง module ทั่วไป
 
@@ -98,7 +98,7 @@ go list -m -versions github.com/gin-gonic/gin
 
 ## Major version semantics
 
-Go modules encode **major version ใน import path** สำหรับ v2+ นี่คือความแตกต่างที่น่าแปลกใจที่สุดจาก npm:
+Go modules ฝัง **major version ไว้ใน import path** สำหรับ v2 ขึ้นไป นี่คือจุดที่ต่างจาก npm มากที่สุดจนหลายคนแปลกใจ:
 
 export const npmMajorCode = `// npm — ชื่อ package เดิม แค่ version ใหม่
 // package.json
@@ -123,7 +123,7 @@ import "github.com/some-lib/core/v2"
 
 ## replace directive — local development
 
-เมื่อกำลัง develop dependency ควบคู่ไปกับ main module `replace` map module path ไปยัง local directory — เทียบเท่า `npm link` หรือ path `file:` ใน `package.json`:
+ตอนที่คุณ develop dependency ไปพร้อมกับ main module `replace` จะ map module path ไปยัง directory บนเครื่อง — เทียบเท่า `npm link` หรือ path แบบ `file:` ใน `package.json`:
 
 ```go
 // go.mod
@@ -132,11 +132,11 @@ require github.com/myorg/shared-lib v1.2.3
 replace github.com/myorg/shared-lib => ../shared-lib
 ```
 
-ลบ `replace` ก่อน commit ไปยัง production ใช้ `go mod tidy` หลังจากนั้นเพื่อ cleanup
+ลบ `replace` ออกก่อน commit ขึ้น production แล้วรัน `go mod tidy` ตามเพื่อเก็บกวาดให้เรียบร้อย
 
 ## Vendoring
 
-Vendoring copy dependencies ทั้งหมดไปยัง directory `vendor/` ภายใน repo — มีประโยชน์สำหรับ air-gapped builds หรือการรับประกัน reproducibility โดยไม่พึ่ง module proxy:
+Vendoring คือการ copy dependency ทั้งหมดมาไว้ใน directory `vendor/` ภายใน repo — มีประโยชน์กับ build แบบ air-gapped หรือเวลาต้องการรับประกัน reproducibility โดยไม่ต้องพึ่ง module proxy:
 
 ```bash
 # สร้าง/อัพเดท vendor directory
@@ -151,7 +151,7 @@ go mod verify
 
 <GoOnly title="go.env และ GOFLAGS">
 
-คุณตั้งค่า `GONOSUMCHECK`, `GONOSUMDB`, `GOPROXY` และ `GOFLAGS` ใน shell หรือผ่าน `go env -w`:
+คุณตั้งค่า `GONOSUMCHECK`, `GONOSUMDB`, `GOPROXY` และ `GOFLAGS` ได้ใน shell หรือผ่าน `go env -w`:
 
 ```bash
 # ใช้ corporate module proxy
@@ -168,7 +168,7 @@ go env -w GOFLAGS=-mod=vendor
 
 ## Go workspaces (`go work`)
 
-Workspaces (เพิ่มใน Go 1.18) ให้คุณ develop multiple inter-dependent modules พร้อมกันโดยไม่ต้องใช้ `replace` directives — เทียบเท่า npm workspaces หรือ yarn workspaces:
+Workspace (เพิ่มเข้ามาใน Go 1.18) ให้คุณ develop หลาย module ที่พึ่งพากันได้พร้อมกัน โดยไม่ต้องใช้ `replace` directive — เทียบเท่า npm workspaces หรือ yarn workspaces:
 
 export const npmWorkspaceCode = `// npm workspaces — package.json ที่ root
 {
@@ -202,7 +202,7 @@ go work use ./cli
 go work sync
 ```
 
-`go.work` มักถูก git-ignore (มันเป็น local developer convenience ไม่ใช่ deployment artefact) ใช้ `GOWORK=off` เพื่อ disable มันใน CI ถ้าจำเป็น
+ปกติ `go.work` มักถูก git-ignore (มันเป็นของอำนวยความสะดวกระดับ local ไม่ใช่ deployment artefact) ถ้าจำเป็นใช้ `GOWORK=off` เพื่อปิดมันใน CI ได้
 
 export const quizQuestionsModules = [
   { q: 'Go เทียบเท่า package-lock.json คืออะไร?', options: ['go.lock', 'go.sum', 'go.work', 'go.deps'], answer: 1 },

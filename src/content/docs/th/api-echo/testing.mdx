@@ -10,7 +10,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## เปรียบเทียบ philosophy การทดสอบ
 
-ใน Node คุณมักจะ spin up แอป NestJS/Express กับ Supertest และยิง HTTP request เข้าไป ใน Go package `net/http/httptest` ให้คุณสร้าง in-memory HTTP recorder (`httptest.ResponseRecorder`) โดยไม่ต้อง bind network port การทดสอบรวดเร็ว deterministic และไม่ต้องการ cleanup
+ใน Node คุณมักจะ spin up แอป NestJS/Express กับ Supertest แล้วยิง HTTP request เข้าไป ส่วนใน Go package `net/http/httptest` ให้คุณสร้าง in-memory HTTP recorder (`httptest.ResponseRecorder`) ได้โดยไม่ต้อง bind network port เทสจึงรันเร็ว, deterministic และไม่ต้อง cleanup
 
 | สิ่งที่ต้องการ | Node.js / Jest + Supertest | Go / testing + httptest |
 |---|---|---|
@@ -66,7 +66,7 @@ func TestGetBook_OK(t *testing.T) {
 
 ## Mock store ด้วย interface
 
-กำหนด interface `BookStore` ใน handler package ในการทดสอบ implement ด้วย struct ที่คืนข้อมูลที่ควบคุมได้ — ไม่ต้องการฐานข้อมูลจริง
+ประกาศ interface `BookStore` ไว้ใน handler package แล้วในเทสค่อย implement มันด้วย struct ที่คืนข้อมูลแบบควบคุมได้ — ไม่ต้องใช้ฐานข้อมูลจริง
 
 export const tsJestMock = `// Jest — mock service
 const mockBooksService = {
@@ -180,7 +180,7 @@ go test -v ./internal/handler/...
 
 <GoOnly title="Table-driven test">
 
-ข้อตกลงของ Go ในการทดสอบหลาย scenario คือ slice ของ test case (table-driven test) หลีกเลี่ยงการ copy-paste ฟังก์ชัน test:
+convention ของ Go สำหรับเทสหลาย scenario คือใช้ slice ของ test case (table-driven test) ช่วยเลี่ยงการ copy-paste ฟังก์ชันเทส:
 
 ```go
 func TestGetBook(t *testing.T) {

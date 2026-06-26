@@ -11,11 +11,11 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## โปรเจกต์ Go มีโครงสร้างอย่างไร
 
-จากมุมมอง Node.js/TypeScript คุณคุ้นเคยกับ `package.json`, `tsconfig.json`, โฟลเดอร์ `src/`, และ `node_modules` โปรเจกต์ Go มีโครงสร้างที่ต่างออกไปแต่มีระเบียบเท่ากัน การเข้าใจมันตั้งแต่ต้นจะช่วยประหยัดเวลาหลายชั่วโมง
+ถ้ามาจากสาย Node.js/TypeScript คุณคงคุ้นกับ `package.json`, `tsconfig.json`, โฟลเดอร์ `src/` และ `node_modules` โปรเจกต์ Go วางโครงสร้างต่างออกไป แต่ก็เป็นระเบียบไม่แพ้กัน เข้าใจมันตั้งแต่ต้นช่วยประหยัดเวลาไปได้หลายชั่วโมง
 
 ## go.mod — package.json ของ Go
 
-`go.mod` ถูกสร้างโดย `go mod init` และเป็น root manifest ของ Go module ของคุณ มันประกาศชื่อ module (prefix ของ import path ของคุณ) และ minimum Go version ที่ต้องการ
+`go.mod` ถูกสร้างโดย `go mod init` และเป็น root manifest ของ Go module มันประกาศชื่อ module (prefix ของ import path ของคุณ) และ Go version ขั้นต่ำที่ต้องใช้
 
 export const tsPackageJsonCode = `// package.json
 {
@@ -40,11 +40,11 @@ require (
 
 <TsGo client:visible ts={tsPackageJsonCode} go={goModCode} />
 
-ชื่อ module (`github.com/yourname/myapp`) ไม่ใช่แค่ชื่อ — มันคือ import path prefix ที่ใช้ทั่วโค้ดของคุณ โดย convention มักตรงกับ URL ของ source repository
+ชื่อ module (`github.com/yourname/myapp`) ไม่ใช่แค่ชื่อ — แต่คือ import path prefix ที่ใช้ทั่วทั้งโค้ดของคุณ โดย convention มักตั้งให้ตรงกับ URL ของ source repository
 
 ## Package — หนึ่งต่อ directory
 
-ใน Go **package** คือ directory ของไฟล์ `.go` ที่ประกาศ `package name` เดียวกันทั้งหมด สิ่งนี้เข้มงวดกว่า TypeScript/ESM ที่ทุกไฟล์เป็น module ของตัวเอง ใน Go คุณ import ที่ระดับ package ไม่ใช่ระดับไฟล์
+ใน Go **package** คือ directory ที่รวมไฟล์ `.go` ซึ่งประกาศ `package name` เดียวกันทั้งหมด เข้มงวดกว่า TypeScript/ESM ที่ทุกไฟล์เป็น module ของตัวเอง เพราะใน Go คุณ import ที่ระดับ package ไม่ใช่ระดับไฟล์
 
 export const tsImportsCode = `// TypeScript: imports ระดับไฟล์
 import { UserService } from './services/user.service';
@@ -66,7 +66,7 @@ import (
 
 ## โครงสร้างโปรเจกต์แบบ Idiomatic
 
-ชุมชน Go ได้ลงตัวกับ layout มาตรฐานสำหรับ service และ CLI นี่คือการเทียบกับโปรเจกต์ Node/TypeScript ทั่วไป:
+ชุมชน Go ลงตัวกับ layout มาตรฐานสำหรับ service และ CLI มาแล้ว ลองมาเทียบกับโปรเจกต์ Node/TypeScript ทั่วไปดู:
 
 export const tsProjectStructCode = `// TypeScript / Node.js project
 my-app/
@@ -99,13 +99,13 @@ myapp/
 <TsGo client:visible ts={tsProjectStructCode} go={goProjectStructCode} />
 
 กฎสำคัญ:
-- `cmd/` เก็บ entry point (`main` package) หนึ่ง subdirectory ต่อ binary
-- `internal/` คือโค้ด private ที่ Go enforce — package ที่นี่ไม่สามารถ import โดย module ภายนอก
-- `pkg/` เก็บ package ที่คุณตั้งใจเปิดเผยสำหรับการใช้งานภายนอก
+- `cmd/` เก็บ entry point (`main` package) — หนึ่ง subdirectory ต่อหนึ่ง binary
+- `internal/` คือโค้ด private ที่ Go บังคับให้ — package ในนี้ module ภายนอก import ไม่ได้
+- `pkg/` เก็บ package ที่คุณตั้งใจเปิดให้ภายนอกเรียกใช้
 
 <GoOnly title="internal/ — privacy ที่ compiler enforce">
 
-ใน TypeScript โค้ด "private" คือ convention (prefix `_`, barrel file, documentation) Go enforce มันที่ระดับ compiler ด้วย directory `internal/` Package ใดๆ ที่อยู่ใน `internal/` สามารถ import ได้เฉพาะโดยโค้ดที่แชร์ parent directory tree เดียวกัน
+ใน TypeScript โค้ด "private" เป็นแค่ convention (prefix `_`, barrel file, documentation) แต่ Go บังคับมันที่ระดับ compiler ผ่าน directory `internal/` package ใดก็ตามที่อยู่ใน `internal/` จะถูก import ได้เฉพาะจากโค้ดที่อยู่ใต้ parent directory tree เดียวกันเท่านั้น
 
 ```
 myapp/
@@ -124,13 +124,13 @@ import "github.com/yourname/myapp/internal/database"
 // cannot use internal package
 ```
 
-สิ่งนี้ให้คุณสร้าง stable public API ใน `pkg/` ในขณะที่เก็บ implementation detail ไว้ใน `internal/` อย่างแท้จริง
+วิธีนี้ทำให้คุณสร้าง public API ที่เสถียรไว้ใน `pkg/` ได้ พร้อมกับเก็บ implementation detail ไว้ใน `internal/` แบบ private จริงๆ
 
 </GoOnly>
 
 ## Identifier ที่ exported vs unexported
 
-ใน TypeScript คุณใช้ `export` และ `import` ใน Go visibility กำหนดโดยตัวอักษรแรกของชื่อ identifier — ไม่ต้องใช้ keyword `export`
+ใน TypeScript คุณใช้ `export` กับ `import` ส่วนใน Go ตัวอักษรแรกของชื่อ identifier เป็นตัวกำหนด visibility — ไม่ต้องมี keyword `export`
 
 export const tsExportCode = `// TypeScript: export แบบ explicit
 export interface User { id: string; name: string; }

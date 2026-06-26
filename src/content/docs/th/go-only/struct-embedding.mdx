@@ -11,9 +11,9 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## TypeScript: class inheritance และ mixin
 
-TypeScript ให้คุณ extend class ด้วย `extends` (single inheritance) และประมาณ multiple inheritance ผ่าน mixin แนวคิดคือ hierarchy: child IS-A parent
+TypeScript ให้คุณ extend class ด้วย `extends` (single inheritance) และเลียนแบบ multiple inheritance ได้คร่าว ๆ ผ่าน mixin โมเดลความคิดคือ hierarchy: child IS-A parent
 
-Go **ไม่มี class, ไม่มี inheritance** แต่ใช้ embedding แทน — type หนึ่งสามารถรวม type อื่นไว้เป็น anonymous field และ method กับ field ของ type ที่ embedded จะถูก **promote** ขึ้นมายัง outer type แนวคิดคือ composition: outer HAS-A inner
+Go **ไม่มี class และไม่มี inheritance** แต่ใช้ embedding แทน type หนึ่งสามารถรวม type อื่นไว้เป็น anonymous field แล้ว method กับ field ของ type ที่ embed เข้ามาจะถูก **promote** ขึ้นมาที่ outer type โมเดลความคิดคือ composition: outer HAS-A inner
 
 ## การ embed พื้นฐาน
 
@@ -182,7 +182,7 @@ func main() {
 
 <GoOnly title="Embedding ไม่ใช่ Inheritance — ความแตกต่างหลัก">
 
-Embedding promote method และ field แต่ Go ไม่รองรับ polymorphism ผ่าน embedding แบบที่ inheritance ทำใน OOP โดยเฉพาะ:
+Embedding promote method และ field ขึ้นมาก็จริง แต่ Go ไม่รองรับ polymorphism ผ่าน embedding แบบที่ inheritance ทำในภาษา OOP กล่าวให้ชัดคือ:
 
 ```go
 type Animal struct{ Name string }
@@ -211,7 +211,7 @@ for _, a := range animals {
 }
 ```
 
-Embedding ให้ code reuse Interface ให้ polymorphism ทั้งสองทำงานร่วมกันแต่มีวัตถุประสงค์ต่างกัน
+Embedding ให้ code reuse ส่วน interface ให้ polymorphism ทั้งสองทำงานร่วมกันได้ แต่มีจุดประสงค์ต่างกัน
 
 </GoOnly>
 

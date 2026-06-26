@@ -10,7 +10,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## ORM landscape ของ Node.js เทียบกับ Go
 
-นักพัฒนา TypeScript คุ้นเคยกับการเลือกระหว่าง Prisma, TypeORM, Drizzle, Knex หรือ Sequelize Go มีตัวเลือกที่คล้ายกัน — GORM, sqlc, Bun, Ent — แต่ package `database/sql` ของ stdlib เป็นตัวเลือกชั้นหนึ่งที่ควรรู้จัก
+นักพัฒนา TypeScript คุ้นเคยกับการเลือกระหว่าง Prisma, TypeORM, Drizzle, Knex หรือ Sequelize ส่วน Go ก็มีตัวเลือกคล้าย ๆ กัน — GORM, sqlc, Bun, Ent — แต่ package `database/sql` ของ stdlib ก็เป็นตัวเลือกชั้นหนึ่งที่ควรรู้จักไว้
 
 | สิ่งที่ต้องการ | ตัวเลือกใน Node.js | ตัวเลือกใน Go |
 |---|---|---|
@@ -142,7 +142,7 @@ api.GET("/books/:id", bookHandler.Get)
 api.POST("/books",    bookHandler.Create)
 ```
 
-ไม่ต้องการ DI container — Go's type system และ constructor function จัดการได้อย่างชัดเจน
+ไม่ต้องมี DI container — type system ของ Go กับ constructor function จัดการให้ได้อย่างชัดเจน
 
 ## ตัวเลือกระดับสูงอื่น ๆ
 
@@ -152,7 +152,7 @@ api.POST("/books",    bookHandler.Create)
 
 <GoOnly title="ส่ง context ให้ทุก DB call เสมอ">
 
-ทุกเมธอดใน `database/sql` มีตัวแปร Context: `QueryContext`, `QueryRowContext`, `ExecContext` **ใช้ตัวแปร context เสมอ** และส่ง `c.Request().Context()` จาก handler ทำให้ database query ถูกยกเลิกได้หากเกิด client disconnect หรือ deadline หมดอายุ — ป้องกันงานเสียเปล่าใน connection pool
+ทุกเมธอดใน `database/sql` มีเวอร์ชันที่รับ Context: `QueryContext`, `QueryRowContext`, `ExecContext` **ใช้เวอร์ชันที่รับ context เสมอ** และส่ง `c.Request().Context()` มาจาก handler ทำให้ database query ถูกยกเลิกได้หากเกิด client disconnect หรือ deadline หมดอายุ — กันงานเสียเปล่าใน connection pool
 
 ```go
 // ดี
@@ -183,12 +183,12 @@ export const quizQuestionsDatabase = [
     answer: 2,
   },
   {
-    q: 'ทำไมต้องใช้ตัวแปร Context ของ database/sql (เช่น QueryContext)?',
+    q: 'ทำไมต้องใช้เมธอดเวอร์ชันที่รับ Context ของ database/sql (เช่น QueryContext)?',
     options: [
-      'ตัวที่ไม่มี context ถูก deprecated',
-      'เพื่ออนุญาต cancellation และ timeout propagation จาก HTTP request',
-      'Context variant คืนผลลัพธ์ที่ typed',
-      'เฉพาะ context variant เท่านั้นที่รองรับ parameterized query',
+      'เวอร์ชันที่ไม่มี context ถูก deprecated',
+      'เพื่อให้ cancellation และ timeout จาก HTTP request ส่งต่อไปได้',
+      'เวอร์ชัน context คืนผลลัพธ์แบบ typed',
+      'มีแต่เวอร์ชัน context เท่านั้นที่รองรับ parameterized query',
     ],
     answer: 1,
   },

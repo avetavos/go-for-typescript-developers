@@ -86,7 +86,7 @@ GOOS=linux   GOARCH=arm64  go build -o myapp-arm64     ./cmd/myapp
 
 ## เวลา compile ที่รวดเร็ว
 
-Go ถูกออกแบบโดยมีความเร็วในการ compile เป็นเป้าหมายระดับ first-class โค้ดเบสขนาดใหญ่ที่อาจใช้เวลาหลายนาทีใน C++ หรือแม้แต่หลายวินาทีใน TypeScript (การรัน `tsc` แบบเต็ม) จะ compile เสร็จในไม่กี่วินาทีหรือต่ำกว่าวินาทีใน Go เพราะ standard library ถูก pre-compile ไว้แล้ว, dependency graph ชัดเจน และไม่มี overhead จากการตรวจจับ circular import
+Go ออกแบบมาโดยตั้งความเร็วในการ compile เป็นเป้าหมายระดับ first-class โค้ดเบสขนาดใหญ่ที่อาจใช้เวลาหลายนาทีใน C++ หรือแม้แต่หลายวินาทีใน TypeScript (รัน `tsc` แบบเต็ม) จะ compile เสร็จในไม่กี่วินาทีหรือต่ำกว่าวินาทีใน Go เพราะ standard library ถูก pre-compile ไว้แล้ว, dependency graph ชัดเจน และไม่มี overhead จากการตรวจจับ circular import
 
 export const tsBuildTimeCode = `# TypeScript build times (realistic examples)
 # tsc --build on a medium NestJS project: 5–30s
@@ -134,7 +134,7 @@ flag `CGO_ENABLED=0` สำคัญมากสำหรับ Docker image แ
 
 <GoOnly title="go mod — Reproducible Dependency Management">
 
-Go modules (`go.mod` / `go.sum`) คือคำตอบของ Go ต่อ `package.json` / `package-lock.json` ไฟล์ `go.sum` เก็บ cryptographic checksums ของ source code ของทุก dependency ไว้ — รับประกันว่าจะดึง source tree ชุดเดิมมาทุกครั้งบนทุกเครื่อง
+Go modules (`go.mod` / `go.sum`) คือคำตอบของ Go ที่เทียบได้กับ `package.json` / `package-lock.json` ไฟล์ `go.sum` เก็บ cryptographic checksum ของ source code ในทุก dependency ไว้ รับประกันว่าจะดึง source tree ชุดเดิมมาทุกครั้งบนทุกเครื่อง
 
 ```
 # go.mod — direct dependencies only

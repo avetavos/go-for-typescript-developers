@@ -11,7 +11,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## ส่ง JSON response
 
-ใน Express เรียก `res.status(200).json(payload)` ใน Echo คือ `c.JSON(statusCode, payload)` Echo ตั้ง header `Content-Type: application/json` ให้อัตโนมัติ
+ใน Express คุณเรียก `res.status(200).json(payload)` ส่วนใน Echo ใช้ `c.JSON(statusCode, payload)` และ Echo ตั้ง header `Content-Type: application/json` ให้อัตโนมัติ
 
 export const tsJsonResp = `// Express
 app.get('/books/:id', (req, res) => {
@@ -38,7 +38,7 @@ return echo.NewHTTPError(http.StatusNotFound, "not found")`;
 
 ## Typed response struct
 
-การใช้ `map[string]string` สะดวกสำหรับตัวอย่าง แต่โค้ด production ควรใช้ typed response struct เพื่อให้ compiler ตรวจจับ typo ใน field name และทำให้ API surface มีเอกสารใน code
+การใช้ `map[string]string` สะดวกสำหรับตัวอย่าง แต่โค้ด production ควรใช้ typed response struct เพื่อให้ compiler จับ typo ของชื่อ field ได้ และทำให้ API surface ถูก document ไว้ในโค้ดเอง
 
 export const tsTypedResp = `// TypeScript — response type
 interface BookResponse {
@@ -144,7 +144,7 @@ func main() {
 
 ## List response และ pagination
 
-ไม่ควร return JSON array เปล่า ๆ ที่ top level — ห่อด้วย object เสมอเพื่อให้สามารถเพิ่ม metadata ได้ทีหลังโดยไม่ทำลาย API
+อย่า return JSON array เปล่า ๆ ที่ top level — ห่อด้วย object เสมอ เพื่อให้เพิ่ม metadata ทีหลังได้โดยไม่ต้อง break API
 
 export const tsListResp = `// Express — paginated list
 res.json({

@@ -13,11 +13,11 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 TypeScript จัดการ cleanup และ error ด้วยสิ่งที่คุณคุ้นเคย: `try/finally` เพื่อรัน cleanup code ไม่ว่าจะเกิด error หรือไม่ และ `throw`/`catch` สำหรับการส่งต่อ error
 
-Go มีคู่ขนานสำหรับทั้งสาม แต่หน้าตาต่างกันและมีความแตกต่างพฤติกรรมที่สำคัญ
+Go มีของที่เทียบเคียงได้ครบทั้งสามตัว แต่หน้าตาต่างกันและมีพฤติกรรมที่ต่างกันในจุดสำคัญ
 
 ## defer — cleanup ที่รันเสมอ
 
-`defer` กำหนดการเรียก function ให้รันเมื่อ **function ที่ครอบคลุมมัน return** — ไม่ว่าจะ return อย่างไร (ปกติ, ผ่าน `return`, หรือหลัง `panic`) สิ่งนี้แทนที่ pattern `try/finally` cleanup ทั่วไป
+`defer` ตั้งเวลาเรียก function ให้รันตอนที่ **function ที่ครอบมันอยู่ return** ไม่ว่าจะ return ด้วยวิธีไหน (ปกติ, ผ่าน `return`, หรือหลัง `panic`) วิธีนี้มาแทน pattern cleanup แบบ `try/finally` ทั่วไป
 
 export const tsFinallyCode = `// TypeScript — try/finally สำหรับ cleanup
 async function readFile(path: string): Promise<string> {
@@ -236,7 +236,7 @@ func mustPositive(n int) int {
 </GoOnly>
 
 export const quizQuestionsDeferPanic = [
-  { q: 'deferred function รันเมื่อไหร่?', options: ['ทันทีหลัง defer statement', 'ท้ายไฟล์', 'เมื่อ function ที่ครอบคลุมมัน return (ทุกกรณี)', 'เฉพาะเมื่อเกิด panic'], answer: 2 },
+  { q: 'deferred function รันเมื่อไหร่?', options: ['ทันทีหลัง defer statement', 'ท้ายไฟล์', 'เมื่อ function ที่ครอบมันอยู่ return (ทุกกรณี)', 'เฉพาะเมื่อเกิด panic'], answer: 2 },
   { q: 'defer หลายครั้งใน function เดียวรันในลำดับใด?', options: ['First-in first-out (FIFO)', 'Last-in first-out (LIFO)', 'ตามตัวอักษร', 'สุ่ม'], answer: 1 },
   { q: 'ต้องเรียก recover() ที่ไหนเพื่อหยุด panic?', options: ['ใน main function', 'ตอนต้นของ function ที่ panic', 'ใน deferred function', 'ใน goroutine แยก'], answer: 2 },
   { q: 'ควรใช้ panic แทนการ return error เมื่อไหร่?', options: ['เมื่อใดก็ตามที่ operation ล้มเหลว', 'สำหรับ network timeout', 'สำหรับ invariant violation และ programming bug เท่านั้น', 'เมื่อต้องการโค้ดเร็ว'], answer: 2 },

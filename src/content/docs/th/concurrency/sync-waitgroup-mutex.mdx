@@ -11,7 +11,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## Shared State ใน JavaScript vs Go
 
-ใน JavaScript เนื่องจาก event loop เป็น single-threaded คุณแทบไม่ต้องกังวลเรื่อง race conditions บน shared data (ยกเว้นเมื่อใช้ SharedArrayBuffer + Worker Threads):
+ใน JavaScript event loop เป็น single-threaded คุณจึงแทบไม่ต้องกังวลเรื่องการเขียน shared variable พร้อมกัน (ยกเว้นตอนใช้ `SharedArrayBuffer` กับ Worker Threads):
 
 ```typescript
 let count = 0;
@@ -21,7 +21,7 @@ await Promise.all([increment(), increment()]);
 console.log(count); // 2 — ถูกต้องเสมอ
 ```
 
-ใน Go goroutines รันบน threads จริง ดังนั้นการเข้าถึง shared variable พร้อมกันโดยไม่มี synchronization ทำให้เกิด **data race** ซึ่งเป็น undefined behavior:
+ใน Go goroutines รันบน OS thread จริง goroutine สองตัวอ่านและเขียน memory ตำแหน่งเดียวกันในจังหวะเดียวกันได้ ทำให้เกิด **data race** ซึ่งเป็น undefined behavior:
 
 ```go
 // อันตราย! Data race!
@@ -37,7 +37,7 @@ wg.Wait()
 
 ## Mutex — Mutual Exclusion Lock
 
-`sync.Mutex` ให้มีเพียง goroutine เดียวที่เข้าถึง critical section ได้ในเวลาหนึ่ง:
+`sync.Mutex` รับประกันว่ามี goroutine เดียวเท่านั้นที่อยู่ใน critical section ได้ในแต่ละช่วงเวลา lock ก่อนเข้า unlock ก่อนออก (ใช้ `defer` เพื่อกันไม่ให้ early return ลืม unlock):
 
 export const tsLockCode = `// TypeScript: ไม่จำเป็นต้องใช้ mutex ใน event loop ปกติ
 // แต่ถ้าใช้ SharedArrayBuffer กับ Workers:
@@ -83,7 +83,7 @@ func main() {
 
 ## RWMutex — อ่านได้พร้อมกัน เขียนได้ครั้งเดียว
 
-เมื่อ data ถูกอ่านบ่อยแต่เขียนน้อย ใช้ `sync.RWMutex`:
+เมื่อ data ถูกอ่านบ่อยแต่เขียนน้อย `sync.RWMutex` ให้ throughput ดีกว่า `Mutex` ธรรมดา หลาย goroutine ถือ read lock พร้อมกันได้ ส่วน write lock เป็น exclusive:
 
 export const tsReadWriteCode = `// TypeScript: ไม่มี built-in RWMutex concept
 // ใน Workers ต้องใช้ message passing แทน`;
@@ -117,14 +117,14 @@ func (c *Cache) Set(key, value string) {
 
 <GoOnly title="ตรวจหา Data Races ด้วย -race Flag">
 
-Go มี built-in race detector ที่ทรงพลัง:
+Go มี race detector มาให้ในตัว รันโปรแกรมหรือ test ด้วย `-race` แล้ว runtime จะรายงาน race ทันทีที่มันเกิด:
 
 ```bash
 go run -race main.go
 go test -race ./...
 ```
 
-Race detector จะรายงาน data race ทันทีที่รันไทม์ detect ได้:
+ตัวอย่าง report ของ race ที่เจอ:
 
 ```
 WARNING: DATA RACE
@@ -134,7 +134,7 @@ Read at 0x... by goroutine 8:
   main.main.func1()
 ```
 
-ควรรัน tests ด้วย `-race` flag ใน CI pipeline เสมอ
+รัน test suite ด้วย `-race` ใน CI เสมอ detector มี overhead ราว ~10% — รับได้ใน test แต่ไม่แนะนำให้ใช้ตอน production
 
 </GoOnly>
 

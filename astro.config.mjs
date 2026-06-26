@@ -15,6 +15,15 @@ export default defineConfig({
       title: 'Go for TypeScript Developers',
       head: [
         { tag: 'script', attrs: { type: 'module', src: '/go-for-typescript-developers/enhance.js' } },
+        { tag: 'link', attrs: { rel: 'manifest', href: '/go-for-typescript-developers/manifest.webmanifest' } },
+        { tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/go-for-typescript-developers/apple-touch-icon.png' } },
+        { tag: 'link', attrs: { rel: 'icon', type: 'image/png', sizes: '192x192', href: '/go-for-typescript-developers/icon-192.png' } },
+        { tag: 'meta', attrs: { name: 'theme-color', content: '#00ADD8' } },
+        { tag: 'meta', attrs: { name: 'mobile-web-app-capable', content: 'yes' } },
+        { tag: 'meta', attrs: { name: 'apple-mobile-web-app-capable', content: 'yes' } },
+        { tag: 'meta', attrs: { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' } },
+        { tag: 'meta', attrs: { name: 'apple-mobile-web-app-title', content: "Go for TypeScript Developers" } },
+        { tag: 'script', content: "if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/go-for-typescript-developers/sw.js',{scope:'/go-for-typescript-developers/'}).catch(function(){})})}" },
       ],
       defaultLocale: 'en',
       locales: {

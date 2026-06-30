@@ -8,22 +8,22 @@ import preact from '@astrojs/preact';
 export default defineConfig({
   // GitHub Pages project site. Update `site` to your GitHub username and `base`
   // to your repo name if they differ.
-  site: 'https://go-for-typescript-developers.avetavos.com',
-  base: '/',
+  site: 'https://for-typescript-developers.avetavos.com',
+  base: '/go',
   output: 'static',
   integrations: [starlight({
       title: 'Go for TypeScript Developers',
       head: [
-        { tag: 'script', attrs: { type: 'module', src: '/enhance.js' } },
-        { tag: 'link', attrs: { rel: 'manifest', href: '/manifest.webmanifest' } },
-        { tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' } },
-        { tag: 'link', attrs: { rel: 'icon', type: 'image/png', sizes: '192x192', href: '/icon-192.png' } },
+        { tag: 'script', attrs: { type: 'module', src: '/go/enhance.js' } },
+        { tag: 'link', attrs: { rel: 'manifest', href: '/go/manifest.webmanifest' } },
+        { tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/go/apple-touch-icon.png' } },
+        { tag: 'link', attrs: { rel: 'icon', type: 'image/png', sizes: '192x192', href: '/go/icon-192.png' } },
         { tag: 'meta', attrs: { name: 'theme-color', content: '#00ADD8' } },
         { tag: 'meta', attrs: { name: 'mobile-web-app-capable', content: 'yes' } },
         { tag: 'meta', attrs: { name: 'apple-mobile-web-app-capable', content: 'yes' } },
         { tag: 'meta', attrs: { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' } },
         { tag: 'meta', attrs: { name: 'apple-mobile-web-app-title', content: "Go for TypeScript Developers" } },
-        { tag: 'script', content: "if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js',{scope:'/'}).catch(function(){})})}" },
+        { tag: 'script', content: "if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/go/sw.js',{scope:'/go/'}).catch(function(){})})}" },
       ],
       defaultLocale: 'en',
       locales: {

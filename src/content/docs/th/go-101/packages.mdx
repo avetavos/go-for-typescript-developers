@@ -3,8 +3,8 @@ title: Packages, Modules และ Imports
 description: packages, exported identifiers ผ่านการขึ้นต้นด้วยตัวพิมพ์ใหญ่, go.mod modules และ imports ของ Go เทียบกับ ES modules และ npm
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -32,7 +32,7 @@ func Add(a, b int) int {
 
 const PI = 3.14159`;
 
-<TsGo client:visible ts={tsModuleCode} go={goPackageCode} />
+<TsGo ts={tsModuleCode} go={goPackageCode} />
 
 ## Exported เทียบกับ unexported identifiers
 
@@ -52,7 +52,7 @@ func privateFunc() { ... }  // unexported — lowercase p
 type PublicStruct struct { ... }
 type internalStruct struct { ... }`;
 
-<TsGo client:visible ts={tsExportCode} go={goExportCode} />
+<TsGo ts={tsExportCode} go={goExportCode} />
 
 ## go.mod — สิ่งเทียบเท่ากับ package.json
 
@@ -80,7 +80,7 @@ require (
 // Add dependency:
 // go get github.com/gin-gonic/gin`;
 
-<TsGo client:visible ts={tsGoModCode} go={goModCode} />
+<TsGo ts={tsGoModCode} go={goModCode} />
 
 ## การ import package
 
@@ -96,7 +96,7 @@ import (
     "github.com/user/app/mathutil" // local package
 )`;
 
-<TsGo client:visible ts={tsImportCode} go={goImportCode} />
+<TsGo ts={tsImportCode} go={goImportCode} />
 
 ## ลองเล่นดู
 
@@ -129,7 +129,7 @@ func main() {
 	fmt.Println(strings.ToTitle(s))
 }`;
 
-<Playground client:visible code={playgroundPkgCode} />
+<Playground code={playgroundPkgCode} />
 
 <GoOnly title="การขึ้นต้นด้วยตัวพิมพ์ใหญ่เป็นกลไกการ export">
 

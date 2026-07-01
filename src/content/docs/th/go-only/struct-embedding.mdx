@@ -3,8 +3,8 @@ title: Struct Embedding
 description: เรียนรู้วิธีที่ Go บรรลุ code reuse ผ่าน struct embedding — composition โดยไม่มี class inheritance — เทียบกับ class extends และ mixin ของ TypeScript
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -62,7 +62,7 @@ func main() {
     fmt.Println(d.Name)            // Rex — promoted field
 }`;
 
-<TsGo client:visible ts={tsExtendsCode} go={goEmbedCode} />
+<TsGo ts={tsExtendsCode} go={goEmbedCode} />
 
 ## Method promotion
 
@@ -95,7 +95,7 @@ func (s UserService) CreateUser(name string) {
     // ... business logic
 }`;
 
-<TsGo client:visible ts={tsMixinCode} go={goPromoteCode} />
+<TsGo ts={tsMixinCode} go={goPromoteCode} />
 
 ## Embedding และ Interface
 
@@ -129,7 +129,7 @@ func (cw *CountingWriter) Write(p []byte) (int, error) {
 }
 // CountingWriter satisfy Writer อัตโนมัติ`;
 
-<TsGo client:visible ts={tsInterfaceCode} go={goInterfaceCode} />
+<TsGo ts={tsInterfaceCode} go={goInterfaceCode} />
 
 ## ลองทำ
 
@@ -178,7 +178,7 @@ func main() {
 	fmt.Println(c.Speak())         // promote มาจาก Animal
 }`;
 
-<Playground client:visible code={playgroundEmbedCode} />
+<Playground code={playgroundEmbedCode} />
 
 <GoOnly title="Embedding ไม่ใช่ Inheritance — ความแตกต่างหลัก">
 

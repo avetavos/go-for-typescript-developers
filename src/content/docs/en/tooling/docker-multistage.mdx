@@ -3,7 +3,7 @@ title: Docker Multi-Stage Builds
 description: Build a tiny, secure Go container image using multi-stage Docker builds — compared to a typical Node.js Docker image with node_modules.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -125,7 +125,7 @@ COPY --from=builder /app/server .
 EXPOSE 8080
 ENTRYPOINT ["/app/server"]`;
 
-<TsGo client:visible ts={tsDockerCode} go={goDockerCode} />
+<TsGo ts={tsDockerCode} go={goDockerCode} />
 
 > These are Dockerfile examples — run them in your terminal with `docker build -t myapp .` and then `docker images myapp` to compare sizes. No browser playground is applicable here.
 

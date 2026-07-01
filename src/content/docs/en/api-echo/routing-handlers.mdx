@@ -3,7 +3,7 @@ title: Routing & Handlers
 description: Define routes with path params and query strings in Echo, and understand the handler signature — compared to Express route handlers.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -36,7 +36,7 @@ func getBook(c echo.Context) error {
     return c.JSON(http.StatusOK, book)
 }`;
 
-<TsGo client:visible ts={tsHandler} go={goHandler} />
+<TsGo ts={tsHandler} go={goHandler} />
 
 ## Registering routes
 
@@ -56,7 +56,7 @@ e.GET("/books/:id",   getBook)
 e.PUT("/books/:id",   updateBook)
 e.DELETE("/books/:id", deleteBook)`;
 
-<TsGo client:visible ts={tsRoutes} go={goRoutes} />
+<TsGo ts={tsRoutes} go={goRoutes} />
 
 ## Path parameters
 
@@ -78,7 +78,7 @@ e.GET("/users/:id/posts/:postId", func(c echo.Context) error {
     })
 })`;
 
-<TsGo client:visible ts={tsParam} go={goParam} />
+<TsGo ts={tsParam} go={goParam} />
 
 ## Query parameters
 
@@ -101,7 +101,7 @@ e.GET("/books", func(c echo.Context) error {
     })
 })`;
 
-<TsGo client:visible ts={tsQuery} go={goQuery} />
+<TsGo ts={tsQuery} go={goQuery} />
 
 ## Attaching handlers to a struct (NestJS controller style)
 
@@ -140,7 +140,7 @@ func (h *BookHandler) Get(c echo.Context) error {
 // bh := NewBookHandler(store)
 // e.GET("/books/:id", bh.Get)`;
 
-<TsGo client:visible ts={tsController} go={goController} />
+<TsGo ts={tsController} go={goController} />
 
 <GoOnly title="Wildcard and any-depth routes">
 

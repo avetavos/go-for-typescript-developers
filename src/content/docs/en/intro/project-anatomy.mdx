@@ -3,8 +3,8 @@ title: Go Project Anatomy
 description: Understand Go module layout, go.mod vs package.json, packages vs folders, imports, and idiomatic project structure — compared to a Node.js project.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -38,7 +38,7 @@ require (
 // go.sum is the lockfile (like package-lock.json)
 // it is auto-managed — never edit it manually`;
 
-<TsGo client:visible ts={tsPackageJsonCode} go={goModCode} />
+<TsGo ts={tsPackageJsonCode} go={goModCode} />
 
 The module name (`github.com/yourname/myapp`) is not just a name — it is the import path prefix used throughout your code. Conventionally it matches your source repository URL.
 
@@ -62,7 +62,7 @@ import (
 //            models.User{...}
 //            utils.SomeHelper(...)`;
 
-<TsGo client:visible ts={tsImportsCode} go={goImportsCode} />
+<TsGo ts={tsImportsCode} go={goImportsCode} />
 
 ## Idiomatic project structure
 
@@ -96,7 +96,7 @@ myapp/
   go.sum
   .env`;
 
-<TsGo client:visible ts={tsProjectStructCode} go={goProjectStructCode} />
+<TsGo ts={tsProjectStructCode} go={goProjectStructCode} />
 
 Key rules:
 - `cmd/` holds your entry points (`main` packages). One subdirectory per binary.
@@ -154,7 +154,7 @@ func formatName(n string) string { // unexported (lowercase)
     return strings.TrimSpace(n)
 }`;
 
-<TsGo client:visible ts={tsExportCode} go={goExportCode} />
+<TsGo ts={tsExportCode} go={goExportCode} />
 
 ## Try it — packages and imports
 
@@ -184,7 +184,7 @@ func main() {
 	fmt.Println(strings.ToUpper("go is great"))
 }`;
 
-<Playground client:visible code={playgroundProjectCode} />
+<Playground code={playgroundProjectCode} />
 
 export const quizQuestionsProject = [
   { q: 'In Go, what determines whether an identifier is exported (public)?', options: ['The `export` keyword before it', 'Being defined in a file named exports.go', 'Starting with an uppercase letter', 'Being in the pkg/ directory'], answer: 2 },

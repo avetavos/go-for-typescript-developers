@@ -3,8 +3,8 @@ title: Go ที่ไม่มีใน TypeScript
 description: ภาพรวมของคอนเซปต์ใน Go ที่ไม่มีเทียบเท่าใน TypeScript — พอยน์เตอร์, value semantics, defer, struct embedding, goroutines, static binary และ generics constraints
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -75,7 +75,7 @@ func main() {
     fmt.Println("double 7:", double(7))
 }`;
 
-<TsGo client:visible ts={tsNoneCode} go={goPreviewCode} />
+<TsGo ts={tsNoneCode} go={goPreviewCode} />
 
 <GoOnly title="ทำไมฟีเจอร์เหล่านี้ถึงมีอยู่ — เป้าหมายการออกแบบของ Go">
 

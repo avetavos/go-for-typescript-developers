@@ -3,7 +3,7 @@ title: Modules เชิงลึก
 description: Semantic versioning, go.mod/go.sum, replace directives, vendoring และ Go workspaces — เปรียบเทียบกับ npm, package-lock.json และ npm workspaces
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -39,7 +39,7 @@ require (
 // deps ที่ใช้เฉพาะ test รวมอยู่ใน require;
 // compiler ไม่รวมมันใน production binaries`;
 
-<TsGo client:visible ts={npmManifestCode} go={goManifestCode} />
+<TsGo ts={npmManifestCode} go={goManifestCode} />
 
 ## go.mod — manifest
 
@@ -119,7 +119,7 @@ import "github.com/some-lib/core/v2"
 // v1:  import "github.com/some-lib/core"
 // v2:  import "github.com/some-lib/core/v2"`;
 
-<TsGo client:visible ts={npmMajorCode} go={goMajorCode} />
+<TsGo ts={npmMajorCode} go={goMajorCode} />
 
 ## replace directive — local development
 
@@ -189,7 +189,7 @@ use (
 // ตอนนี้ api import shared ได้โดยตรงจาก disk
 // ไม่ต้องใช้ replace directive`;
 
-<TsGo client:visible ts={npmWorkspaceCode} go={goWorkspaceCode} />
+<TsGo ts={npmWorkspaceCode} go={goWorkspaceCode} />
 
 ```bash
 # เริ่มต้น workspace (สร้าง go.work)

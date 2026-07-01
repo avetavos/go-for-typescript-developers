@@ -3,8 +3,8 @@ title: Functions
 description: ฟังก์ชัน, parameter, การคืนค่าหลายค่า, named returns และ variadics ของ Go เทียบกับฟังก์ชันและ tuple ของ TypeScript
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -33,7 +33,7 @@ func greet(name string) string {
     return "Hello, " + name + "!"
 }`;
 
-<TsGo client:visible ts={tsFuncCode} go={goFuncCode} />
+<TsGo ts={tsFuncCode} go={goFuncCode} />
 
 ## การคืนค่าหลายค่า
 
@@ -55,7 +55,7 @@ func divide(a, b float64) (float64, error) {
 }
 result, err := divide(10, 2)`;
 
-<TsGo client:visible ts={tsTupleCode} go={goMultiCode} />
+<TsGo ts={tsTupleCode} go={goMultiCode} />
 
 ## Variadic functions
 
@@ -75,7 +75,7 @@ export const goVariadicCode = `func sum(nums ...int) int {
 }
 sum(1, 2, 3, 4)`;
 
-<TsGo client:visible ts={tsVariadicCode} go={goVariadicCode} />
+<TsGo ts={tsVariadicCode} go={goVariadicCode} />
 
 ## ลองเล่นดู
 
@@ -118,7 +118,7 @@ func main() {
 	fmt.Println(sum(1, 2, 3, 4, 5))
 }`;
 
-<Playground client:visible code={playgroundFuncsCode} />
+<Playground code={playgroundFuncsCode} />
 
 <GoOnly title="Named Return Values">
 

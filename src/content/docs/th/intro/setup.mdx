@@ -3,8 +3,8 @@ title: ตั้งค่า Go
 description: ติดตั้ง Go และเรียนรู้คำสั่ง CLI ที่จำเป็น — go run, go build, go mod init, go install — เทียบกับ node, tsc, และ npm
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -44,7 +44,7 @@ go mod init github.com/you/myapp  # init module ใหม่
 go get github.com/gin-gonic/gin   # เพิ่ม dependency
 go install tool@latest   # ติดตั้ง CLI tool แบบ global`;
 
-<TsGo client:visible ts={tsCliCode} go={goCliCode} />
+<TsGo ts={tsCliCode} go={goCliCode} />
 
 ## go run vs go build
 
@@ -60,7 +60,7 @@ go run .                    # คอมไพล์ + รัน (dev)
 go build -o ./bin/app . && ./bin/app  # คอมไพล์แล้วรัน
 # air                       # watch mode (third-party)`;
 
-<TsGo client:visible ts={tsRunCode} go={goRunCode} />
+<TsGo ts={tsRunCode} go={goRunCode} />
 
 ## go mod init — เทียบเท่ากับ npm init
 
@@ -82,7 +82,7 @@ go mod init github.com/yourname/myapp
 go get github.com/gin-gonic/gin
 # อัพเดท go.mod + สร้าง go.sum (เหมือน package-lock.json)`;
 
-<TsGo client:visible ts={tsNpmInitCode} go={goModInitCode} />
+<TsGo ts={tsNpmInitCode} go={goModInitCode} />
 
 ## go install — CLI tool แบบ global
 
@@ -98,7 +98,7 @@ go install golang.org/x/tools/gopls@latest      # LSP server
 go install github.com/air-verse/air@latest       # live reload
 go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest`;
 
-<TsGo client:visible ts={tsInstallCode} go={goInstallCode} />
+<TsGo ts={tsInstallCode} go={goInstallCode} />
 
 <GoOnly title="GOPATH, GOROOT, และ module cache">
 

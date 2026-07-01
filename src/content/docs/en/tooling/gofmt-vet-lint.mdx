@@ -3,7 +3,7 @@ title: gofmt, go vet & Linting
 description: Go's built-in formatter and static analysis tools — the zero-config alternative to Prettier, ESLint, and tsc.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -54,7 +54,7 @@ go fmt ./...
 # Or wire it into your editor's "format on save".
 # The result is always the same regardless of who runs it.`;
 
-<TsGo client:visible ts={tsFmtCode} go={goFmtCode} />
+<TsGo ts={tsFmtCode} go={goFmtCode} />
 
 ## go vet — the bug detector
 
@@ -89,7 +89,7 @@ go vet ./...
 # Example output when something is wrong:
 # ./main.go:12:2: Printf format %d has arg name of wrong type string`;
 
-<TsGo client:visible ts={tsVetCode} go={goVetCode} />
+<TsGo ts={tsVetCode} go={goVetCode} />
 
 ## staticcheck and golangci-lint
 

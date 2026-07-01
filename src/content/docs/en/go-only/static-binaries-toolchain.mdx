@@ -3,8 +3,8 @@ title: Static Binaries & the Go Toolchain
 description: Learn how Go compiles to a single self-contained binary with no runtime dependency, how cross-compilation works, and how this compares to shipping a Node.js application with node_modules.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -60,7 +60,7 @@ scp myapp user@server:/usr/local/bin/
 #
 # Final image is often < 10 MB vs 200–500 MB for Node`;
 
-<TsGo client:visible ts={tsDeployCode} go={goDeployCode} />
+<TsGo ts={tsDeployCode} go={goDeployCode} />
 
 ## Cross-compilation in one command
 
@@ -82,7 +82,7 @@ GOOS=linux   GOARCH=arm64  go build -o myapp-arm64     ./cmd/myapp
 # All three commands run on your laptop — no emulation needed
 # Each output is a standalone executable for that platform`;
 
-<TsGo client:visible ts={tsCrossCode} go={goCrossCode} />
+<TsGo ts={tsCrossCode} go={goCrossCode} />
 
 ## Fast compile times
 
@@ -106,7 +106,7 @@ go vet     # static analysis
 go fmt     # format (gofmt — no config needed)
 go mod     # dependency management`;
 
-<TsGo client:visible ts={tsBuildTimeCode} go={goBuildTimeCode} />
+<TsGo ts={tsBuildTimeCode} go={goBuildTimeCode} />
 
 <GoOnly title="Static Binary — What Gets Linked In">
 

@@ -3,8 +3,8 @@ title: Context — การยกเลิกและ Deadlines
 description: ใช้ context.Context สำหรับ cancellation, deadlines และ timeouts; เปรียบเทียบกับ AbortController ของ JavaScript
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -72,7 +72,7 @@ func main() {
     fmt.Println("All workers stopped")
 }`;
 
-<TsGo client:visible ts={tsAbortCode} go={goWithCancelCode} />
+<TsGo ts={tsAbortCode} go={goWithCancelCode} />
 
 ## context.WithTimeout
 
@@ -123,7 +123,7 @@ func main() {
     wg.Wait()
 }`;
 
-<TsGo client:visible ts={tsTimeoutCode} go={goWithTimeoutCode} />
+<TsGo ts={tsTimeoutCode} go={goWithTimeoutCode} />
 
 ## Context Values — ส่งข้อมูลผ่าน Call Chain
 
@@ -159,7 +159,7 @@ func main() {
     processRequest(ctx)
 }`;
 
-<TsGo client:visible ts={tsReqCode} go={goCtxValueCode} />
+<TsGo ts={tsReqCode} go={goCtxValueCode} />
 
 <GoOnly title="กฎการใช้ Context ใน Go">
 
@@ -201,7 +201,7 @@ func main() {
 	fmt.Println("All workers stopped")
 }`;
 
-<Playground client:visible code={playgroundContextCode} />
+<Playground code={playgroundContextCode} />
 
 export const quizQuestionsContext = [
   { q: 'context.Context เปรียบเทียบกับอะไรใน JavaScript?', options: ['Promise', 'AbortController', 'EventEmitter', 'setTimeout'], answer: 1 },

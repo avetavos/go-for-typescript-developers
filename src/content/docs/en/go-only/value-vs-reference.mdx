@@ -3,8 +3,8 @@ title: Value vs Reference Semantics
 description: Understand how Go structs and arrays are copied (value types) while slices and maps share their underlying data (reference types) — a critical difference from JavaScript's object model.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -54,7 +54,7 @@ arr2 := arr1    // copy
 arr2[0] = 99
 fmt.Println(arr1[0]) // 1 — unchanged`;
 
-<TsGo client:visible ts={tsStructCode} go={goStructCode} />
+<TsGo ts={tsStructCode} go={goStructCode} />
 
 ## Slices and maps are reference types
 
@@ -90,7 +90,7 @@ copy(s3, s1)
 s3[0] = 0
 fmt.Println(s1[0]) // 99 — s1 unchanged`;
 
-<TsGo client:visible ts={tsSliceCode} go={goSliceCode} />
+<TsGo ts={tsSliceCode} go={goSliceCode} />
 
 ## Passing to functions
 
@@ -124,7 +124,7 @@ func main() {
     fmt.Println(sl[0]) // 99 — shared data modified
 }`;
 
-<TsGo client:visible ts={tsFuncCode} go={goFuncCode} />
+<TsGo ts={tsFuncCode} go={goFuncCode} />
 
 ## Try it
 
@@ -167,7 +167,7 @@ func main() {
 	fmt.Println("original after clone mutation:", original[0]) // 1
 }`;
 
-<Playground client:visible code={playgroundValueRefCode} />
+<Playground code={playgroundValueRefCode} />
 
 <GoOnly title="Slice Header — Three Fields Under the Hood">
 

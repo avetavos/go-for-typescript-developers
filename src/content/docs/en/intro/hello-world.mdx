@@ -3,8 +3,8 @@ title: Hello, World!
 description: Write your first Go program — understand package main, func main, and fmt.Println compared to a TypeScript hello world.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -30,7 +30,7 @@ func main() {
 
 // run with: go run hello.go`;
 
-<TsGo client:visible ts={tsHelloCode} go={goHelloCode} />
+<TsGo ts={tsHelloCode} go={goHelloCode} />
 
 ## Breaking it down line by line
 
@@ -63,7 +63,7 @@ func main() {
     fmt.Println("Runs first.")
 }`;
 
-<TsGo client:visible ts={tsEntryCode} go={goEntryCode} />
+<TsGo ts={tsEntryCode} go={goEntryCode} />
 
 ## fmt.Println vs console.log
 
@@ -81,7 +81,7 @@ fmt.Println("Name:", name)              // multiple args
 fmt.Printf("Score: %d\\n", score)        // format verb
 msg := fmt.Sprintf("Hello, %s!", name)  // build a string`;
 
-<TsGo client:visible ts={tsLogCode} go={goFmtCode} />
+<TsGo ts={tsLogCode} go={goFmtCode} />
 
 ## Format verbs
 
@@ -142,7 +142,7 @@ func main() {
 	fmt.Println(greeting)
 }`;
 
-<Playground client:visible code={playgroundHelloCode} />
+<Playground code={playgroundHelloCode} />
 
 export const quizQuestionsHello = [
   { q: 'What must every executable Go program have?', options: ['A file named main.go', 'A func main() in package main', 'A package.json with "main" field', 'An exported Main function'], answer: 1 },

@@ -3,7 +3,7 @@ title: Benchmarks
 description: testing.B, go test -bench และ profiling intuition เบื้องต้น — เปรียบเทียบกับ JavaScript micro-benchmarking ด้วย benchmark.js และ console.time
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -52,7 +52,7 @@ func BenchmarkSum(b *testing.B) {
     }
 }`;
 
-<TsGo client:visible ts={jsBenchCode} go={goBenchCode} />
+<TsGo ts={jsBenchCode} go={goBenchCode} />
 
 ## การรัน benchmarks
 

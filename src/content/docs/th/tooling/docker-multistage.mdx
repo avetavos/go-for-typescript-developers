@@ -3,7 +3,7 @@ title: Docker Multi-Stage Builds
 description: สร้าง Go container image ขนาดเล็กและปลอดภัยด้วย multi-stage Docker builds — เทียบกับ Node.js Docker image ทั่วไปที่มี node_modules
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -125,7 +125,7 @@ COPY --from=builder /app/server .
 EXPOSE 8080
 ENTRYPOINT ["/app/server"]`;
 
-<TsGo client:visible ts={tsDockerCode} go={goDockerCode} />
+<TsGo ts={tsDockerCode} go={goDockerCode} />
 
 > เหล่านี้คือตัวอย่าง Dockerfile — รันใน terminal ด้วย `docker build -t myapp .` แล้วใช้ `docker images myapp` เพื่อเปรียบเทียบขนาด ไม่มี browser playground สำหรับส่วนนี้
 

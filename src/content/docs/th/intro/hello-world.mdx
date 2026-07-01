@@ -3,8 +3,8 @@ title: Hello, World!
 description: เขียนโปรแกรม Go แรกของคุณ — เข้าใจ package main, func main, และ fmt.Println เทียบกับ hello world ใน TypeScript
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -30,7 +30,7 @@ func main() {
 
 // รันด้วย: go run hello.go`;
 
-<TsGo client:visible ts={tsHelloCode} go={goHelloCode} />
+<TsGo ts={tsHelloCode} go={goHelloCode} />
 
 ## อธิบายทีละบรรทัด
 
@@ -63,7 +63,7 @@ func main() {
     fmt.Println("รันก่อน")
 }`;
 
-<TsGo client:visible ts={tsEntryCode} go={goEntryCode} />
+<TsGo ts={tsEntryCode} go={goEntryCode} />
 
 ## fmt.Println vs console.log
 
@@ -81,7 +81,7 @@ fmt.Println("Name:", name)              // หลาย arg
 fmt.Printf("Score: %d\\n", score)        // format verb
 msg := fmt.Sprintf("Hello, %s!", name)  // สร้าง string`;
 
-<TsGo client:visible ts={tsLogCode} go={goFmtCode} />
+<TsGo ts={tsLogCode} go={goFmtCode} />
 
 ## Format verb
 
@@ -142,7 +142,7 @@ func main() {
 	fmt.Println(greeting)
 }`;
 
-<Playground client:visible code={playgroundHelloCode} />
+<Playground code={playgroundHelloCode} />
 
 export const quizQuestionsHello = [
   { q: 'ทุกโปรแกรม Go ที่รันได้ต้องมีอะไร?', options: ['ไฟล์ชื่อ main.go', 'func main() ใน package main', 'package.json ที่มี field "main"', 'Exported function ชื่อ Main'], answer: 1 },

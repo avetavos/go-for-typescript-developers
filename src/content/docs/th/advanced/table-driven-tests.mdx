@@ -3,7 +3,7 @@ title: Table-Driven Tests
 description: การทดสอบ Go แบบ idiomatic ด้วย testing.T, subtests ด้วย t.Run และ table-driven patterns — เปรียบเทียบกับ Jest's it.each และ describe.each
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -53,7 +53,7 @@ func TestAdd(t *testing.T) {
     }
 }`;
 
-<TsGo client:visible ts={tsTableCode} go={goTableCode} />
+<TsGo ts={tsTableCode} go={goTableCode} />
 
 ## กายวิภาคของ table-driven test
 
@@ -155,7 +155,7 @@ func TestDivide(t *testing.T) {
     }
 }`;
 
-<TsGo client:visible ts={jestStructureCode} go={goStructureCode} />
+<TsGo ts={jestStructureCode} go={goStructureCode} />
 
 <GoOnly title="Testify — ไลบรารี assertion ที่เป็น optional">
 

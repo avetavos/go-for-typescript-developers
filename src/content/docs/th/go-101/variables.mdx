@@ -3,8 +3,8 @@ title: Variables, Types และ Zero Values
 description: เรียนรู้การประกาศตัวแปร, type inference, ค่าคงที่ และ zero values ของ Go เทียบกับ let, const และ undefined ของ TypeScript
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -29,7 +29,7 @@ var count int = 0
 name := "Alice"   // inferred as string
 const MAX = 100`;
 
-<TsGo client:visible ts={tsVarCode} go={goVarCode} />
+<TsGo ts={tsVarCode} go={goVarCode} />
 
 ## Type inference ด้วย :=
 
@@ -45,7 +45,7 @@ ratio := 3.14        // float64
 label := "hello"     // string
 active := true       // bool`;
 
-<TsGo client:visible ts={tsInferCode} go={goInferCode} />
+<TsGo ts={tsInferCode} go={goInferCode} />
 
 ## Constants
 
@@ -57,7 +57,7 @@ const APP_NAME = "MyApp";`;
 export const goConstCode = `const PI = 3.14159
 const AppName = "MyApp"`;
 
-<TsGo client:visible ts={tsConstCode} go={goConstCode} />
+<TsGo ts={tsConstCode} go={goConstCode} />
 
 ## ลองเล่นดู
 
@@ -78,7 +78,7 @@ func main() {
 	fmt.Printf("%s, %s! Age: %d, Score: %d\\n", greeting, name, age, score)
 }`;
 
-<Playground client:visible code={playgroundVarsCode} />
+<Playground code={playgroundVarsCode} />
 
 <GoOnly title="Zero Values — ไม่มี undefined ใน Go">
 

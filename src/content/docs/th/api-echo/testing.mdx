@@ -3,7 +3,7 @@ title: การทดสอบ Echo Handler
 description: เขียน handler test ด้วย httptest package และ testing standard library ของ Go — เปรียบกับ supertest/Jest ใน Node
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -100,7 +100,7 @@ func (f *fakeBookStore) Insert(_ context.Context, req model.CreateBookRequest) (
     return model.Book{ID: "new-id", Title: req.Title, Author: req.Author}, nil
 }`;
 
-<TsGo client:visible ts={tsJestMock} go={goInterfaceMock} />
+<TsGo ts={tsJestMock} go={goInterfaceMock} />
 
 ## ทดสอบ POST handler กับ JSON body
 

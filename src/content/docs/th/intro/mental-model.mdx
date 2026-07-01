@@ -3,8 +3,8 @@ title: Mental Model ของ Go
 description: การเปลี่ยน mindset สำคัญที่นักพัฒนา TypeScript ต้องรู้เมื่อย้ายมาใช้ Go — compiled binary, ไม่มี node_modules, goroutine, error แบบ explicit, และความเรียบง่าย
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -27,7 +27,7 @@ export const goRuntimeCode = `// Go workflow
 // ./myapp
 // (ไม่ต้องการอะไรอื่นบน server)`;
 
-<TsGo client:visible ts={tsRuntimeCode} go={goRuntimeCode} />
+<TsGo ts={tsRuntimeCode} go={goRuntimeCode} />
 
 เรื่องนี้สำคัญมากกับ Docker image (Go image เป็น `FROM scratch` ได้), Lambda cold start และการแจกจ่าย CLI — เพราะคุณส่งแค่ไฟล์เดียว
 
@@ -54,7 +54,7 @@ require (
 )
 // dependency คอมไพล์รวมเข้า binary — ไม่ต้องส่งแยก`;
 
-<TsGo client:visible ts={tsDepsCode} go={goDepsCode} />
+<TsGo ts={tsDepsCode} go={goDepsCode} />
 
 ## 3. Goroutine vs Event Loop
 
@@ -77,7 +77,7 @@ func doWork(ch chan int) {
 }
 // เรียกใช้ด้วย: go doWork(ch)`;
 
-<TsGo client:visible ts={tsEventLoopCode} go={goGoroutineCode} />
+<TsGo ts={tsEventLoopCode} go={goGoroutineCode} />
 
 เราจะลงลึกเรื่อง goroutine และ channel ในบทถัดไป สำหรับตอนนี้ขอแค่จำ mental model ไว้ว่า: concurrency ของ Go เป็น parallel โดยค่าเริ่มต้น ไม่ใช่แค่ async
 
@@ -111,7 +111,7 @@ if err != nil {
     // ต้องจัดการ — compiler เตือนถ้าไม่ใช้ err
 }`;
 
-<TsGo client:visible ts={tsThrowCode} go={goReturnErrCode} />
+<TsGo ts={tsThrowCode} go={goReturnErrCode} />
 
 ## 5. ความเรียบง่าย — วิธีเดียวที่ idiomatic
 
@@ -140,7 +140,7 @@ func (s *UserService) GetUser(ctx context.Context, id string) (User, error) {
     return User{}, nil
 }`;
 
-<TsGo client:visible ts={tsStyleCode} go={goStyleCode} />
+<TsGo ts={tsStyleCode} go={goStyleCode} />
 
 <GoOnly title="gofmt — การ format โค้ดไม่ใช่ตัวเลือก">
 
@@ -188,7 +188,7 @@ func main() {
 	}
 }`;
 
-<Playground client:visible code={playgroundMentalCode} />
+<Playground code={playgroundMentalCode} />
 
 export const quizQuestionsMental = [
   { q: 'Go ใช้อะไรแทน Node.js event loop สำหรับ concurrency?', options: ['Async/await', 'Worker threads', 'Goroutine และ channel', 'Promise'], answer: 2 },

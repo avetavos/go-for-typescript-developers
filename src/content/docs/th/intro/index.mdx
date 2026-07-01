@@ -3,8 +3,8 @@ title: ทำไมต้องเรียน Go ในฐานะนักพ
 description: ค้นพบว่าทำไม Go จึงเป็นภาษาต่อไปที่น่าสนใจสำหรับนักพัฒนา TypeScript — คอมไพล์ได้, มี static type, เร็ว, binary เดียว, และรองรับ concurrency ได้ดีเยี่ยม
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -29,7 +29,7 @@ export const goDistCode = `// ส่ง: ./myapp (binary เดียว, ~5 MB)
 // ต้องการ: ไม่มีอะไรเพิ่มบน server
 // $ go build -o myapp .`;
 
-<TsGo client:visible ts={tsDistCode} go={goDistCode} />
+<TsGo ts={tsDistCode} go={goDistCode} />
 
 ### Static type — ไม่มีเซอร์ไพรส์ตอน runtime
 
@@ -67,7 +67,7 @@ func fetchAll(urls []string) []any {
     return results
 }`;
 
-<TsGo client:visible ts={tsConcurrentCode} go={goConcurrentCode} />
+<TsGo ts={tsConcurrentCode} go={goConcurrentCode} />
 
 ### Error แบบ explicit แทน exception
 
@@ -88,7 +88,7 @@ if err != nil {
 }
 processData(data)`;
 
-<TsGo client:visible ts={tsErrorCode} go={goErrorCode} />
+<TsGo ts={tsErrorCode} go={goErrorCode} />
 
 ## คอร์สนี้ครอบคลุมอะไรบ้าง
 
@@ -124,7 +124,7 @@ func main() {
 	fmt.Printf("Year: %d\\n", year)
 }`;
 
-<Playground client:visible code={playgroundIndexCode} />
+<Playground code={playgroundIndexCode} />
 
 export const quizQuestionsIndex = [
   { q: 'Go คอมไพล์เป็นอะไร ต่างจาก TypeScript อย่างไร?', options: ['JavaScript (CommonJS)', 'WebAssembly เท่านั้น', 'Native binary ที่ไม่ต้องการ runtime', 'Docker image'], answer: 2 },

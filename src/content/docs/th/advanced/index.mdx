@@ -3,7 +3,7 @@ title: Advanced Go — ภาพรวม
 description: ทัวร์ชุดเครื่องมือ Go ขั้นสูง — generics, reflection, table-driven tests, benchmarks, การจัดการโมดูล และ profiling
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -40,7 +40,7 @@ export const goBatteriesCode = `// Go: คำสั่งเดียวจั�
 // go test -fuzz=Fuzz    — รัน fuzz tests
 // go tool pprof cpu.out — เปิด profiler`;
 
-<TsGo client:visible ts={tsBatteriesCode} go={goBatteriesCode} />
+<TsGo ts={tsBatteriesCode} go={goBatteriesCode} />
 
 <GoOnly title="ข้อกำหนดเบื้องต้น: Go 1.21+">
 

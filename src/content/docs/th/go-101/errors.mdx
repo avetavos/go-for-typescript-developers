@@ -3,8 +3,8 @@ title: การจัดการ Error
 description: error เป็น value, error interface, errors.Is/As และการ wrap ของ Go เทียบกับ try/catch ของ TypeScript
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -40,7 +40,7 @@ func readConfig(path string) (Config, error) {
     return cfg, nil
 }`;
 
-<TsGo client:visible ts={tsTryCatchCode} go={goErrorCode} />
+<TsGo ts={tsTryCatchCode} go={goErrorCode} />
 
 ## การสร้าง error
 
@@ -68,7 +68,7 @@ func (e *NotFoundError) Error() string {
     return fmt.Sprintf("item %s not found", e.ID)
 }`;
 
-<TsGo client:visible ts={tsErrorCreateCode} go={goErrorCreateCode} />
+<TsGo ts={tsErrorCreateCode} go={goErrorCreateCode} />
 
 ## การ wrap และ unwrap ด้วย %w
 
@@ -115,7 +115,7 @@ func main() {
 	}
 }`;
 
-<Playground client:visible code={playgroundErrCode} />
+<Playground code={playgroundErrCode} />
 
 <GoOnly title="การ wrap error ด้วย %w">
 

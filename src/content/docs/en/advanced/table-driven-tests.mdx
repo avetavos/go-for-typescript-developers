@@ -3,7 +3,7 @@ title: Table-Driven Tests
 description: Idiomatic Go testing with testing.T, subtests using t.Run, and table-driven patterns — compared to Jest's it.each and describe.each.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -53,7 +53,7 @@ func TestAdd(t *testing.T) {
     }
 }`;
 
-<TsGo client:visible ts={tsTableCode} go={goTableCode} />
+<TsGo ts={tsTableCode} go={goTableCode} />
 
 ## Anatomy of a table-driven test
 
@@ -155,7 +155,7 @@ func TestDivide(t *testing.T) {
     }
 }`;
 
-<TsGo client:visible ts={jestStructureCode} go={goStructureCode} />
+<TsGo ts={jestStructureCode} go={goStructureCode} />
 
 <GoOnly title="Testify — the optional assertion library">
 

@@ -3,8 +3,8 @@ title: Generics
 description: Type parameters, constraint interfaces, comparable และเมื่อใดควรเลือก generics แทน plain interface — เปรียบเทียบกับ TypeScript generics
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -57,7 +57,7 @@ func (s *Stack[T]) Pop() (T, bool) {
     return last, true
 }`;
 
-<TsGo client:visible ts={tsGenericCode} go={goGenericCode} />
+<TsGo ts={tsGenericCode} go={goGenericCode} />
 
 ## Constraint interfaces
 
@@ -83,7 +83,7 @@ func Add[T Number](a, b T) T {
 x := Add(1, 2)         // int
 y := Add(1.5, 2.5)     // float64`;
 
-<TsGo client:visible ts={tsConstraintCode} go={goConstraintCode} />
+<TsGo ts={tsConstraintCode} go={goConstraintCode} />
 
 syntax `~int` หมายถึง "type ใดก็ตามที่มี **underlying type** เป็น `int`" ดังนั้น custom type อย่าง `type MyID int` ก็เข้าเงื่อนไข `~int` ด้วย ถ้าไม่มี `~` จะตรงเฉพาะ type `int` ตรง ๆ เท่านั้น
 
@@ -108,7 +108,7 @@ func Contains[T comparable](slice []T, val T) bool {
 
 // ใช้ได้กับ int, string, struct ที่มีฟิลด์ comparable — แต่ไม่ใช่ slices หรือ maps`;
 
-<TsGo client:visible ts={tsComparableCode} go={goComparableCode} />
+<TsGo ts={tsComparableCode} go={goComparableCode} />
 
 ## รวม method sets กับ type unions
 
@@ -156,7 +156,7 @@ func Filter[T any](s []T, fn func(T) bool) []T {
 
 // ตั้งแต่ Go 1.23 slices.Collect + iter package จัดการได้ idiomatic มากขึ้น`;
 
-<TsGo client:visible ts={tsFpCode} go={goFpCode} />
+<TsGo ts={tsFpCode} go={goFpCode} />
 
 ## Generics vs interfaces — เมื่อใดควรใช้อะไร
 
@@ -223,7 +223,7 @@ func main() {
 	fmt.Println("Contains 9?", Contains(ints, 9))
 }`;
 
-<Playground client:visible code={playgroundGenericsCode} />
+<Playground code={playgroundGenericsCode} />
 
 export const quizQuestionsGenerics = [
   { q: 'syntax `~int` ใน constraint interface ของ Go หมายความว่าอะไร?', options: ['เฉพาะ type int เท่านั้น', 'type ใดก็ตามที่มี underlying type เป็น int', 'int ที่เป็น nullable', 'alias สำหรับ int64'], answer: 1 },

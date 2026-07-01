@@ -3,7 +3,7 @@ title: Building an API with Echo
 description: An introduction to Echo — Go's answer to Express/Fastify — and what you will build in this module.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -62,7 +62,7 @@ func main() {
     e.Logger.Fatal(e.Start(":1323"))
 }`;
 
-<TsGo client:visible ts={tsBootstrap} go={goBootstrap} />
+<TsGo ts={tsBootstrap} go={goBootstrap} />
 
 ## What you will build
 

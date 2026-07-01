@@ -3,7 +3,7 @@ title: Connecting to a Database
 description: Wire a database connection into an Echo handler using database/sql or an ORM — compared to TypeORM, Prisma, or Drizzle in Node.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -55,7 +55,7 @@ func NewDB() *sql.DB {
     return db
 }`;
 
-<TsGo client:visible ts={tsDbConnect} go={goDbConnect} />
+<TsGo ts={tsDbConnect} go={goDbConnect} />
 
 ## A store layer — the repository pattern
 
@@ -98,7 +98,7 @@ func (s *BookStore) FindByID(ctx context.Context, id string) (Book, error) {
     return b, nil
 }`;
 
-<TsGo client:visible ts={tsRepo} go={goStore} />
+<TsGo ts={tsRepo} go={goStore} />
 
 ## Inserting a row
 
@@ -126,7 +126,7 @@ func (s *BookStore) Insert(ctx context.Context, req CreateBookRequest) (Book, er
     return b, nil
 }`;
 
-<TsGo client:visible ts={tsInsert} go={goInsert} />
+<TsGo ts={tsInsert} go={goInsert} />
 
 ## Wiring the store into a handler via main.go
 

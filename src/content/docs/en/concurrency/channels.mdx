@@ -3,8 +3,8 @@ title: Channels
 description: Channels are typed pipes for communicating between goroutines — unbuffered and buffered. Compare to Promises and callbacks.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -60,7 +60,7 @@ func main() {
     fmt.Println(result) // 42
 }`;
 
-<TsGo client:visible ts={tsPromiseCode} go={goChannelCode} />
+<TsGo ts={tsPromiseCode} go={goChannelCode} />
 
 ## Buffered channels
 
@@ -92,7 +92,7 @@ func main() {
     fmt.Println(<-ch) // 3
 }`;
 
-<TsGo client:visible ts={tsQueueCode} go={goBufferedCode} />
+<TsGo ts={tsQueueCode} go={goBufferedCode} />
 
 ## Range over a closed channel
 
@@ -134,7 +134,7 @@ func main() {
     }
 }`;
 
-<TsGo client:visible ts={tsIterableCode} go={goRangeChannelCode} />
+<TsGo ts={tsIterableCode} go={goRangeChannelCode} />
 
 <GoOnly title="Channel direction — compile-time type safety">
 
@@ -181,7 +181,7 @@ func main() {
 	}
 }`;
 
-<Playground client:visible code={playgroundChannelsCode} />
+<Playground code={playgroundChannelsCode} />
 
 export const quizQuestionsChannels = [
   { q: 'What is the difference between an unbuffered and a buffered channel?', options: ['Unbuffered is always faster', 'Unbuffered blocks until a receiver is ready; buffered has an internal queue', 'Buffered channels are safe from data races', 'There is no difference'], answer: 1 },

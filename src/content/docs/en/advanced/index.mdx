@@ -3,7 +3,7 @@ title: Advanced Go — Overview
 description: A tour of the advanced Go toolkit — generics, reflection, table-driven tests, benchmarks, module management, and profiling.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -40,7 +40,7 @@ export const goBatteriesCode = `// Go: one command rules them all
 // go test -fuzz=Fuzz    — runs fuzz tests
 // go tool pprof cpu.out — opens profiler`;
 
-<TsGo client:visible ts={tsBatteriesCode} go={goBatteriesCode} />
+<TsGo ts={tsBatteriesCode} go={goBatteriesCode} />
 
 <GoOnly title="Prerequisite: Go 1.21+">
 

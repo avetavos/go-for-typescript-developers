@@ -3,7 +3,7 @@ title: CI with GitHub Actions
 description: A working GitHub Actions workflow for Go — setup, test, build, and lint — compared to a Node/TypeScript CI workflow.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -177,7 +177,7 @@ steps:
   - run: go test -race -coverprofile=coverage.out ./...
   - run: CGO_ENABLED=0 GOOS=linux go build -o bin/app ./cmd/app`;
 
-<TsGo client:visible ts={tsWorkflowCode} go={goWorkflowCode} />
+<TsGo ts={tsWorkflowCode} go={goWorkflowCode} />
 
 > Save this as `.github/workflows/ci.yml` in your repository. Push to a branch and watch the Actions tab — no local setup required to verify the workflow.
 

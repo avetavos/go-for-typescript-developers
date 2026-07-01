@@ -3,7 +3,7 @@ title: การจัดการ Error
 description: คืน error จาก handler, ใช้ echo.HTTPError สำหรับ HTTP-aware error และเขียน central error handler — เชื่อมกับ philosophy errors-as-values ของ Go
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -43,7 +43,7 @@ func getBook(c echo.Context) error {
     return c.JSON(http.StatusOK, book)
 }`;
 
-<TsGo client:visible ts={tsErrorThrow} go={goErrorReturn} />
+<TsGo ts={tsErrorThrow} go={goErrorReturn} />
 
 ## echo.NewHTTPError — error ที่รู้จัก HTTP
 
@@ -96,7 +96,7 @@ func createBook(c echo.Context) error {
     return c.JSON(http.StatusCreated, book)
 }`;
 
-<TsGo client:visible ts={tsErrorWrap} go={goErrorWrap} />
+<TsGo ts={tsErrorWrap} go={goErrorWrap} />
 
 ## Central error handler
 
@@ -132,7 +132,7 @@ func customErrorHandler(err error, c echo.Context) {
 // ลงทะเบียนใน main():
 e.HTTPErrorHandler = customErrorHandler`;
 
-<TsGo client:visible ts={tsErrMiddleware} go={goErrHandler} />
+<TsGo ts={tsErrMiddleware} go={goErrHandler} />
 
 <GoOnly title="Sentinel error — เทียบเท่า custom exception ของ Go">
 

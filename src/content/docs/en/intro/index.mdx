@@ -3,8 +3,8 @@ title: Why Go for TypeScript Developers
 description: Discover why Go is a compelling next language for TypeScript developers — compiled, statically typed, fast, single binary, and built for concurrency.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -29,7 +29,7 @@ export const goDistCode = `// ship: ./myapp (single binary, ~5 MB)
 // needs: nothing on the server
 // $ go build -o myapp .`;
 
-<TsGo client:visible ts={tsDistCode} go={goDistCode} />
+<TsGo ts={tsDistCode} go={goDistCode} />
 
 ### Statically typed — no runtime surprises
 
@@ -67,7 +67,7 @@ func fetchAll(urls []string) []any {
     return results
 }`;
 
-<TsGo client:visible ts={tsConcurrentCode} go={goConcurrentCode} />
+<TsGo ts={tsConcurrentCode} go={goConcurrentCode} />
 
 ### Explicit errors, not exceptions
 
@@ -88,7 +88,7 @@ if err != nil {
 }
 processData(data)`;
 
-<TsGo client:visible ts={tsErrorCode} go={goErrorCode} />
+<TsGo ts={tsErrorCode} go={goErrorCode} />
 
 ## What this course covers
 
@@ -124,7 +124,7 @@ func main() {
 	fmt.Printf("Year: %d\\n", year)
 }`;
 
-<Playground client:visible code={playgroundIndexCode} />
+<Playground code={playgroundIndexCode} />
 
 export const quizQuestionsIndex = [
   { q: 'What does Go compile to, unlike TypeScript?', options: ['JavaScript (CommonJS)', 'WebAssembly only', 'A native binary requiring no runtime', 'A Docker image'], answer: 2 },

@@ -3,7 +3,7 @@ title: การเชื่อมต่อฐานข้อมูล
 description: เชื่อม database connection เข้า Echo handler ด้วย database/sql หรือ ORM — เปรียบกับ TypeORM, Prisma หรือ Drizzle ใน Node
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -55,7 +55,7 @@ func NewDB() *sql.DB {
     return db
 }`;
 
-<TsGo client:visible ts={tsDbConnect} go={goDbConnect} />
+<TsGo ts={tsDbConnect} go={goDbConnect} />
 
 ## Store layer — repository pattern
 
@@ -98,7 +98,7 @@ func (s *BookStore) FindByID(ctx context.Context, id string) (Book, error) {
     return b, nil
 }`;
 
-<TsGo client:visible ts={tsRepo} go={goStore} />
+<TsGo ts={tsRepo} go={goStore} />
 
 ## Insert row
 
@@ -126,7 +126,7 @@ func (s *BookStore) Insert(ctx context.Context, req CreateBookRequest) (Book, er
     return b, nil
 }`;
 
-<TsGo client:visible ts={tsInsert} go={goInsert} />
+<TsGo ts={tsInsert} go={goInsert} />
 
 ## เชื่อม store เข้า handler ผ่าน main.go
 

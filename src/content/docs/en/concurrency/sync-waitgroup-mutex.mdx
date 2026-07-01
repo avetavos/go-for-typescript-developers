@@ -3,8 +3,8 @@ title: Sync — WaitGroup, Mutex, and RWMutex
 description: Protect shared state from data races with sync.WaitGroup, sync.Mutex, and sync.RWMutex. Understand why races are rare in JS but common in Go.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -82,7 +82,7 @@ func main() {
     fmt.Println("Final count:", counter.count) // always 100
 }`;
 
-<TsGo client:visible ts={tsLockCode} go={goMutexCode} />
+<TsGo ts={tsLockCode} go={goMutexCode} />
 
 ## RWMutex — multiple readers, exclusive writer
 
@@ -122,7 +122,7 @@ func main() {
     fmt.Println(cache.Get("lang")) // Go
 }`;
 
-<TsGo client:visible ts={tsReadWriteCode} go={goRWMutexCode} />
+<TsGo ts={tsReadWriteCode} go={goRWMutexCode} />
 
 <GoOnly title="Find data races with the -race flag">
 
@@ -187,7 +187,7 @@ func main() {
 	fmt.Println("Final count:", counter.Value())
 }`;
 
-<Playground client:visible code={playgroundMutexCode} />
+<Playground code={playgroundMutexCode} />
 
 export const quizQuestionsSyncMutex = [
   { q: 'Why do data races occur in Go but not in typical JavaScript code?', options: ['Go has no garbage collector', 'Goroutines run on real OS threads and can access memory simultaneously', 'JavaScript is faster than Go', 'Go has no async/await'], answer: 1 },

@@ -3,7 +3,7 @@ title: Middleware
 description: Use Echo's built-in middleware (Logger, Recover, CORS) and write your own — compared to Express middleware.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -36,7 +36,7 @@ func RequestLogger(next echo.HandlerFunc) echo.HandlerFunc {
 
 e.Use(RequestLogger)`;
 
-<TsGo client:visible ts={tsMiddleware} go={goMiddleware} />
+<TsGo ts={tsMiddleware} go={goMiddleware} />
 
 ## Built-in middleware
 
@@ -63,7 +63,7 @@ e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
     AllowMethods: []string{http.MethodGet, http.MethodPost},
 }))`;
 
-<TsGo client:visible ts={tsBuiltIn} go={goBuiltIn} />
+<TsGo ts={tsBuiltIn} go={goBuiltIn} />
 
 ## Middleware ordering
 
@@ -97,7 +97,7 @@ admin.Use(authMiddleware)
 admin.GET("", adminHandler)
 admin.GET("/users", adminUsersHandler)`;
 
-<TsGo client:visible ts={tsRouteMiddleware} go={goRouteMiddleware} />
+<TsGo ts={tsRouteMiddleware} go={goRouteMiddleware} />
 
 ## Writing a custom auth middleware
 
@@ -134,7 +134,7 @@ func RequireAuth(next echo.HandlerFunc) echo.HandlerFunc {
     }
 }`;
 
-<TsGo client:visible ts={tsAuthMiddleware} go={goAuthMiddleware} />
+<TsGo ts={tsAuthMiddleware} go={goAuthMiddleware} />
 
 <GoOnly title="Storing values in context">
 

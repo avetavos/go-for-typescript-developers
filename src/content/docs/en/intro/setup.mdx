@@ -3,8 +3,8 @@ title: Setting Up Go
 description: Install Go and learn the essential CLI commands — go run, go build, go mod init, go install — compared to node, tsc, and npm.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -44,7 +44,7 @@ go mod init github.com/you/myapp  # init a new module
 go get github.com/gin-gonic/gin   # add a dependency
 go install tool@latest   # install a CLI tool globally`;
 
-<TsGo client:visible ts={tsCliCode} go={goCliCode} />
+<TsGo ts={tsCliCode} go={goCliCode} />
 
 ## go run vs go build
 
@@ -60,7 +60,7 @@ go run .                    # compile + run (dev)
 go build -o ./bin/app . && ./bin/app  # compile then run
 # air                       # watch mode (third-party)`;
 
-<TsGo client:visible ts={tsRunCode} go={goRunCode} />
+<TsGo ts={tsRunCode} go={goRunCode} />
 
 ## go mod init — the equivalent of npm init
 
@@ -82,7 +82,7 @@ go mod init github.com/yourname/myapp
 go get github.com/gin-gonic/gin
 # updates go.mod + creates go.sum (like package-lock.json)`;
 
-<TsGo client:visible ts={tsNpmInitCode} go={goModInitCode} />
+<TsGo ts={tsNpmInitCode} go={goModInitCode} />
 
 ## go install — global CLI tools
 
@@ -98,7 +98,7 @@ go install golang.org/x/tools/gopls@latest      # LSP server
 go install github.com/air-verse/air@latest       # live reload
 go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest`;
 
-<TsGo client:visible ts={tsInstallCode} go={goInstallCode} />
+<TsGo ts={tsInstallCode} go={goInstallCode} />
 
 <GoOnly title="GOPATH, GOROOT, and module cache">
 

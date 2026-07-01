@@ -3,7 +3,7 @@ title: Project Layout Idioms
 description: Idiomatic Go project structure — cmd/, internal/, and package naming — compared to the src/ conventions you know from Node/TypeScript.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -61,7 +61,7 @@ pkg/
 go.mod
 go.sum`;
 
-<TsGo client:visible ts={tsLayoutCode} go={goLayoutCode} />
+<TsGo ts={tsLayoutCode} go={goLayoutCode} />
 
 ## cmd/ — one directory per binary
 

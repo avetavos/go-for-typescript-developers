@@ -3,8 +3,8 @@ title: Structs และ Methods
 description: structs, value vs pointer receivers ของ Go เทียบกับ interface, class และ object ธรรมดาของ TypeScript
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -33,7 +33,7 @@ type User struct {
 u := User{Name: "Alice", Age: 30}
 fmt.Println(u.Name)`;
 
-<TsGo client:visible ts={tsStructCode} go={goStructCode} />
+<TsGo ts={tsStructCode} go={goStructCode} />
 
 ## Methods บน struct
 
@@ -60,7 +60,7 @@ func (u User) Greet() string {
     return "Hi, I'm " + u.Name
 }`;
 
-<TsGo client:visible ts={tsMethodCode} go={goMethodCode} />
+<TsGo ts={tsMethodCode} go={goMethodCode} />
 
 ## ลองเล่นดู
 
@@ -96,7 +96,7 @@ func main() {
 	fmt.Printf("After scaling: %.1f x %.1f\\n", rect.Width, rect.Height)
 }`;
 
-<Playground client:visible code={playgroundStructCode} />
+<Playground code={playgroundStructCode} />
 
 <GoOnly title="Value Receivers เทียบกับ Pointer Receivers">
 

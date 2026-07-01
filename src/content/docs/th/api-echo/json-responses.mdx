@@ -3,8 +3,8 @@ title: JSON Response
 description: ส่ง JSON response ด้วย c.JSON, ควบคุม status code และจัดโครงสร้าง response payload — เปรียบกับ res.json ใน Express
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -34,7 +34,7 @@ func getBook(c echo.Context) error {
 // 404 (ผ่าน HTTPError — ดูในบท Error Handling)
 return echo.NewHTTPError(http.StatusNotFound, "not found")`;
 
-<TsGo client:visible ts={tsJsonResp} go={goJsonResp} />
+<TsGo ts={tsJsonResp} go={goJsonResp} />
 
 ## Typed response struct
 
@@ -76,7 +76,7 @@ func toBookResponse(b Book) BookResponse {
 
 return c.JSON(http.StatusOK, toBookResponse(book))`;
 
-<TsGo client:visible ts={tsTypedResp} go={goTypedResp} />
+<TsGo ts={tsTypedResp} go={goTypedResp} />
 
 ## HTTP status code มาตรฐาน
 
@@ -140,7 +140,7 @@ func main() {
 	fmt.Printf("Published:     %s\\n", decoded.PublishedAt.Format(time.RFC3339))
 }`;
 
-<Playground client:visible code={playgroundJson} />
+<Playground code={playgroundJson} />
 
 ## List response และ pagination
 
@@ -169,7 +169,7 @@ return c.JSON(http.StatusOK, PaginatedBooks{
     Limit: limit,
 })`;
 
-<TsGo client:visible ts={tsListResp} go={goListResp} />
+<TsGo ts={tsListResp} go={goListResp} />
 
 <GoOnly title="Response แบบไม่มี content">
 

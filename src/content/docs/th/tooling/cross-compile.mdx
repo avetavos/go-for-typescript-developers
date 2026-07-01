@@ -3,7 +3,7 @@ title: Cross-Compilation
 description: คอมไพล์ Go binary สำหรับทุก OS และ architecture ด้วย environment variables สองตัว — ไม่ต้องติดตั้ง runtime บนเครื่องเป้าหมาย
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -119,7 +119,7 @@ scp app-linux server:/usr/local/bin/myapp
 # บน server — แค่รัน:
 ssh server "/usr/local/bin/myapp"`;
 
-<TsGo client:visible ts={tsDeployCode} go={goCrossCode} />
+<TsGo ts={tsDeployCode} go={goCrossCode} />
 
 <GoOnly title="ไม่มี runtime — binary คือแอปพลิเคชัน">
 

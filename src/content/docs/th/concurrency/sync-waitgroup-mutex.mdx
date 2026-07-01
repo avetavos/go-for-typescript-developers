@@ -3,8 +3,8 @@ title: Sync — WaitGroup, Mutex และ RWMutex
 description: จัดการ shared state อย่างปลอดภัยด้วย sync.WaitGroup, sync.Mutex และ sync.RWMutex; เข้าใจ data races
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -79,7 +79,7 @@ func main() {
     fmt.Println("Final count:", counter.count) // 100 เสมอ
 }`;
 
-<TsGo client:visible ts={tsLockCode} go={goMutexCode} />
+<TsGo ts={tsLockCode} go={goMutexCode} />
 
 ## RWMutex — อ่านได้พร้อมกัน เขียนได้ครั้งเดียว
 
@@ -113,7 +113,7 @@ func (c *Cache) Set(key, value string) {
     c.data[key] = value
 }`;
 
-<TsGo client:visible ts={tsReadWriteCode} go={goRWMutexCode} />
+<TsGo ts={tsReadWriteCode} go={goRWMutexCode} />
 
 <GoOnly title="ตรวจหา Data Races ด้วย -race Flag">
 
@@ -177,7 +177,7 @@ func main() {
 	fmt.Println("Final count:", counter.Value())
 }`;
 
-<Playground client:visible code={playgroundMutexCode} />
+<Playground code={playgroundMutexCode} />
 
 export const quizQuestionsSyncMutex = [
   { q: 'ทำไมถึงเกิด data race ใน Go แต่ไม่เกิดใน JavaScript ปกติ?', options: ['Go ไม่มี garbage collector', 'Goroutines รันบน threads จริง ทำให้เข้าถึง memory พร้อมกันได้', 'JavaScript เร็วกว่า Go', 'Go ไม่มี async/await'], answer: 1 },

@@ -3,7 +3,7 @@ title: Project Layout
 description: How to structure an Echo project — go.mod, main.go, and directory conventions — compared to an Express or NestJS project.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -42,7 +42,7 @@ books-api/
   model/
     book.go                // shared structs / domain types`;
 
-<TsGo client:visible ts={tsLayout} go={goLayout} />
+<TsGo ts={tsLayout} go={goLayout} />
 
 ## go.mod — the package.json of Go
 
@@ -69,7 +69,7 @@ require (
     github.com/labstack/echo/v4 v4.12.0
 )`;
 
-<TsGo client:visible ts={tsPackageJson} go={goModFile} />
+<TsGo ts={tsPackageJson} go={goModFile} />
 
 ## main.go — wiring the application
 
@@ -121,7 +121,7 @@ func main() {
     e.Logger.Fatal(e.Start(":1323"))
 }`;
 
-<TsGo client:visible ts={tsMainTs} go={goMainGo} />
+<TsGo ts={tsMainTs} go={goMainGo} />
 
 <GoOnly title="Why internal/?">
 

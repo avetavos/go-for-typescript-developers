@@ -3,8 +3,8 @@ title: Reflection
 description: The reflect package, struct tags at runtime, use cases and caveats — compared to TypeScript's reflect-metadata and decorators.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -46,7 +46,7 @@ for i := 0; i < t.NumField(); i++ {
 // Name: string
 // Age: int`;
 
-<TsGo client:visible ts={tsReflectCode} go={goReflectCode} />
+<TsGo ts={tsReflectCode} go={goReflectCode} />
 
 ## Struct tags
 
@@ -76,7 +76,7 @@ type CreateUserDTO struct {
 // encoding/json uses the "json" tag automatically.
 // Validator libraries read "validate" at runtime.`;
 
-<TsGo client:visible ts={tsTagCode} go={goTagCode} />
+<TsGo ts={tsTagCode} go={goTagCode} />
 
 ## Reading struct tags at runtime
 
@@ -183,7 +183,7 @@ func main() {
 	printValues(u)
 }`;
 
-<Playground client:visible code={playgroundReflectCode} />
+<Playground code={playgroundReflectCode} />
 
 export const quizQuestionsReflection = [
   { q: 'Which function returns the runtime type descriptor of a Go value?', options: ['reflect.ValueOf', 'reflect.TypeOf', 'reflect.KindOf', 'reflect.MetaOf'], answer: 1 },

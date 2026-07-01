@@ -3,8 +3,8 @@ title: โครงสร้างโปรเจกต์ Go
 description: เข้าใจ Go module layout, go.mod vs package.json, packages vs folder, imports, และโครงสร้างโปรเจกต์แบบ idiomatic — เทียบกับโปรเจกต์ Node.js
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -38,7 +38,7 @@ require (
 // go.sum คือ lockfile (เหมือน package-lock.json)
 // จัดการอัตโนมัติ — ไม่ควรแก้ด้วยตัวเอง`;
 
-<TsGo client:visible ts={tsPackageJsonCode} go={goModCode} />
+<TsGo ts={tsPackageJsonCode} go={goModCode} />
 
 ชื่อ module (`github.com/yourname/myapp`) ไม่ใช่แค่ชื่อ — แต่คือ import path prefix ที่ใช้ทั่วทั้งโค้ดของคุณ โดย convention มักตั้งให้ตรงกับ URL ของ source repository
 
@@ -62,7 +62,7 @@ import (
 //            models.User{...}
 //            utils.SomeHelper(...)`;
 
-<TsGo client:visible ts={tsImportsCode} go={goImportsCode} />
+<TsGo ts={tsImportsCode} go={goImportsCode} />
 
 ## โครงสร้างโปรเจกต์แบบ Idiomatic
 
@@ -96,7 +96,7 @@ myapp/
   go.sum
   .env`;
 
-<TsGo client:visible ts={tsProjectStructCode} go={goProjectStructCode} />
+<TsGo ts={tsProjectStructCode} go={goProjectStructCode} />
 
 กฎสำคัญ:
 - `cmd/` เก็บ entry point (`main` package) — หนึ่ง subdirectory ต่อหนึ่ง binary
@@ -154,7 +154,7 @@ func formatName(n string) string { // unexported (lowercase)
     return strings.TrimSpace(n)
 }`;
 
-<TsGo client:visible ts={tsExportCode} go={goExportCode} />
+<TsGo ts={tsExportCode} go={goExportCode} />
 
 ## ลองเลย — package และ import
 
@@ -184,7 +184,7 @@ func main() {
 	fmt.Println(strings.ToUpper("go is great"))
 }`;
 
-<Playground client:visible code={playgroundProjectCode} />
+<Playground code={playgroundProjectCode} />
 
 export const quizQuestionsProject = [
   { q: 'ใน Go อะไรกำหนดว่า identifier ถูก export (public) หรือไม่?', options: ['Keyword `export` ก่อนมัน', 'อยู่ในไฟล์ชื่อ exports.go', 'เริ่มต้นด้วยตัวพิมพ์ใหญ่', 'อยู่ใน directory pkg/'], answer: 2 },

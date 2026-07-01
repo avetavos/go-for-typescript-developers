@@ -3,8 +3,8 @@ title: Pointers
 description: Learn Go's explicit pointers — &, *, and pointer types — and understand when and why to use them, compared to JavaScript's implicit reference model.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -51,7 +51,7 @@ func main() {
     // increment(x)  would be a compile error (type mismatch)
 }`;
 
-<TsGo client:visible ts={tsRefCode} go={goPointerCode} />
+<TsGo ts={tsRefCode} go={goPointerCode} />
 
 ## Pointer types
 
@@ -68,7 +68,7 @@ fmt.Println(*p)     // 10 — dereference to read
 *p = 20             // write through pointer
 fmt.Println(x)      // 20`;
 
-<TsGo client:visible ts={tsPtrTypeCode} go={goPtrTypeCode} />
+<TsGo ts={tsPtrTypeCode} go={goPtrTypeCode} />
 
 ## When to use pointers in Go
 
@@ -105,7 +105,7 @@ func main() {
     fmt.Println(cfg.String()) // localhost:9090
 }`;
 
-<TsGo client:visible ts={tsWhenCode} go={goWhenCode} />
+<TsGo ts={tsWhenCode} go={goWhenCode} />
 
 ## Try it
 
@@ -139,7 +139,7 @@ func main() {
 	fmt.Println("point:", *p)
 }`;
 
-<Playground client:visible code={playgroundPointersCode} />
+<Playground code={playgroundPointersCode} />
 
 <GoOnly title="nil Pointers — The Go null">
 

@@ -3,8 +3,8 @@ title: Context — Cancellation and Deadlines
 description: Use context.Context to propagate cancellation, deadlines, and timeouts through a call chain. Compare to JavaScript's AbortController.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -70,7 +70,7 @@ func main() {
     fmt.Println("All workers stopped")
 }`;
 
-<TsGo client:visible ts={tsAbortCode} go={goWithCancelCode} />
+<TsGo ts={tsAbortCode} go={goWithCancelCode} />
 
 ## context.WithTimeout
 
@@ -120,7 +120,7 @@ func main() {
     wg.Wait()
 }`;
 
-<TsGo client:visible ts={tsTimeoutCode} go={goWithTimeoutCode} />
+<TsGo ts={tsTimeoutCode} go={goWithTimeoutCode} />
 
 ## context.WithValue — request-scoped data
 
@@ -156,7 +156,7 @@ func main() {
     processRequest(ctx)
 }`;
 
-<TsGo client:visible ts={tsReqCode} go={goCtxValueCode} />
+<TsGo ts={tsReqCode} go={goCtxValueCode} />
 
 <GoOnly title="Five rules for context in Go">
 
@@ -198,7 +198,7 @@ func main() {
 	fmt.Println("All workers stopped")
 }`;
 
-<Playground client:visible code={playgroundContextCode} />
+<Playground code={playgroundContextCode} />
 
 export const quizQuestionsContext = [
   { q: 'What JavaScript API is most analogous to context.Context?', options: ['Promise', 'AbortController', 'EventEmitter', 'setTimeout'], answer: 1 },

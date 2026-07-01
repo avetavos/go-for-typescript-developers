@@ -3,8 +3,8 @@ title: Interfaces และการ Satisfy แบบ Implicit
 description: interfaces และการ satisfy แบบ implicit ของ Go เทียบกับ structural typing และ explicit implements ของ TypeScript
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 
@@ -43,7 +43,7 @@ func sayHello(g Greeter) {
     fmt.Println(g.Greet())
 }`;
 
-<TsGo client:visible ts={tsInterfaceCode} go={goInterfaceCode} />
+<TsGo ts={tsInterfaceCode} go={goInterfaceCode} />
 
 ## จุดแข็ง: แยกการนิยามออกจากการ implement
 
@@ -68,7 +68,7 @@ type ConsoleLogger struct{}
 func (c ConsoleLogger) Log(msg string) { fmt.Println(msg) }
 // ConsoleLogger satisfies Logger without knowing Logger exists`;
 
-<TsGo client:visible ts={tsDepsCode} go={goDepsCode} />
+<TsGo ts={tsDepsCode} go={goDepsCode} />
 
 ## ลองเล่นดู
 
@@ -107,7 +107,7 @@ func main() {
 	}
 }`;
 
-<Playground client:visible code={playgroundIfaceCode} />
+<Playground code={playgroundIfaceCode} />
 
 export const quizQuestionsIface = [
   { q: 'type ใน Go ส่งสัญญาณว่ามัน implement interface ได้อย่างไร?', options: ['ด้วยการเขียน "implements InterfaceName"', 'ด้วยการ embed interface', 'โดยอัตโนมัติ — ด้วยการมีเมธอดที่จำเป็น', 'ด้วยการลงทะเบียนกับ factory'], answer: 2 },

@@ -3,8 +3,8 @@ title: Concurrency — Overview
 description: An overview of Go's concurrency model vs JavaScript's single-threaded event loop, and the intuition behind "concurrency is not parallelism."
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -63,7 +63,7 @@ func main() {
     wg.Wait() // block until all goroutines finish
 }`;
 
-<TsGo client:visible ts={tsEventLoopCode} go={goConcurrencyOverviewCode} />
+<TsGo ts={tsEventLoopCode} go={goConcurrencyOverviewCode} />
 
 ## What you will learn in this module
 
@@ -97,7 +97,7 @@ func main() {
 	fmt.Println("All tasks complete")
 }`;
 
-<Playground client:visible code={playgroundIndexCode} />
+<Playground code={playgroundIndexCode} />
 
 <GoOnly title="Why Go is concurrent by design">
 

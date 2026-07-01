@@ -3,7 +3,7 @@ title: โครงสร้างโปรเจกต์
 description: วิธีจัดโครงสร้างโปรเจกต์ Echo — go.mod, main.go และข้อตกลงเรื่อง directory — เปรียบกับโปรเจกต์ Express หรือ NestJS
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -42,7 +42,7 @@ books-api/
   model/
     book.go                // struct / domain type ที่ใช้ร่วมกัน`;
 
-<TsGo client:visible ts={tsLayout} go={goLayout} />
+<TsGo ts={tsLayout} go={goLayout} />
 
 ## go.mod — package.json ของ Go
 
@@ -69,7 +69,7 @@ require (
     github.com/labstack/echo/v4 v4.12.0
 )`;
 
-<TsGo client:visible ts={tsPackageJson} go={goModFile} />
+<TsGo ts={tsPackageJson} go={goModFile} />
 
 ## main.go — เชื่อมแอปพลิเคชัน
 
@@ -121,7 +121,7 @@ func main() {
     e.Logger.Fatal(e.Start(":1323"))
 }`;
 
-<TsGo client:visible ts={tsMainTs} go={goMainGo} />
+<TsGo ts={tsMainTs} go={goMainGo} />
 
 <GoOnly title="ทำไมต้องใช้ internal/?">
 

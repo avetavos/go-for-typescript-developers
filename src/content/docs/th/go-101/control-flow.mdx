@@ -3,8 +3,8 @@ title: Control Flow
 description: if, for (ลูปเดียว), switch และ range ของ Go เทียบกับโครงสร้างควบคุมการทำงานของ TypeScript
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -33,7 +33,7 @@ export const goIfCode = `if score > 90 {
     fmt.Println("C")
 }`;
 
-<TsGo client:visible ts={tsIfCode} go={goIfCode} />
+<TsGo ts={tsIfCode} go={goIfCode} />
 
 ## ลูป for หนึ่งเดียว
 
@@ -63,7 +63,7 @@ for { ... }
 // range (like for...of)
 for i, item := range items { ... }`;
 
-<TsGo client:visible ts={tsLoopCode} go={goLoopCode} />
+<TsGo ts={tsLoopCode} go={goLoopCode} />
 
 ## switch
 
@@ -91,7 +91,7 @@ default:
     fmt.Println("Unknown")
 }`;
 
-<TsGo client:visible ts={tsSwitchCode} go={goSwitchCode} />
+<TsGo ts={tsSwitchCode} go={goSwitchCode} />
 
 ## range
 
@@ -117,7 +117,7 @@ for _, v := range nums {
     fmt.Println(v)
 }`;
 
-<TsGo client:visible ts={tsRangeCode} go={goRangeCode} />
+<TsGo ts={tsRangeCode} go={goRangeCode} />
 
 ## ลองเล่นดู
 
@@ -145,7 +145,7 @@ func main() {
 	}
 }`;
 
-<Playground client:visible code={playgroundCFCode} />
+<Playground code={playgroundCFCode} />
 
 <GoOnly title="if พร้อม init statement">
 

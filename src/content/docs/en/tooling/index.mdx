@@ -3,7 +3,7 @@ title: Tooling, Testing & Deployment
 description: Go ships with a batteries-included toolchain. Learn how it maps to the assemble-it-yourself Node/TypeScript ecosystem.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -89,7 +89,7 @@ build:
 run:
     go run ./cmd/app`;
 
-<TsGo client:visible ts={tsToolingCode} go={goToolingCode} />
+<TsGo ts={tsToolingCode} go={goToolingCode} />
 
 <GoOnly title="go run vs ts-node">
 

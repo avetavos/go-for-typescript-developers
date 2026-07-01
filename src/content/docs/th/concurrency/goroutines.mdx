@@ -3,8 +3,8 @@ title: Goroutines
 description: เรียนรู้ goroutines เทียบกับ async functions; การสร้างและรอ goroutines ด้วย sync.WaitGroup
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -70,7 +70,7 @@ func main() {
     fmt.Println("All done!")
 }`;
 
-<TsGo client:visible ts={tsAsyncCode} go={goGoroutineCode} />
+<TsGo ts={tsAsyncCode} go={goGoroutineCode} />
 
 ## sync.WaitGroup — รอ Goroutines ให้เสร็จ
 
@@ -98,7 +98,7 @@ go func() {
     fmt.Println(result)
 }() // วงเล็บ () ด้านหลังเพื่อ invoke ทันที`;
 
-<TsGo client:visible ts={tsAnonCode} go={goAnonCode} />
+<TsGo ts={tsAnonCode} go={goAnonCode} />
 
 <GoOnly title="Goroutines มีน้ำหนักเบาแค่ไหน?">
 
@@ -135,7 +135,7 @@ func main() {
 	fmt.Println("All squares printed")
 }`;
 
-<Playground client:visible code={playgroundGoroutinesCode} />
+<Playground code={playgroundGoroutinesCode} />
 
 export const quizQuestionsGoroutines = [
   { q: 'คีย์เวิร์ดใดที่ใช้ launch goroutine ใน Go?', options: ['async', 'spawn', 'go', 'thread'], answer: 2 },

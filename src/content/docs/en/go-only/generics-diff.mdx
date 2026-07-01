@@ -3,8 +3,8 @@ title: Generics — Go vs TypeScript
 description: Learn Go generics (type parameters and interface constraints) and understand the key differences from TypeScript generics — no structural duck-typing without explicit constraints, no conditional or mapped types.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -60,7 +60,7 @@ func Contains[T comparable](slice []T, item T) bool {
     return false
 }`;
 
-<TsGo client:visible ts={tsGenericCode} go={goGenericCode} />
+<TsGo ts={tsGenericCode} go={goGenericCode} />
 
 ## Union type constraints with ~
 
@@ -89,7 +89,7 @@ type Celsius float64       // underlying type is float64
 temps := []Celsius{20, 21, 22}
 fmt.Println(Sum(temps))    // works — ~float64 includes Celsius`;
 
-<TsGo client:visible ts={tsUnionCode} go={goUnionCode} />
+<TsGo ts={tsUnionCode} go={goUnionCode} />
 
 ## What Go generics cannot do
 
@@ -124,7 +124,7 @@ export const goNoAdvancedCode = `// Go — none of these exist; alternatives:
 // use code generation (go generate) or accept a small amount
 // of repetition. Explicitness over metaprogramming.`;
 
-<TsGo client:visible ts={tsAdvancedCode} go={goNoAdvancedCode} />
+<TsGo ts={tsAdvancedCode} go={goNoAdvancedCode} />
 
 ## Generic Map and Filter functions
 
@@ -154,7 +154,7 @@ func Filter[T any](slice []T, fn func(T) bool) []T {
 doubled := Map([]int{1,2,3}, func(n int) int { return n * 2 })
 evens   := Filter([]int{1,2,3}, func(n int) bool { return n%2==0 })`;
 
-<TsGo client:visible ts={tsMapFilterCode} go={goMapFilterCode} />
+<TsGo ts={tsMapFilterCode} go={goMapFilterCode} />
 
 ## Try it
 
@@ -212,7 +212,7 @@ func main() {
 	fmt.Println("has 9:", Contains(ints, 9))
 }`;
 
-<Playground client:visible code={playgroundGenericsCode} />
+<Playground code={playgroundGenericsCode} />
 
 <GoOnly title="comparable — The Equality Constraint">
 

@@ -3,8 +3,8 @@ title: Channels
 description: เรียนรู้ channels แบบ unbuffered และ buffered สำหรับสื่อสารระหว่าง goroutines; เปรียบเทียบกับ Promises และ callbacks
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -58,7 +58,7 @@ func main() {
     fmt.Println(result) // 42
 }`;
 
-<TsGo client:visible ts={tsPromiseCode} go={goChannelCode} />
+<TsGo ts={tsPromiseCode} go={goChannelCode} />
 
 ## Buffered Channels
 
@@ -90,7 +90,7 @@ func main() {
     fmt.Println(<-ch) // 3
 }`;
 
-<TsGo client:visible ts={tsQueueCode} go={goBufferedCode} />
+<TsGo ts={tsQueueCode} go={goBufferedCode} />
 
 ## Range over Channels
 
@@ -132,7 +132,7 @@ func main() {
     }
 }`;
 
-<TsGo client:visible ts={tsIterableCode} go={goRangeChannelCode} />
+<TsGo ts={tsIterableCode} go={goRangeChannelCode} />
 
 <GoOnly title="Channel Direction — Type Safety สำหรับ Channels">
 
@@ -179,7 +179,7 @@ func main() {
 	}
 }`;
 
-<Playground client:visible code={playgroundChannelsCode} />
+<Playground code={playgroundChannelsCode} />
 
 export const quizQuestionsChannels = [
   { q: 'อะไรคือความแตกต่างระหว่าง unbuffered และ buffered channel?', options: ['Unbuffered เร็วกว่าเสมอ', 'Unbuffered blocks จนกว่า receiver พร้อม; buffered มี queue', 'Buffered ปลอดภัยกว่าจาก race conditions', 'ไม่มีความแตกต่าง'], answer: 1 },

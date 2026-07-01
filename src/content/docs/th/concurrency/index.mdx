@@ -3,8 +3,8 @@ title: การทำงานพร้อมกัน — ภาพรวม
 description: ภาพรวมของโมเดล concurrency ของ Go เทียบกับ event loop แบบ single-threaded ของ JavaScript และความแตกต่างระหว่าง concurrency กับ parallelism
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -63,7 +63,7 @@ func main() {
     wg.Wait() // block until all goroutines finish
 }`;
 
-<TsGo client:visible ts={tsEventLoopCode} go={goConcurrencyOverviewCode} />
+<TsGo ts={tsEventLoopCode} go={goConcurrencyOverviewCode} />
 
 ## สิ่งที่จะเรียนในโมดูลนี้
 
@@ -109,7 +109,7 @@ func main() {
 	fmt.Println("All tasks complete")
 }`;
 
-<Playground client:visible code={playgroundIndexCode} />
+<Playground code={playgroundIndexCode} />
 
 export const quizQuestionsIndex = [
   { q: 'อะไรคือความแตกต่างหลักระหว่าง concurrency และ parallelism?', options: ['ไม่มีความแตกต่าง', 'Concurrency คือการจัดการหลายสิ่งพร้อมกัน; parallelism คือการทำหลายสิ่งพร้อมกันจริง ๆ', 'Parallelism ต้องการ async/await', 'Concurrency ต้องการ CPU หลาย core'], answer: 1 },

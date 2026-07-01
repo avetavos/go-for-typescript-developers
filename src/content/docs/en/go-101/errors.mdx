@@ -3,8 +3,8 @@ title: Error Handling
 description: Go errors as values, the error interface, errors.Is/As, and wrapping — compared to TypeScript try/catch.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -40,7 +40,7 @@ func readConfig(path string) (Config, error) {
     return cfg, nil
 }`;
 
-<TsGo client:visible ts={tsTryCatchCode} go={goErrorCode} />
+<TsGo ts={tsTryCatchCode} go={goErrorCode} />
 
 ## Creating errors
 
@@ -68,7 +68,7 @@ func (e *NotFoundError) Error() string {
     return fmt.Sprintf("item %s not found", e.ID)
 }`;
 
-<TsGo client:visible ts={tsErrorCreateCode} go={goErrorCreateCode} />
+<TsGo ts={tsErrorCreateCode} go={goErrorCreateCode} />
 
 ## Wrapping and unwrapping with %w
 
@@ -115,7 +115,7 @@ func main() {
 	}
 }`;
 
-<Playground client:visible code={playgroundErrCode} />
+<Playground code={playgroundErrCode} />
 
 <GoOnly title="Error wrapping with %w">
 

@@ -3,8 +3,8 @@ title: Goroutines Preview
 description: A first look at goroutines and channels — Go's built-in concurrency primitives — compared to JavaScript's async/await model. Full concurrency coverage is in the Concurrency module.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -48,7 +48,7 @@ func main() {
     // To collect results, use channels or sync.WaitGroup
 }`;
 
-<TsGo client:visible ts={tsAsyncCode} go={goGoroutineCode} />
+<TsGo ts={tsAsyncCode} go={goGoroutineCode} />
 
 ## sync.WaitGroup — wait for goroutines to finish
 
@@ -77,7 +77,7 @@ func main() {
     fmt.Println("all done")
 }`;
 
-<TsGo client:visible ts={tsPromiseAllCode} go={goWaitGroupCode} />
+<TsGo ts={tsPromiseAllCode} go={goWaitGroupCode} />
 
 ## Channels — communicate between goroutines
 
@@ -105,7 +105,7 @@ func main() {
     }
 }`;
 
-<TsGo client:visible ts={tsChannelCode} go={goChannelCode} />
+<TsGo ts={tsChannelCode} go={goChannelCode} />
 
 ## Try it
 
@@ -146,7 +146,7 @@ func main() {
 	fmt.Println("all workers done")
 }`;
 
-<Playground client:visible code={playgroundGoroutinesCode} />
+<Playground code={playgroundGoroutinesCode} />
 
 <GoOnly title="Goroutines Are Not OS Threads">
 

@@ -3,8 +3,8 @@ title: Pointers (ตัวชี้)
 description: เรียนรู้ pointer ใน Go — &, * และ pointer type — รวมถึงเหตุผลที่ใช้ เทียบกับโมเดล reference แบบ implicit ของ JavaScript
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -51,7 +51,7 @@ func main() {
     // increment(x)  จะเป็น compile error (type ไม่ตรง)
 }`;
 
-<TsGo client:visible ts={tsRefCode} go={goPointerCode} />
+<TsGo ts={tsRefCode} go={goPointerCode} />
 
 ## Pointer types
 
@@ -68,7 +68,7 @@ fmt.Println(*p)     // 10 — dereference เพื่ออ่าน
 *p = 20             // เขียนผ่าน pointer
 fmt.Println(x)      // 20`;
 
-<TsGo client:visible ts={tsPtrTypeCode} go={goPtrTypeCode} />
+<TsGo ts={tsPtrTypeCode} go={goPtrTypeCode} />
 
 ## เมื่อไหร่ควรใช้ pointer ใน Go
 
@@ -105,7 +105,7 @@ func main() {
     fmt.Println(cfg.String()) // localhost:9090
 }`;
 
-<TsGo client:visible ts={tsWhenCode} go={goWhenCode} />
+<TsGo ts={tsWhenCode} go={goWhenCode} />
 
 ## ลองทำ
 
@@ -139,7 +139,7 @@ func main() {
 	fmt.Println("point:", *p)
 }`;
 
-<Playground client:visible code={playgroundPointersCode} />
+<Playground code={playgroundPointersCode} />
 
 <GoOnly title="nil Pointer — null ของ Go">
 

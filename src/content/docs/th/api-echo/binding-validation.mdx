@@ -3,8 +3,8 @@ title: Binding และ Validation
 description: Decode JSON request body เข้า Go struct ด้วย c.Bind และ validate ด้วย struct tag — เปรียบกับ class-validator/Zod ใน TypeScript
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -42,7 +42,7 @@ func createBook(c echo.Context) error {
     return c.JSON(http.StatusCreated, req)
 }`;
 
-<TsGo client:visible ts={tsBinding} go={goBinding} />
+<TsGo ts={tsBinding} go={goBinding} />
 
 ## Struct tag — ระบบ annotation ของ Go
 
@@ -71,7 +71,7 @@ type CreateBookRequest struct {
     Year   int    \`json:"year"   validate:"required,min=1000"\`
 }`;
 
-<TsGo client:visible ts={tsDecorators} go={goStructTags} />
+<TsGo ts={tsDecorators} go={goStructTags} />
 
 ## ลองใช้งาน — struct tag กับ encoding/json
 
@@ -110,7 +110,7 @@ func main() {
 	fmt.Println(string(out))
 }`;
 
-<Playground client:visible code={playgroundStructTags} />
+<Playground code={playgroundStructTags} />
 
 ## Validation ด้วย go-playground/validator
 
@@ -153,7 +153,7 @@ func createBook(c echo.Context) error {
     return c.JSON(http.StatusCreated, req)
 }`;
 
-<TsGo client:visible ts={tsClassValidator} go={goValidation} />
+<TsGo ts={tsClassValidator} go={goValidation} />
 
 <GoOnly title="validate tag ที่ใช้บ่อย">
 

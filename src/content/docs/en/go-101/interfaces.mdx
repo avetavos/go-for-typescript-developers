@@ -3,8 +3,8 @@ title: Interfaces & Implicit Satisfaction
 description: Go interfaces and implicit satisfaction — compared to TypeScript structural typing and explicit implements.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 
@@ -43,7 +43,7 @@ func sayHello(g Greeter) {
     fmt.Println(g.Greet())
 }`;
 
-<TsGo client:visible ts={tsInterfaceCode} go={goInterfaceCode} />
+<TsGo ts={tsInterfaceCode} go={goInterfaceCode} />
 
 ## The power: decouple definition from implementation
 
@@ -68,7 +68,7 @@ type ConsoleLogger struct{}
 func (c ConsoleLogger) Log(msg string) { fmt.Println(msg) }
 // ConsoleLogger satisfies Logger without knowing Logger exists`;
 
-<TsGo client:visible ts={tsDepsCode} go={goDepsCode} />
+<TsGo ts={tsDepsCode} go={goDepsCode} />
 
 ## Try it
 
@@ -107,7 +107,7 @@ func main() {
 	}
 }`;
 
-<Playground client:visible code={playgroundIfaceCode} />
+<Playground code={playgroundIfaceCode} />
 
 export const quizQuestionsIface = [
   { q: 'How does a Go type signal it implements an interface?', options: ['By writing "implements InterfaceName"', 'By embedding the interface', 'Automatically — by having the required methods', 'By registering with a factory'], answer: 2 },

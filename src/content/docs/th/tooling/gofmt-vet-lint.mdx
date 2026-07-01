@@ -3,7 +3,7 @@ title: gofmt, go vet และ Linting
 description: เครื่องมือจัดรูปแบบและ static analysis ของ Go — ทางเลือกแบบ zero-config แทน Prettier, ESLint และ tsc
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -54,7 +54,7 @@ go fmt ./...
 # หรือเชื่อมกับ "format on save" ของ editor
 # ผลลัพธ์จะเหมือนกันเสมอไม่ว่าใครจะรัน`;
 
-<TsGo client:visible ts={tsFmtCode} go={goFmtCode} />
+<TsGo ts={tsFmtCode} go={goFmtCode} />
 
 ## go vet — ตัวตรวจจับบัก
 
@@ -89,7 +89,7 @@ go vet ./...
 # ตัวอย่าง output เมื่อมีปัญหา:
 # ./main.go:12:2: Printf format %d has arg name of wrong type string`;
 
-<TsGo client:visible ts={tsVetCode} go={goVetCode} />
+<TsGo ts={tsVetCode} go={goVetCode} />
 
 ## staticcheck และ golangci-lint
 

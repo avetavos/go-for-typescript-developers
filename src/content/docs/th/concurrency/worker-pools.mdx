@@ -3,8 +3,8 @@ title: Worker Pools
 description: สร้าง worker pool pattern ด้วย goroutines และ channels; เปรียบเทียบกับ Promise pool ใน JavaScript
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -92,7 +92,7 @@ func main() {
     fmt.Println("Sum of squares:", sum) // 285
 }`;
 
-<TsGo client:visible ts={tsPromisePoolCode} go={goWorkerPoolCode} />
+<TsGo ts={tsPromisePoolCode} go={goWorkerPoolCode} />
 
 ## Pipeline Pattern — ต่อ Workers เป็น Chain
 
@@ -139,7 +139,7 @@ func main() {
     }
 }`;
 
-<TsGo client:visible ts={tsPipelineCode} go={goPipelineCode} />
+<TsGo ts={tsPipelineCode} go={goPipelineCode} />
 
 <GoOnly title="เหตุใด Worker Pool ถึง Idiomatic ใน Go">
 
@@ -196,7 +196,7 @@ func main() {
 	fmt.Println("Sum of squares:", sum)
 }`;
 
-<Playground client:visible code={playgroundWorkerPoolCode} />
+<Playground code={playgroundWorkerPoolCode} />
 
 export const quizQuestionsWorkerPool = [
   { q: 'ใน Go worker pool pattern, jobs channel ทำหน้าที่เป็นอะไร?', options: ['Mutex สำหรับ workers', 'Concurrent-safe queue สำหรับงาน', 'Logger', 'Error handler'], answer: 1 },

@@ -3,8 +3,8 @@ title: Select
 description: Use select to wait on multiple channels simultaneously — Go's answer to Promise.race. Includes the default case for non-blocking polls.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -69,7 +69,7 @@ func main() {
     }
 }`;
 
-<TsGo client:visible ts={tsRaceCode} go={goSelectCode} />
+<TsGo ts={tsRaceCode} go={goSelectCode} />
 
 ## default case — non-blocking poll
 
@@ -108,7 +108,7 @@ func main() {
     }
 }`;
 
-<TsGo client:visible ts={tsNonBlockCode} go={goDefaultSelectCode} />
+<TsGo ts={tsNonBlockCode} go={goDefaultSelectCode} />
 
 ## select with context cancellation
 
@@ -150,7 +150,7 @@ func worker(ctx context.Context, jobs <-chan int, wg *sync.WaitGroup) {
     }
 }`;
 
-<TsGo client:visible ts={tsAbortCode} go={goCtxSelectCode} />
+<TsGo ts={tsAbortCode} go={goCtxSelectCode} />
 
 <GoOnly title="Select picks randomly when multiple cases are ready">
 
@@ -201,7 +201,7 @@ func main() {
 	}
 }`;
 
-<Playground client:visible code={playgroundSelectCode} />
+<Playground code={playgroundSelectCode} />
 
 export const quizQuestionsSelect = [
   { q: 'What JavaScript construct is most analogous to Go\'s select statement?', options: ['switch/case', 'Promise.all', 'Promise.race', 'async/await'], answer: 2 },

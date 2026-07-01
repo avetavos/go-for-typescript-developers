@@ -3,8 +3,8 @@ title: Generics
 description: Type parameters, constraint interfaces, comparable, and when to choose generics over plain interfaces — compared to TypeScript generics.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -57,7 +57,7 @@ func (s *Stack[T]) Pop() (T, bool) {
     return last, true
 }`;
 
-<TsGo client:visible ts={tsGenericCode} go={goGenericCode} />
+<TsGo ts={tsGenericCode} go={goGenericCode} />
 
 ## Constraint interfaces
 
@@ -83,7 +83,7 @@ func Add[T Number](a, b T) T {
 x := Add(1, 2)         // int
 y := Add(1.5, 2.5)     // float64`;
 
-<TsGo client:visible ts={tsConstraintCode} go={goConstraintCode} />
+<TsGo ts={tsConstraintCode} go={goConstraintCode} />
 
 The `~int` syntax means "any type whose **underlying type** is `int`" — so your custom type `type MyID int` satisfies `~int`. Without `~` only the exact `int` type would match.
 
@@ -108,7 +108,7 @@ func Contains[T comparable](slice []T, val T) bool {
 
 // Works for int, string, struct with comparable fields — but NOT for slices or maps.`;
 
-<TsGo client:visible ts={tsComparableCode} go={goComparableCode} />
+<TsGo ts={tsComparableCode} go={goComparableCode} />
 
 ## Combining method sets with type unions
 
@@ -156,7 +156,7 @@ func Filter[T any](s []T, fn func(T) bool) []T {
 
 // Since Go 1.23 slices.Collect + iter package handles this more idiomatically`;
 
-<TsGo client:visible ts={tsFpCode} go={goFpCode} />
+<TsGo ts={tsFpCode} go={goFpCode} />
 
 ## Generics vs interfaces — when to use which
 
@@ -223,7 +223,7 @@ func main() {
 	fmt.Println("Contains 9?", Contains(ints, 9))
 }`;
 
-<Playground client:visible code={playgroundGenericsCode} />
+<Playground code={playgroundGenericsCode} />
 
 export const quizQuestionsGenerics = [
   { q: 'What does the `~int` syntax mean in a Go constraint interface?', options: ['Exactly the int type only', 'Any type whose underlying type is int', 'A nullable int', 'An alias for int64'], answer: 1 },

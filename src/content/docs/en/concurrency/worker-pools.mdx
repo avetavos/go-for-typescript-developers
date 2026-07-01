@@ -3,8 +3,8 @@ title: Worker Pools
 description: Implement the worker pool pattern with goroutines and channels for bounded parallel work. Compare to a Promise concurrency pool in JavaScript.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -80,7 +80,7 @@ func main() {
     fmt.Println("Sum of squares:", sum) // 285
 }`;
 
-<TsGo client:visible ts={tsPromisePoolCode} go={goWorkerPoolCode} />
+<TsGo ts={tsPromisePoolCode} go={goWorkerPoolCode} />
 
 ## Pipeline pattern — chaining workers
 
@@ -127,7 +127,7 @@ func main() {
     }
 }`;
 
-<TsGo client:visible ts={tsPipelineCode} go={goPipelineCode} />
+<TsGo ts={tsPipelineCode} go={goPipelineCode} />
 
 <GoOnly title="Why worker pools are idiomatic in Go">
 
@@ -184,7 +184,7 @@ func main() {
 	fmt.Println("Sum of squares:", sum)
 }`;
 
-<Playground client:visible code={playgroundWorkerPoolCode} />
+<Playground code={playgroundWorkerPoolCode} />
 
 export const quizQuestionsWorkerPool = [
   { q: 'In the Go worker pool pattern, what role does the jobs channel play?', options: ['A mutex for the workers', 'A concurrent-safe queue for pending work', 'A logger', 'An error handler'], answer: 1 },

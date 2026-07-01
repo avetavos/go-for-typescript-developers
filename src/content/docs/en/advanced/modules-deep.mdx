@@ -3,7 +3,7 @@ title: Modules Deep Dive
 description: Semantic versioning, go.mod/go.sum, replace directives, vendoring, and Go workspaces — compared to npm, package-lock.json, and npm workspaces.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -39,7 +39,7 @@ require (
 // Test-only deps are included in require; the
 // compiler excludes them from production binaries.`;
 
-<TsGo client:visible ts={npmManifestCode} go={goManifestCode} />
+<TsGo ts={npmManifestCode} go={goManifestCode} />
 
 ## go.mod — the manifest
 
@@ -119,7 +119,7 @@ import "github.com/some-lib/core/v2"
 // v1:  import "github.com/some-lib/core"
 // v2:  import "github.com/some-lib/core/v2"`;
 
-<TsGo client:visible ts={npmMajorCode} go={goMajorCode} />
+<TsGo ts={npmMajorCode} go={goMajorCode} />
 
 ## replace directive — local development
 
@@ -189,7 +189,7 @@ use (
 // Now api can import shared directly from disk,
 // no replace directive needed.`;
 
-<TsGo client:visible ts={npmWorkspaceCode} go={goWorkspaceCode} />
+<TsGo ts={npmWorkspaceCode} go={goWorkspaceCode} />
 
 ```bash
 # Initialise a workspace (creates go.work)

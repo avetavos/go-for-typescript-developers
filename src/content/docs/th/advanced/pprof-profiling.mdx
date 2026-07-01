@@ -3,7 +3,7 @@ title: pprof Profiling
 description: runtime/pprof และ net/http/pprof สำหรับ CPU และ heap profiles, อ่าน flame graphs — เปรียบเทียบกับ node --prof และ clinic.js
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -108,7 +108,7 @@ go tool pprof cpu.out
 // เปิด interactive web UI (ต้องการ Graphviz):
 go tool pprof -http=:8080 cpu.out`;
 
-<TsGo client:visible ts={nodeProfilingCode} go={goProfilingCode} />
+<TsGo ts={nodeProfilingCode} go={goProfilingCode} />
 
 ## อ่าน CPU profile
 

@@ -3,8 +3,8 @@ title: Reflection
 description: reflect package, struct tags ที่ runtime, use cases และข้อควรระวัง — เปรียบเทียบกับ TypeScript's reflect-metadata และ decorators
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -46,7 +46,7 @@ for i := 0; i < t.NumField(); i++ {
 // Name: string
 // Age: int`;
 
-<TsGo client:visible ts={tsReflectCode} go={goReflectCode} />
+<TsGo ts={tsReflectCode} go={goReflectCode} />
 
 ## Struct tags
 
@@ -76,7 +76,7 @@ type CreateUserDTO struct {
 // encoding/json ใช้ "json" tag อัตโนมัติ
 // Validator libraries อ่าน "validate" ที่ runtime`;
 
-<TsGo client:visible ts={tsTagCode} go={goTagCode} />
+<TsGo ts={tsTagCode} go={goTagCode} />
 
 ## อ่าน struct tag ที่ runtime
 
@@ -183,7 +183,7 @@ func main() {
 	printValues(u)
 }`;
 
-<Playground client:visible code={playgroundReflectCode} />
+<Playground code={playgroundReflectCode} />
 
 export const quizQuestionsReflection = [
   { q: 'ฟังก์ชันใดที่ return runtime type descriptor ของค่า Go?', options: ['reflect.ValueOf', 'reflect.TypeOf', 'reflect.KindOf', 'reflect.MetaOf'], answer: 1 },

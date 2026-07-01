@@ -3,7 +3,7 @@ title: รูปแบบโครงสร้าง Project
 description: โครงสร้าง Go project แบบ idiomatic — cmd/, internal/ และการตั้งชื่อ package — เทียบกับ convention ของ src/ ที่คุ้นเคยจาก Node/TypeScript
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
+import TsGo from '../../../../components/TsGo.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -61,7 +61,7 @@ pkg/
 go.mod
 go.sum`;
 
-<TsGo client:visible ts={tsLayoutCode} go={goLayoutCode} />
+<TsGo ts={tsLayoutCode} go={goLayoutCode} />
 
 ## cmd/ — หนึ่ง directory ต่อหนึ่ง binary
 

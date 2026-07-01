@@ -3,8 +3,8 @@ title: Defer, Panic และ Recover
 description: เรียนรู้ defer สำหรับ cleanup แบบ deterministic, panic สำหรับ error ที่กู้คืนไม่ได้, และ recover เพื่อดัก panic — เทียบกับ try/finally/throw ของ JavaScript
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -44,7 +44,7 @@ func readFile(path string) (string, error) {
     return string(data), nil
 }`;
 
-<TsGo client:visible ts={tsFinallyCode} go={goDeferCode} />
+<TsGo ts={tsFinallyCode} go={goDeferCode} />
 
 ## defer รันตาม LIFO
 
@@ -71,7 +71,7 @@ export const goLifoCode = `func doWork() {
     processRows()
 }`;
 
-<TsGo client:visible ts={tsLifoCode} go={goLifoCode} />
+<TsGo ts={tsLifoCode} go={goLifoCode} />
 
 ## panic — เหมือน throw แต่สำหรับ error ที่กู้คืนไม่ได้
 
@@ -104,7 +104,7 @@ func safeDivide(a, b float64) (float64, error) {
     return a / b, nil
 }`;
 
-<TsGo client:visible ts={tsThrowCode} go={goPanicCode} />
+<TsGo ts={tsThrowCode} go={goPanicCode} />
 
 ## recover — ดัก panic
 
@@ -137,7 +137,7 @@ func main() {
     fmt.Println(err) // panic recovered: oh no!
 }`;
 
-<TsGo client:visible ts={tsCatchCode} go={goRecoverCode} />
+<TsGo ts={tsCatchCode} go={goRecoverCode} />
 
 ## ลองทำ
 
@@ -183,7 +183,7 @@ func main() {
 	fmt.Printf("5/0  = %.1f err=%v\\n", r2, err)
 }`;
 
-<Playground client:visible code={playgroundDeferCode} />
+<Playground code={playgroundDeferCode} />
 
 <GoOnly title="defer Argument ถูก Evaluate ทันที">
 

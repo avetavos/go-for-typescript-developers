@@ -3,8 +3,8 @@ title: The Go Mental Model
 description: The key mindset shifts TypeScript developers need when moving to Go — compiled binary, no node_modules, goroutines, explicit errors, and simplicity.
 ---
 
-import TsGo from '../../../../components/TsGo.tsx';
-import Playground from '../../../../components/Playground.tsx';
+import TsGo from '../../../../components/TsGo.astro';
+import Playground from '../../../../components/Playground.astro';
 import Quiz from '../../../../components/Quiz.tsx';
 import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 import GoOnly from '../../../../components/GoOnly.astro';
@@ -27,7 +27,7 @@ export const goRuntimeCode = `// Go workflow
 // ./myapp
 // (nothing else needed on the server)`;
 
-<TsGo client:visible ts={tsRuntimeCode} go={goRuntimeCode} />
+<TsGo ts={tsRuntimeCode} go={goRuntimeCode} />
 
 This matters for Docker images (Go images can be `FROM scratch`), Lambda cold starts, and CLI distribution — you ship one file.
 
@@ -54,7 +54,7 @@ require (
 )
 // dependencies compiled into the binary — nothing to ship separately`;
 
-<TsGo client:visible ts={tsDepsCode} go={goDepsCode} />
+<TsGo ts={tsDepsCode} go={goDepsCode} />
 
 ## 3. Goroutines vs the event loop
 
@@ -77,7 +77,7 @@ func doWork(ch chan int) {
 }
 // launch with: go doWork(ch)`;
 
-<TsGo client:visible ts={tsEventLoopCode} go={goGoroutineCode} />
+<TsGo ts={tsEventLoopCode} go={goGoroutineCode} />
 
 Goroutines and channels are covered in depth in a later module. For now, the mental model is: Go concurrency is parallel by default, not just async.
 
@@ -111,7 +111,7 @@ if err != nil {
     // must handle — compiler warns if you don't use err
 }`;
 
-<TsGo client:visible ts={tsThrowCode} go={goReturnErrCode} />
+<TsGo ts={tsThrowCode} go={goReturnErrCode} />
 
 ## 5. Simplicity — one idiomatic way
 
@@ -140,7 +140,7 @@ func (s *UserService) GetUser(ctx context.Context, id string) (User, error) {
     return User{}, nil
 }`;
 
-<TsGo client:visible ts={tsStyleCode} go={goStyleCode} />
+<TsGo ts={tsStyleCode} go={goStyleCode} />
 
 <GoOnly title="gofmt — Formatting is Not Optional">
 
@@ -188,7 +188,7 @@ func main() {
 	}
 }`;
 
-<Playground client:visible code={playgroundMentalCode} />
+<Playground code={playgroundMentalCode} />
 
 export const quizQuestionsMental = [
   { q: 'What does Go use instead of the Node.js event loop for concurrency?', options: ['Async/await', 'Worker threads', 'Goroutines and channels', 'Promises'], answer: 2 },

@@ -144,7 +144,7 @@ Previous read at 0x00c0000b4010 by goroutine 8:
   main.main.func1()
 ```
 
-Always run your test suite with `-race` in CI. The detector has ~10% runtime overhead — acceptable in test environments, not recommended in production.
+Always run your test suite with `-race` in CI. The detector has 2–20x runtime overhead (and ~5–10x memory) — acceptable in test environments, not recommended in production.
 
 </GoOnly>
 

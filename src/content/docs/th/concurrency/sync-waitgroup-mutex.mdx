@@ -134,7 +134,7 @@ Read at 0x... by goroutine 8:
   main.main.func1()
 ```
 
-รัน test suite ด้วย `-race` ใน CI เสมอ detector มี overhead ราว ~10% — รับได้ใน test แต่ไม่แนะนำให้ใช้ตอน production
+รัน test suite ด้วย `-race` ใน CI เสมอ detector มี runtime overhead ราว 2–20 เท่า (และใช้ memory เพิ่ม ~5–10 เท่า) — รับได้ใน test แต่ไม่แนะนำให้ใช้ตอน production
 
 </GoOnly>
 

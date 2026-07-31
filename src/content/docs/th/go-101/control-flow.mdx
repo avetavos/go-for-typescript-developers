@@ -1,6 +1,6 @@
 ---
 title: Control Flow
-description: if, for (ลูปเดียว), switch และ range ของ Go เทียบกับโครงสร้างควบคุมการทำงานของ TypeScript
+description: if, for (loop เดียวจบ), switch และ range ของ Go เทียบกับโครงสร้างควบคุมการทำงานของ TypeScript
 ---
 
 import TsGo from '../../../../components/TsGo.astro';
@@ -11,7 +11,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## Control flow: ส่วนใหญ่คุ้นเคย มีหนึ่งเรื่องที่น่าแปลกใจ
 
-TypeScript มี `if`, `for`, `for...of`, `for...in`, `while`, `do...while` และ `switch` ส่วน Go มี `if`, `for` และ `switch` — และ **`for` ทำหน้าที่ของลูปทุกประเภท** ไม่มีคีย์เวิร์ด `while` พอได้ลองใช้ คุณจะชอบความเรียบง่ายของมัน
+TypeScript มี `if`, `for`, `for...of`, `for...in`, `while`, `do...while` และ `switch` ส่วน Go มีแค่ `if`, `for` และ `switch` — โดย **`for` ตัวเดียวทำหน้าที่ของ loop ทุกแบบ** ไม่มี keyword `while` พอได้ลองใช้จริง คุณจะติดใจความเรียบง่ายแบบนี้
 
 ## if / else
 
@@ -35,9 +35,9 @@ export const goIfCode = `if score > 90 {
 
 <TsGo ts={tsIfCode} go={goIfCode} />
 
-## ลูป for หนึ่งเดียว
+## loop for หนึ่งเดียว
 
-`for` ของ Go ครอบคลุมรูปแบบการวนลูปทุกแบบ:
+`for` ของ Go ครอบคลุมรูปแบบการวน loop ทุกแบบ:
 
 export const tsLoopCode = `// C-style
 for (let i = 0; i < 5; i++) { ... }
@@ -149,7 +149,7 @@ func main() {
 
 <GoOnly title="if พร้อม init statement">
 
-`if` ของ Go สามารถมี init statement สั้นๆ ก่อนเงื่อนไขได้ โดยคั่นด้วยเซมิโคลอน ซึ่งเป็นแนวทางที่ idiomatic สำหรับการจำกัดขอบเขตของตัวแปร error ให้อยู่ในบล็อก `if`:
+`if` ของ Go ใส่ init statement สั้น ๆ ก่อนเงื่อนไขได้ โดยคั่นด้วยเซมิโคลอน เป็นแนวทาง idiomatic ที่ใช้จำกัดขอบเขตตัวแปร error ให้อยู่แค่ในบล็อก `if`:
 
 ```go
 if err := doSomething(); err != nil {

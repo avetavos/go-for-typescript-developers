@@ -100,7 +100,7 @@ import "myapp/internal/service"   // จาก github.com/other/proj ✗
 
 ## pkg/ — shared code แบบ optional
 
-`pkg/` ไว้สำหรับโค้ดที่คุณตั้งใจให้ consumer ภายนอก import ได้ ให้นึกถึงมันเป็น public API surface ของคุณ — ตรงข้ามกับ `internal/` หลายทีมข้าม `pkg/` ไปเลยและวาง shared utilities ไว้ใน named packages ที่ root โดยตรง
+`pkg/` ไว้สำหรับโค้ดที่คุณตั้งใจให้ consumer ภายนอก import ได้ ให้นึกถึงเป็น public API surface ของโปรเจกต์ — ตรงข้ามกับ `internal/` หลายทีมข้าม `pkg/` ไปเลย แล้ววาง shared utility ไว้ใน named package ที่ root โดยตรง
 
 ## Convention การตั้งชื่อ package
 
@@ -129,7 +129,7 @@ TypeScript มี `private`, `protected` และ module-level visibility แ�
 
 directory `internal/` ของ Go ถูกบังคับใช้โดย Go toolchain ไม่ใช่ linter หรือ type-system convention ถ้า module ภายนอกพยายาม import path ที่มี `/internal/` compiler จะปฏิเสธการ build นี่คือการรับประกันเชิงโครงสร้างที่คุณจะ bypass แบบไม่ตั้งใจไม่ได้
 
-มันเป็นวิธีแบบ idiomatic ที่จะบอกว่า "โค้ดนี้เป็น implementation detail ของ module นี้ ไม่ใช่ส่วนหนึ่งของ public API"
+นี่คือวิธี idiomatic ในการบอกว่า "โค้ดนี้เป็น implementation detail ของ module นี้ ไม่ใช่ส่วนหนึ่งของ public API"
 
 </GoOnly>
 

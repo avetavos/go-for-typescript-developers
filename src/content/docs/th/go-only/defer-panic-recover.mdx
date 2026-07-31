@@ -17,7 +17,7 @@ Go มีของที่เทียบเคียงได้ครบท�
 
 ## defer — cleanup ที่รันเสมอ
 
-`defer` ตั้งเวลาเรียก function ให้รันตอนที่ **function ที่ครอบมันอยู่ return** ไม่ว่าจะ return ด้วยวิธีไหน (ปกติ, ผ่าน `return`, หรือหลัง `panic`) วิธีนี้มาแทน pattern cleanup แบบ `try/finally` ทั่วไป
+`defer` ตั้งเวลาเรียก function ให้รันตอนที่ **function ที่ครอบอยู่ return** ไม่ว่าจะ return ด้วยวิธีไหน (ปกติ, ผ่าน `return`, หรือหลัง `panic`) วิธีนี้มาแทน pattern cleanup แบบ `try/finally` ทั่วไป
 
 export const tsFinallyCode = `// TypeScript — try/finally สำหรับ cleanup
 async function readFile(path: string): Promise<string> {
@@ -75,7 +75,7 @@ export const goLifoCode = `func doWork() {
 
 ## panic — เหมือน throw แต่สำหรับ error ที่กู้คืนไม่ได้
 
-`panic` หยุด goroutine ปัจจุบัน unwind stack (รัน deferred function ทั้งหมดระหว่างทาง) และ crash โปรแกรมหากไม่มีอะไรดักมัน ใช้เฉพาะสำหรับ **programming error** ที่ไม่ควรเกิดขึ้นในโค้ดที่ถูกต้อง ไม่ใช่สำหรับ error ที่คาดการณ์ได้ที่คุณต้องการส่งต่อให้ caller
+`panic` หยุด goroutine ปัจจุบัน unwind stack (รัน deferred function ทั้งหมดระหว่างทาง) แล้ว crash โปรแกรมถ้าไม่มีใครดักไว้ ใช้เฉพาะกับ **programming error** ที่ไม่ควรเกิดขึ้นในโค้ดที่ถูกต้อง ไม่ใช่สำหรับ error ที่คาดการณ์ได้ที่คุณต้องการส่งต่อให้ caller
 
 export const tsThrowCode = `// TypeScript — throw สำหรับ error ทุกประเภท
 function divide(a: number, b: number): number {
@@ -236,7 +236,7 @@ func mustPositive(n int) int {
 </GoOnly>
 
 export const quizQuestionsDeferPanic = [
-  { q: 'deferred function รันเมื่อไหร่?', options: ['ทันทีหลัง defer statement', 'ท้ายไฟล์', 'เมื่อ function ที่ครอบมันอยู่ return (ทุกกรณี)', 'เฉพาะเมื่อเกิด panic'], answer: 2 },
+  { q: 'deferred function รันเมื่อไหร่?', options: ['ทันทีหลัง defer statement', 'ท้ายไฟล์', 'เมื่อ function ที่ครอบอยู่ return (ทุกกรณี)', 'เฉพาะเมื่อเกิด panic'], answer: 2 },
   { q: 'defer หลายครั้งใน function เดียวรันในลำดับใด?', options: ['First-in first-out (FIFO)', 'Last-in first-out (LIFO)', 'ตามตัวอักษร', 'สุ่ม'], answer: 1 },
   { q: 'ต้องเรียก recover() ที่ไหนเพื่อหยุด panic?', options: ['ใน main function', 'ตอนต้นของ function ที่ panic', 'ใน deferred function', 'ใน goroutine แยก'], answer: 2 },
   { q: 'ควรใช้ panic แทนการ return error เมื่อไหร่?', options: ['เมื่อใดก็ตามที่ operation ล้มเหลว', 'สำหรับ network timeout', 'สำหรับ invariant violation และ programming bug เท่านั้น', 'เมื่อต้องการโค้ดเร็ว'], answer: 2 },

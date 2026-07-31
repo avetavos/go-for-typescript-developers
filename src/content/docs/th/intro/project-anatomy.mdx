@@ -11,11 +11,11 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## โปรเจกต์ Go มีโครงสร้างอย่างไร
 
-ถ้ามาจากสาย Node.js/TypeScript คุณคงคุ้นกับ `package.json`, `tsconfig.json`, โฟลเดอร์ `src/` และ `node_modules` โปรเจกต์ Go วางโครงสร้างต่างออกไป แต่ก็เป็นระเบียบไม่แพ้กัน เข้าใจมันตั้งแต่ต้นช่วยประหยัดเวลาไปได้หลายชั่วโมง
+ถ้ามาจากสาย Node.js/TypeScript คุณคงคุ้นกับ `package.json`, `tsconfig.json`, โฟลเดอร์ `src/` และ `node_modules` โปรเจกต์ Go วางโครงสร้างต่างออกไป แต่ก็เป็นระเบียบไม่แพ้กัน เข้าใจโครงสร้างนี้ตั้งแต่ต้นช่วยประหยัดเวลาไปได้หลายชั่วโมง
 
 ## go.mod — package.json ของ Go
 
-`go.mod` ถูกสร้างโดย `go mod init` และเป็น root manifest ของ Go module มันประกาศชื่อ module (prefix ของ import path ของคุณ) และ Go version ขั้นต่ำที่ต้องใช้
+`go mod init` เป็นคนสร้าง `go.mod` ขึ้นมาเป็น root manifest ของ Go module ในไฟล์นี้จะประกาศชื่อ module (prefix ของ import path ของคุณ) และ Go version ขั้นต่ำที่ต้องใช้
 
 export const tsPackageJsonCode = `// package.json
 {
@@ -105,7 +105,7 @@ myapp/
 
 <GoOnly title="internal/ — privacy ที่ compiler enforce">
 
-ใน TypeScript โค้ด "private" เป็นแค่ convention (prefix `_`, barrel file, documentation) แต่ Go บังคับมันที่ระดับ compiler ผ่าน directory `internal/` package ใดก็ตามที่อยู่ใน `internal/` จะถูก import ได้เฉพาะจากโค้ดที่อยู่ใต้ parent directory tree เดียวกันเท่านั้น
+ใน TypeScript โค้ด "private" เป็นแค่ convention (prefix `_`, barrel file, documentation) ส่วน Go บังคับเรื่องนี้ที่ระดับ compiler ผ่าน directory `internal/` package ที่อยู่ใน `internal/` จะ import ได้เฉพาะจากโค้ดที่อยู่ใต้ parent directory tree เดียวกันเท่านั้น
 
 ```
 myapp/
@@ -187,7 +187,7 @@ func main() {
 <Playground code={playgroundProjectCode} />
 
 export const quizQuestionsProject = [
-  { q: 'ใน Go อะไรกำหนดว่า identifier ถูก export (public) หรือไม่?', options: ['Keyword `export` ก่อนมัน', 'อยู่ในไฟล์ชื่อ exports.go', 'เริ่มต้นด้วยตัวพิมพ์ใหญ่', 'อยู่ใน directory pkg/'], answer: 2 },
+  { q: 'ใน Go อะไรกำหนดว่า identifier ถูก export (public) หรือไม่?', options: ['มี keyword `export` นำหน้า', 'อยู่ในไฟล์ชื่อ exports.go', 'เริ่มต้นด้วยตัวพิมพ์ใหญ่', 'อยู่ใน directory pkg/'], answer: 2 },
   { q: 'directory `internal/` enforce อะไรใน Go?', options: ['โค้ดในนั้นรันเร็วกว่า', 'เฉพาะ module tree เดียวกันเท่านั้นที่ import package เหล่านั้นได้', 'Package ข้างในถูก test อัตโนมัติ', 'โค้ดทั้งหมดข้างในถูก format ด้วย gofmt'], answer: 1 },
   { q: 'ใน Go scope ของ import คืออะไร? (เช่น import "fmt")', options: ['ทั้ง module', 'ทั้งไฟล์', 'Function เดียว', 'ทั้ง package directory'], answer: 1 },
   { q: 'go.sum เทียบเท่ากับอะไรใน Node.js ecosystem?', options: ['package.json', 'tsconfig.json', 'package-lock.json', '.npmignore'], answer: 2 },

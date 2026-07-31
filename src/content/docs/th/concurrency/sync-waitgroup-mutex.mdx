@@ -21,7 +21,7 @@ await Promise.all([increment(), increment()]);
 console.log(count); // 2 — ถูกต้องเสมอ
 ```
 
-ใน Go goroutines รันบน OS thread จริง goroutine สองตัวอ่านและเขียน memory ตำแหน่งเดียวกันในจังหวะเดียวกันได้ ทำให้เกิด **data race** ซึ่งเป็น undefined behavior:
+ใน Go goroutine รันบน OS thread จริง goroutine สองตัวจึงอ่านและเขียน memory ตำแหน่งเดียวกันในจังหวะเดียวกันได้ ผลที่ได้คือ **data race** — undefined behavior เต็ม ๆ:
 
 ```go
 // อันตราย! Data race!
@@ -117,7 +117,7 @@ func (c *Cache) Set(key, value string) {
 
 <GoOnly title="ตรวจหา Data Races ด้วย -race Flag">
 
-Go มี race detector มาให้ในตัว รันโปรแกรมหรือ test ด้วย `-race` แล้ว runtime จะรายงาน race ทันทีที่มันเกิด:
+Go มี race detector มาให้ในตัว รันโปรแกรมหรือ test ด้วย `-race` แล้ว runtime จะรายงาน race ทันทีที่ตรวจพบ:
 
 ```bash
 go run -race main.go

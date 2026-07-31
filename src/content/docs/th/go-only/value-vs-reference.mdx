@@ -11,7 +11,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## JavaScript: ทุก object เป็น reference
 
-ใน JavaScript และ TypeScript ค่าทุกอย่างที่ไม่ใช่ primitive (object, array, function) ถูกส่งเป็น reference การ assign object ให้ตัวแปรใหม่ไม่ได้ copy มัน — ทั้งสองตัวแปรชี้ไปยังข้อมูลเดิม
+ใน JavaScript และ TypeScript ค่าทุกอย่างที่ไม่ใช่ primitive (object, array, function) ถูกส่งเป็น reference การ assign object ให้ตัวแปรใหม่ไม่ได้ copy ข้อมูล — ตัวแปรทั้งสองชี้ไปที่ก้อนเดิม
 
 ```ts
 // TypeScript — object แชร์กันเสมอ
@@ -169,9 +169,9 @@ func main() {
 
 <Playground code={playgroundValueRefCode} />
 
-<GoOnly title="Slice Header — สามฟิลด์ภายใน">
+<GoOnly title="Slice Header — สาม field ภายใน">
 
-Slice ไม่ใช่แค่ pointer ธรรมดา ภายในมันเป็น struct เล็กๆ ที่มีสามฟิลด์:
+Slice ไม่ใช่แค่ pointer ธรรมดา แต่ข้างในเป็น struct เล็ก ๆ ที่มีสาม field:
 
 ```
 type sliceHeader struct {
@@ -207,7 +207,7 @@ fmt.Println(emptySlice == nil) // false
 </GoOnly>
 
 export const quizQuestionsValueRef = [
-  { q: 'คุณ assign Go struct ให้ตัวแปรใหม่แล้วแก้ไข field จะเกิดอะไรกับต้นฉบับ?', options: ['มันถูกแก้ไขด้วย — struct แชร์กัน', 'มันไม่เปลี่ยน — struct copy', 'ขึ้นอยู่กับขนาด struct', 'Compile error'], answer: 1 },
+  { q: 'คุณ assign Go struct ให้ตัวแปรใหม่แล้วแก้ไข field จะเกิดอะไรกับต้นฉบับ?', options: ['ต้นฉบับเปลี่ยนตามไปด้วย — struct แชร์กัน', 'ต้นฉบับไม่เปลี่ยน — struct ถูก copy', 'ขึ้นอยู่กับขนาด struct', 'Compile error'], answer: 1 },
   { q: 'built-in function ใดสร้าง deep copy จริงๆ ของ slice?', options: ['clone()', 'dup()', 'copy()', 'make()'], answer: 2 },
   { q: 'คุณส่ง map ให้ function แล้ว function เพิ่ม key caller เห็นอะไร?', options: ['ไม่เห็นอะไร — map copy', 'เห็น key ใหม่ — map เป็น reference type', 'Compile error', 'Runtime panic'], answer: 1 },
   { q: 'json.Marshal สร้างอะไรสำหรับ nil slice ใน Go?', options: ['[]', '{}', 'null', '"nil"'], answer: 2 },

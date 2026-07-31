@@ -152,7 +152,7 @@ api.POST("/books",    bookHandler.Create)
 
 <GoOnly title="ส่ง context ให้ทุก DB call เสมอ">
 
-ทุกเมธอดใน `database/sql` มีเวอร์ชันที่รับ Context: `QueryContext`, `QueryRowContext`, `ExecContext` **ใช้เวอร์ชันที่รับ context เสมอ** และส่ง `c.Request().Context()` มาจาก handler ทำให้ database query ถูกยกเลิกได้หากเกิด client disconnect หรือ deadline หมดอายุ — กันงานเสียเปล่าใน connection pool
+ทุก method ใน `database/sql` มีเวอร์ชันที่รับ Context: `QueryContext`, `QueryRowContext`, `ExecContext` **ใช้เวอร์ชันที่รับ context เสมอ** และส่ง `c.Request().Context()` มาจาก handler ทำให้ database query ถูกยกเลิกได้หากเกิด client disconnect หรือ deadline หมดอายุ — กันงานเสียเปล่าใน connection pool
 
 ```go
 // ดี
@@ -183,7 +183,7 @@ export const quizQuestionsDatabase = [
     answer: 2,
   },
   {
-    q: 'ทำไมต้องใช้เมธอดเวอร์ชันที่รับ Context ของ database/sql (เช่น QueryContext)?',
+    q: 'ทำไมต้องใช้ method เวอร์ชันที่รับ Context ของ database/sql (เช่น QueryContext)?',
     options: [
       'เวอร์ชันที่ไม่มี context ถูก deprecated',
       'เพื่อให้ cancellation และ timeout จาก HTTP request ส่งต่อไปได้',

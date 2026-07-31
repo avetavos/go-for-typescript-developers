@@ -205,9 +205,9 @@ go test -v ./...
 
 <GoOnly title="Race detector — superpower พิเศษของ Go">
 
-Go race detector (`-race`) เป็นเครื่องมือที่น่าทึ่ง มัน instrument binary ของคุณในขณะคอมไพล์เพื่อตรวจจับเมื่อ goroutines สองตัวเข้าถึง memory เดียวกันโดยไม่มี synchronisation — แม้ว่า race จะ non-deterministic และแทบไม่เกิดขึ้นใน production
+Go race detector (`-race`) เป็นเครื่องมือที่น่าทึ่ง ทำงานด้วยการ instrument binary ของคุณตอนคอมไพล์ เพื่อจับจังหวะที่ goroutine สองตัวเข้าถึง memory ตำแหน่งเดียวกันโดยไม่มี synchronisation — จับได้แม้ race จะ non-deterministic และแทบไม่เคยโผล่ใน production
 
-TypeScript ไม่มีเทียบเท่าเพราะ JavaScript เป็น single-threaded Worker threads share memory ผ่าน `SharedArrayBuffer` และ `Atomics` แต่ race conditions ในความหมายคลาสสิก (goroutine reads และ writes ที่ไม่มี synchronised) เกิดขึ้นไม่ได้
+TypeScript ไม่มีอะไรเทียบเท่า เพราะ JavaScript เป็น single-threaded ถึง Worker thread จะ share memory ผ่าน `SharedArrayBuffer` และ `Atomics` ได้ แต่ race condition ในความหมายคลาสสิก (อ่านและเขียนพร้อมกันโดยไม่มี synchronisation) ก็เกิดขึ้นไม่ได้
 
 ใน Go concurrency เป็น first-class feature และ data races เป็น bug ประเภทหนึ่งที่เกิดได้จริง การรัน `go test -race ./...` ใน CI จึงเป็น standard practice และช่วยจับ races ที่จะโผล่เฉพาะตอนมีโหลดหนักใน production
 
@@ -216,7 +216,7 @@ TypeScript ไม่มีเทียบเท่าเพราะ JavaScript 
 export const quizQuestionsCi = [
   { q: 'flag `go test` ไหนเปิด concurrent race detector?', options: ['-concurrent', '-sync', '-race', '-detect'], answer: 2 },
   { q: '`go mod verify` ตรวจสอบอะไรใน CI pipeline?', options: ['ว่า tests ทั้งหมด pass', 'ว่า go.sum hashes ตรงกับ modules ที่ดาวน์โหลด', 'ว่า binary คอมไพล์ได้', 'ว่า golangci-lint ไม่มี findings'], answer: 1 },
-  { q: 'ใน Go CI workflow ทำไมจึงใช้ `-covermode=atomic` ควบคู่กับ `-race`?', options: ['มันเร่ง coverage collection', 'Atomic mode จำเป็นสำหรับ coverage ที่แม่นยำเมื่อ race detector ทำงาน', 'มันเปิด branch coverage แทน statement coverage', 'มันอัปโหลด coverage ไปยัง Codecov อัตโนมัติ'], answer: 1 },
+  { q: 'ใน Go CI workflow ทำไมจึงใช้ `-covermode=atomic` ควบคู่กับ `-race`?', options: ['ช่วยเร่ง coverage collection ให้เร็วขึ้น', 'Atomic mode จำเป็นสำหรับ coverage ที่แม่นยำเมื่อ race detector ทำงาน', 'เปิด branch coverage แทน statement coverage', 'อัปโหลด coverage ไปยัง Codecov อัตโนมัติ'], answer: 1 },
   { q: 'GitHub Action ไหนตั้งค่า Go toolchain ใน CI?', options: ['actions/go@v5', 'setup-go/action@v5', 'actions/setup-go@v5', 'golang/setup@v5'], answer: 2 },
 ];
 

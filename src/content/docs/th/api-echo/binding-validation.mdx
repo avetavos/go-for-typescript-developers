@@ -46,7 +46,7 @@ func createBook(c echo.Context) error {
 
 ## Struct tag — ระบบ annotation ของ Go
 
-Struct tag คือ string literal ที่แนบกับ field ทำงานคล้าย TypeScript decorator แต่ไม่ได้รันโค้ด — มันถูกอ่านตอน runtime ผ่าน reflection `json:"name"` ควบคุม serialization ส่วน `validate:"rule"` ถูกอ่านโดย validator library
+Struct tag คือ string literal ที่แนบกับ field ทำงานคล้าย TypeScript decorator แต่ไม่ได้รันโค้ด — โค้ดจะอ่าน tag ตอน runtime ผ่าน reflection ตัว `json:"name"` คุมเรื่อง serialization ส่วน `validate:"rule"` ให้ validator library อ่านไปใช้
 
 export const tsDecorators = `// TypeScript class-validator
 import { IsString, IsInt, Min, IsNotEmpty } from 'class-validator';
@@ -173,7 +173,7 @@ func createBook(c echo.Context) error {
 
 export const quizQuestionsBinding = [
   {
-    q: 'เมธอดใดของ Echo ที่ decode JSON request body เข้า struct?',
+    q: 'method ไหนของ Echo ที่ decode JSON request body เข้า struct?',
     options: ['c.Body()', 'c.JSON()', 'c.Bind()', 'c.Decode()'],
     answer: 2,
   },

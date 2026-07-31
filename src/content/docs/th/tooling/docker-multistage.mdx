@@ -18,7 +18,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ผลลัพธ์มักเป็น image ขนาด 500 MB–1 GB ที่ขน development dependency tree ทั้งก้อนขึ้น production คุณลดขนาดได้ด้วย `.dockerignore`, `--omit=dev` และ multi-stage builds แต่ตัว Node runtime เองไม่มีทางหายไป
 
-Go คอมไพล์เป็น **binary เดียวแบบ statically-linked** โดยไม่ต้องพึ่ง runtime Docker image สุดท้ายสามารถ build `FROM scratch` — base image ที่ว่างเปล่าจริง ๆ — ที่มีแค่ binary ของคุณ Go production image ทั่วไปมีขนาด **5–20 MB**
+Go คอมไพล์ออกมาเป็น **binary เดียวแบบ statically-linked** ที่ไม่ต้องพึ่ง runtime ใด ๆ image สุดท้ายจึง build จาก `FROM scratch` — base image ที่ว่างเปล่าจริง ๆ — โดยมีแค่ binary ของคุณอยู่ข้างในได้เลย ขนาด production image ของ Go จึงอยู่ราว **5–20 MB**
 
 ## Dockerfile multi-stage สำหรับ Go
 
@@ -131,9 +131,9 @@ ENTRYPOINT ["/app/server"]`;
 
 <GoOnly title="FROM scratch — image ที่ว่างเปล่า">
 
-คุณไปไกลกว่า `distroless` ได้อีกขั้นด้วยการใช้ `FROM scratch` ซึ่งเป็น Docker image ที่ว่างเปล่าทั้งหมด binary ของคุณคือไฟล์เดียวใน container
+คุณไปไกลกว่า `distroless` ได้อีกขั้นด้วย `FROM scratch` — Docker image ที่ว่างเปล่าล้วน ๆ เหลือ binary ของคุณเป็นไฟล์เดียวใน container
 
-ที่ทำได้แบบนี้เพราะ Go binary ถูก link แบบ static — มันพกทุกอย่างที่ต้องใช้ไว้ใน ELF/Mach-O/PE file เดียว ไม่มี dynamic linker, ไม่มี libc, ไม่มี shared libraries
+ที่ทำแบบนี้ได้เพราะ Go binary ถูก link แบบ static — พกทุกอย่างที่ต้องใช้ไว้ใน ELF/Mach-O/PE file เดียว ไม่มี dynamic linker, ไม่มี libc, ไม่มี shared library
 
 Trade-off คือ `scratch` ไม่มี shell และไม่มี CA certificates ดังนั้นถ้าแอปยิง HTTPS calls ขาออก คุณต้อง `COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/` เอง ส่วน `distroless/static` จัดการให้แล้ว จึงเป็นตัวเลือกที่ใช้งานจริงได้สะดวกกว่าสำหรับ service ส่วนใหญ่
 
@@ -141,7 +141,7 @@ Trade-off คือ `scratch` ไม่มี shell และไม่มี CA 
 
 export const quizQuestionsDocker = [
   { q: '`CGO_ENABLED=0` ทำอะไรเมื่อ build Go binary สำหรับ Docker?', options: ['เปิดใช้ C extensions เพื่อประสิทธิภาพดีขึ้น', 'ปิด C bindings เพื่อสร้าง binary แบบ fully static', 'ตั้งค่า target OS เป็น Linux', 'Strip debug symbols จาก binary'], answer: 1 },
-  { q: 'ทำไม Go Docker image ถึงใช้ `FROM scratch` ได้ในขณะที่ Node image ไม่ได้?', options: ['Go image ถูกบีบอัดได้ดีกว่า', 'Go binary แบบ statically linked ไม่ต้องการ runtime', 'scratch รองรับเฉพาะ Linux', 'Node image ต้องการ database driver'], answer: 1 },
+  { q: 'ทำไม Go Docker image ถึงใช้ `FROM scratch` ได้ แต่ Node image ทำไม่ได้?', options: ['Go image ถูกบีบอัดได้ดีกว่า', 'Go binary แบบ statically linked ไม่ต้องการ runtime', 'scratch รองรับเฉพาะ Linux', 'Node image ต้องการ database driver'], answer: 1 },
   { q: '`-ldflags="-s -w"` ใน Go build command มีจุดประสงค์อะไร?', options: ['เปิด link-time optimization เพื่อความเร็ว', 'Strip debug symbols เพื่อลดขนาด binary', 'ตั้งชื่อ output binary', 'บังคับ static linking บน Windows'], answer: 1 },
   { q: 'Go production image ไหนที่แนะนำสำหรับ service ที่ต้องการ CA certificates?', options: ['FROM scratch', 'FROM ubuntu:latest', 'FROM gcr.io/distroless/static-debian12', 'FROM golang:1.22'], answer: 2 },
 ];

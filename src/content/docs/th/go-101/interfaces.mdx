@@ -10,7 +10,7 @@ import ProgressTracker from '../../../../components/ProgressTracker.tsx';
 
 ## Interfaces: เป็น structural แต่ implicit
 
-TypeScript ใช้ **structural typing** — ถ้า type มีรูปร่างที่ถูกต้อง มันก็เข้ากันได้ interface ของ Go ทำงานในแบบเดียวกัน แต่มีความแตกต่างสำคัญหนึ่งอย่าง: **คุณไม่ต้องเขียน `implements` เลย** ถ้า type หนึ่งมี method ครบทุกตัวที่ interface ต้องการ มันก็ satisfy interface นั้นโดยอัตโนมัติ เรียกว่า **implicit satisfaction**
+TypeScript ใช้ **structural typing** — ถ้า type มีรูปร่างตรงตามที่ต้องการ ก็ใช้แทนกันได้เลย interface ของ Go ก็ทำงานแบบเดียวกัน แต่ต่างกันตรงจุดสำคัญหนึ่งอย่าง: **คุณไม่ต้องเขียน `implements` เลย** ถ้า type ไหนมี method ครบทุกตัวที่ interface ต้องการ type นั้นก็ satisfy interface โดยอัตโนมัติ เรียกว่า **implicit satisfaction**
 
 ## การนิยามและการ satisfy interface
 
@@ -47,7 +47,7 @@ func sayHello(g Greeter) {
 
 ## จุดแข็ง: แยกการนิยามออกจากการ implement
 
-เพราะการ satisfy เป็นแบบ implicit interface จึงนิยามไว้ใน package ที่ **ใช้งาน** มันได้ ไม่ใช่ใน package ที่ให้ implementation นั่นแปลว่าผู้เขียน library ไม่ต้องรู้จัก interface ของคุณเลย — ถ้า type ของเขามี method ครบ ก็ใช้งานได้
+เพราะการ satisfy เป็นแบบ implicit เราจึงนิยาม interface ไว้ใน package ฝั่งที่ **ใช้งาน** ได้เลย ไม่ต้องไปนิยามใน package ที่ให้ implementation แปลว่าคนเขียน library ไม่จำเป็นต้องรู้จัก interface ของคุณเลย — ขอแค่ type ของเขามี method ครบ ก็ใช้ได้
 
 export const tsDepsCode = `// TypeScript — interface often lives with the class
 interface Logger {
@@ -110,8 +110,8 @@ func main() {
 <Playground code={playgroundIfaceCode} />
 
 export const quizQuestionsIface = [
-  { q: 'type ใน Go ส่งสัญญาณว่ามัน implement interface ได้อย่างไร?', options: ['ด้วยการเขียน "implements InterfaceName"', 'ด้วยการ embed interface', 'โดยอัตโนมัติ — ด้วยการมีเมธอดที่จำเป็น', 'ด้วยการลงทะเบียนกับ factory'], answer: 2 },
-  { q: 'ที่ใดคือที่ที่ idiomatic ในการนิยาม interface ของ Go?', options: ['ใน package ที่ให้ implementation', 'ใน package ที่ใช้งานมัน', 'ใน package types ที่ใช้ร่วมกันเสมอ', 'ข้างๆ main()'], answer: 1 },
+  { q: 'type ใน Go บอกได้อย่างไรว่า implement interface แล้ว?', options: ['ด้วยการเขียน "implements InterfaceName"', 'ด้วยการ embed interface', 'โดยอัตโนมัติ — แค่มี method ที่จำเป็นครบ', 'ด้วยการลงทะเบียนกับ factory'], answer: 2 },
+  { q: 'ที่ไหนคือที่ที่ idiomatic ในการนิยาม interface ของ Go?', options: ['ใน package ที่ให้ implementation', 'ใน package ฝั่งที่เอาไปใช้งาน', 'ใน package types ที่ใช้ร่วมกันเสมอ', 'ข้างๆ main()'], answer: 1 },
   { q: 'structural typing ของ TypeScript กับการ satisfy interface แบบ implicit ของ Go นั้น:', options: ['เป็นแนวคิดที่ต่างกันโดยสิ้นเชิง', 'คล้ายกัน — ทั้งคู่จับคู่ตามรูปร่าง แต่ Go ไม่มีคีย์เวิร์ด implements', 'เหมือนกันเป๊ะ — Go แค่ลอก TypeScript มา', 'ทั้งคู่ต้องประกาศอย่างชัดเจน'], answer: 1 },
   { q: 'empty interface ใน Go คืออะไร (type ที่ทุก type satisfy ได้)?', options: ['interface{}  or  any', 'object', 'unknown', 'void'], answer: 0 },
 ];

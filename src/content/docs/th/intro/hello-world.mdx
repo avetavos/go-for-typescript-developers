@@ -36,7 +36,7 @@ func main() {
 
 **`package main`**
 
-ทุกไฟล์ Go เริ่มด้วยการประกาศ `package` และ package ชื่อ `main` นั้นพิเศษ — มันบอกว่านี่คือโปรแกรมที่รันได้ (ไม่ใช่ library) คิดเสียว่าเทียบเท่ากับไฟล์ที่ field `"main"` ใน `package.json` ชี้ไปหา
+ทุกไฟล์ Go เริ่มด้วยการประกาศ `package` และ package ชื่อ `main` นั้นพิเศษ — เป็นตัวบอกว่านี่คือโปรแกรมที่รันได้ ไม่ใช่ library เทียบได้กับไฟล์ที่ field `"main"` ใน `package.json` ชี้ไปหา
 
 **`import "fmt"`**
 
@@ -44,7 +44,7 @@ func main() {
 
 **`func main()`**
 
-Function `main` คือ entry point ทุกโปรแกรม Go ที่รันได้ต้องมี `func main()` เพียงตัวเดียวใน package `main` และมันไม่รับ argument — ถ้าต้องการ command-line argument ให้เข้าถึงผ่าน `os.Args`
+Function `main` คือ entry point ทุกโปรแกรม Go ที่รันได้ต้องมี `func main()` เพียงตัวเดียวใน package `main` และไม่รับ argument ใด ๆ — ถ้าต้องการ command-line argument ให้อ่านจาก `os.Args`
 
 export const tsEntryCode = `// TypeScript: หลาย entry style
 // 1. Top-level code (scripts)

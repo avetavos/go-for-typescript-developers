@@ -11,13 +11,13 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## JavaScript: concurrency model ด้วย async/await
 
-JavaScript เป็น single-threaded ความ concurrent มาจาก event loop เมื่อ async operation (network, I/O) เสร็จ callback จะถูก schedule เข้าคิว `async/await` เป็นแค่ syntactic sugar บน Promise ทำให้โค้ด async อ่านเหมือน synchronous แต่ก็ยังมีแค่ thread เดียวที่รันโค้ด JavaScript ของเราได้ในแต่ละช่วงเวลา
+JavaScript เป็น single-threaded ความ concurrent มาจาก event loop พอ async operation (network, I/O) ทำงานเสร็จ event loop ก็เอา callback เข้าคิวรอ ส่วน `async/await` เป็นแค่ syntactic sugar บน Promise ที่ทำให้โค้ด async อ่านเหมือน synchronous แต่สุดท้ายก็ยังมีแค่ thread เดียวที่รันโค้ด JavaScript ของเราได้ในแต่ละช่วงเวลา
 
-Go ใช้แนวทางที่แตกต่างอย่างสิ้นเชิง: **goroutine** คือ lightweight thread ที่ concurrent จริงๆ และ Go runtime schedule พวกมันบน OS thread หลายตัว คุณสามารถรัน goroutine ได้หลายล้านตัวบนเครื่องทั่วไป
+Go ใช้แนวทางที่ต่างออกไปสิ้นเชิง: **goroutine** คือ lightweight thread ที่ concurrent จริง ๆ โดย Go runtime จะ schedule กระจายลงบน OS thread หลายตัว เครื่องทั่วไปรัน goroutine พร้อมกันได้เป็นล้านตัว
 
 ## การเปิด goroutine
 
-keyword `go` เปิด function ใน goroutine ใหม่ ซึ่งเป็น execution context ที่เบาและถูก schedule แยกอิสระ คำสั่งนี้ return ทันที แล้ว goroutine ก็รัน concurrent ต่อไป
+keyword `go` เปิด function ใน goroutine ใหม่ — execution context ที่เบาและถูก schedule แยกอิสระ คำสั่งนี้ return ทันที แล้ว goroutine ก็รัน concurrent ต่อไป
 
 export const tsAsyncCode = `// TypeScript — async/await (event loop, single thread)
 async function fetchUser(id: number): Promise<User> {
@@ -52,7 +52,7 @@ func main() {
 
 ## sync.WaitGroup — รอ goroutine เสร็จ
 
-`sync.WaitGroup` คือวิธีที่ง่ายที่สุดในการรอ goroutine จำนวนที่รู้แน่นอนให้เสร็จก่อนที่ main goroutine จะออก คิดว่ามันเป็น counter ที่ block จนกว่าจะถึงศูนย์
+`sync.WaitGroup` คือวิธีที่ง่ายที่สุดในการรอ goroutine จำนวนที่รู้แน่นอนให้เสร็จก่อน main goroutine จะออก ให้นึกถึงเป็น counter ที่ block จนกว่าจะนับถึงศูนย์
 
 export const tsPromiseAllCode = `// TypeScript — Promise.all รอทั้งหมด
 const results = await Promise.all(
@@ -150,13 +150,13 @@ func main() {
 
 <GoOnly title="Goroutine ไม่ใช่ OS Thread">
 
-OS thread ทั่วไปใช้ stack memory 1–8 MB Go runtime เริ่มต้นแต่ละ goroutine ด้วย stack เล็กๆ (~2–4 KB) ที่โตแบบ dynamic Go scheduler multiplexes goroutine หลายตัวบน OS thread pool ที่เล็กกว่า (M:N scheduling) หมายความว่า:
+OS thread ทั่วไปใช้ stack memory 1–8 MB ส่วน Go runtime เริ่มต้นแต่ละ goroutine ด้วย stack เล็ก ๆ แค่ ~2–4 KB แล้วค่อยโตแบบ dynamic จากนั้น scheduler ของ Go จะ multiplex goroutine หลายตัวลงบน OS thread pool ที่เล็กกว่ามาก (M:N scheduling) ผลที่ตามมาคือ:
 
 - **Goroutine หลายล้านตัว** สามารถอยู่ร่วมกันบนเครื่องทั่วไปได้
 - การสร้าง goroutine ถูกมาก — microsecond และ KB ไม่กี่ KB
 - การ block goroutine (เช่น รอ I/O) ไม่ได้ block OS thread แต่ scheduler จะ park goroutine นั้นไว้แล้วไปรันตัวอื่นแทน
 
-เทียบกับ Node.js: JavaScript thread เดียวจัดการ callback ทั้งหมดผ่าน event loop Goroutine ของ Go รัน parallel จริงๆ บน multi-core hardware โดยไม่ต้องกำหนดค่าเพิ่มเติม
+เทียบกับ Node.js: JavaScript มี thread เดียวคอยจัดการ callback ทั้งหมดผ่าน event loop ส่วน goroutine ของ Go รัน parallel ได้จริงบน multi-core hardware โดยไม่ต้อง config อะไรเพิ่ม
 
 ```go
 // การเปิด 100,000 goroutine เป็นเรื่องปกติใน Go
@@ -169,7 +169,7 @@ for i := 0; i < 100_000; i++ {
 
 <GoOnly title="keyword go และ Race Condition">
 
-เพราะ goroutine รัน concurrent พวกมันจึงสามารถอ่านและเขียน memory เดิมพร้อมกัน นี่คือ **data race** — หนึ่งใน bug ที่อันตรายที่สุดใน concurrent programming — และ Go มีเครื่องมือตรวจจับ
+เพราะ goroutine รัน concurrent จึงอ่านและเขียน memory ตำแหน่งเดียวกันพร้อมกันได้ นี่คือ **data race** — หนึ่งใน bug ที่อันตรายที่สุดของ concurrent programming — และ Go มีเครื่องมือตรวจจับมาให้
 
 ```go
 // DATA RACE — อย่าทำแบบนี้:
@@ -188,7 +188,7 @@ wg.Wait()
 // race detector จะรายงานทันที
 ```
 
-ทางเลือกที่ปลอดภัยคือ `sync.Mutex`, `sync/atomic`, หรือ channel Concurrency module เต็มรูปแบบครอบคลุม pattern ทั้งสามอย่างละเอียด
+ทางเลือกที่ปลอดภัยคือ `sync.Mutex`, `sync/atomic` หรือ channel ซึ่ง module Concurrency จะลงรายละเอียดทั้งสาม pattern นี้แบบเต็ม ๆ
 
 </GoOnly>
 

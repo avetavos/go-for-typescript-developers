@@ -59,7 +59,7 @@ result, err := divide(10, 2)`;
 
 ## Variadic functions
 
-variadic ของ Go ทำงานเหมือน rest parameters ของ TypeScript เป๊ะๆ ใช้ `...T` ในรายการ parameter ส่วนภายในฟังก์ชันมันคือ slice
+variadic ของ Go ทำงานเหมือน rest parameter ของ TypeScript เป๊ะ ๆ ใช้ `...T` ในรายการ parameter แล้วข้างในฟังก์ชันจะได้ค่าออกมาเป็น slice
 
 export const tsVariadicCode = `function sum(...nums: number[]): number {
     return nums.reduce((a, b) => a + b, 0);

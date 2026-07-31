@@ -40,7 +40,7 @@ func getBook(c echo.Context) error {
 
 ## การลงทะเบียน route
 
-Routing API ของ Echo คล้าย Express มาก เมธอดแมปตรงกับ HTTP verb
+Routing API ของ Echo คล้าย Express มาก ชื่อ method แมปตรงกับ HTTP verb
 
 export const tsRoutes = `// Express
 app.get('/books',      listBooks);
@@ -105,7 +105,7 @@ e.GET("/books", func(c echo.Context) error {
 
 ## ผูก handler เข้ากับ struct (แบบ NestJS controller)
 
-NestJS controller เป็น class ส่วนใน Go รูปแบบ idiomatic คือ struct ที่ method ของมันคือ handler โดย dependency injection ทำผ่าน field ของ struct
+NestJS controller เป็น class ส่วนใน Go รูปแบบ idiomatic คือ struct ที่มี method เป็นตัว handler แล้วทำ dependency injection ผ่าน field ของ struct
 
 export const tsController = `// NestJS controller
 @Controller('books')

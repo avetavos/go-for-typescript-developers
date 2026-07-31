@@ -202,7 +202,7 @@ go work use ./cli
 go work sync
 ```
 
-ปกติ `go.work` มักถูก git-ignore (มันเป็นของอำนวยความสะดวกระดับ local ไม่ใช่ deployment artefact) ถ้าจำเป็นใช้ `GOWORK=off` เพื่อปิดมันใน CI ได้
+ปกติ `go.work` มักถูก git-ignore เพราะเป็นของอำนวยความสะดวกระดับ local ไม่ใช่ deployment artefact ถ้าจำเป็นก็ใช้ `GOWORK=off` เพื่อปิดใน CI ได้
 
 export const quizQuestionsModules = [
   { q: 'Go เทียบเท่า package-lock.json คืออะไร?', options: ['go.lock', 'go.sum', 'go.work', 'go.deps'], answer: 1 },

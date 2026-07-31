@@ -20,7 +20,7 @@ Go ยุบทั้งหมดนี้ไว้ในเครื่อง�
 
 ## gofmt — formatter แบบมีความเห็นชัดเจน
 
-`gofmt` (หรือ alias `go fmt`) เขียนทับไฟล์ source ของคุณ in-place เพื่อให้ตรงกับ Go style หนึ่งเดียว ต่างจาก Prettier ตรงที่มัน **ไม่มี configuration เลย** ไม่มี `.gofmtrc`, `printWidth`, หรือ option `singleQuote`
+`gofmt` (หรือ alias `go fmt`) เขียนทับไฟล์ source ของคุณ in-place เพื่อให้ตรงกับ Go style หนึ่งเดียว ต่างจาก Prettier ตรงที่ **ไม่มี configuration ให้ปรับเลย** ไม่มี `.gofmtrc`, ไม่มี `printWidth`, ไม่มี option `singleQuote`
 
 ```bash
 # จัดรูปแบบทุก package ใน module
@@ -33,7 +33,7 @@ gofmt -d .
 gofmt -w .
 ```
 
-Editor ส่วนใหญ่รัน `gofmt` อัตโนมัติเมื่อ save ถ้าใช้ VS Code ให้ติดตั้ง Go extension อย่างเป็นทางการและมันจะทำงานโดยไม่ต้อง config เพิ่มเติม
+Editor ส่วนใหญ่รัน `gofmt` อัตโนมัติตอน save ถ้าใช้ VS Code แค่ติดตั้ง Go extension ตัวทางการ ก็ทำงานได้เลยโดยไม่ต้อง config อะไรเพิ่ม
 
 export const tsFmtCode = `// .prettierrc
 {
@@ -58,7 +58,7 @@ go fmt ./...
 
 ## go vet — ตัวตรวจจับบัก
 
-`go vet` คือ static analyser ที่มาพร้อมกับ Go มันค้นหาบักจริง ๆ ไม่ใช่แค่ปัญหา style เช่น:
+`go vet` คือ static analyser ที่มาพร้อมกับ Go คอยหาบั๊กจริง ๆ ไม่ใช่แค่ปัญหา style เช่น:
 
 - การส่ง type ผิดให้ format string ของ `fmt.Printf`
 - โค้ดที่รันไปไม่ถึงหลัง `return`
@@ -69,7 +69,7 @@ go fmt ./...
 go vet ./...
 ```
 
-ให้นึกถึงมันเป็น subset ของ ESLint rules ที่จับความผิดพลาดจริง ๆ ไม่ใช่ preference ด้าน style
+ให้นึกถึงเป็น subset ของ ESLint rule ที่จับความผิดพลาดจริง ๆ ไม่ใช่ preference ด้าน style
 
 export const tsVetCode = `// ESLint (ส่วนหนึ่งของ .eslintrc.json)
 {
@@ -125,7 +125,7 @@ linters-settings:
     go: "1.22"
 ```
 
-> รันคำสั่งพวกนี้ใน terminal หลังติดตั้ง golangci-lint ตัว linter ไม่มีเวอร์ชันที่รันบนเบราว์เซอร์
+> รันคำสั่งพวกนี้ใน terminal หลังติดตั้ง golangci-lint ตัว linter ไม่มีเวอร์ชันที่รันบน browser
 
 <GoOnly title="Style เดียว — ไม่มีการทะเลาะเรื่อง style อีกต่อไป">
 

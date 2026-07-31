@@ -22,7 +22,7 @@ go version
 # go version go1.22.0 darwin/arm64
 ```
 
-โดยค่าเริ่มต้น Go จะติดตั้งที่ `/usr/local/go` ส่วน `GOPATH` (workspace directory, ค่าเริ่มต้นคือ `~/go`) คือที่เก็บ module ที่ดาวน์โหลดมาและ binary ที่ติดตั้งไว้ คุณแทบไม่ต้องสนใจมันเลย — `go mod` จัดการให้หมด
+โดยค่าเริ่มต้น Go จะติดตั้งที่ `/usr/local/go` ส่วน `GOPATH` (workspace directory, ค่าเริ่มต้นคือ `~/go`) คือที่เก็บ module ที่ดาวน์โหลดมาและ binary ที่ติดตั้งไว้ ในทางปฏิบัติคุณแทบไม่ต้องไปยุ่งกับ `GOPATH` เลย — `go mod` จัดการให้หมด
 
 ## Go CLI vs Node/npm CLI
 
@@ -124,7 +124,7 @@ go doc fmt      # อ่าน docs ของ fmt package ในเทอร์�
 
 ## Playground
 
-บทนี้เป็นบท setup — playground จึงไม่ค่อยมีบทบาทตรงนี้ (ไม่มีอะไรต้องติดตั้งในเบราว์เซอร์) แต่ในบทถัดไป (Hello World) คุณจะได้ใช้ playground รันโปรแกรม Go แรกแบบเต็มๆ
+บทนี้เป็นบท setup — playground จึงไม่ค่อยมีบทบาทตรงนี้ (ไม่มีอะไรต้องติดตั้งใน browser) แต่ในบทถัดไป (Hello World) คุณจะได้ใช้ playground รันโปรแกรม Go แรกแบบเต็มๆ
 
 export const quizQuestionsSetup = [
   { q: 'Go เทียบเท่ากับ `ts-node src/index.ts` คืออะไร?', options: ['go install .', 'go build .', 'go run .', 'go test .'], answer: 2 },

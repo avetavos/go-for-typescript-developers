@@ -11,13 +11,13 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## TypeScript: class inheritance และ mixin
 
-TypeScript ให้คุณ extend class ด้วย `extends` (single inheritance) และเลียนแบบ multiple inheritance ได้คร่าว ๆ ผ่าน mixin โมเดลความคิดคือ hierarchy: child IS-A parent
+TypeScript ให้คุณ extend class ด้วย `extends` (single inheritance) และเลียนแบบ multiple inheritance ได้คร่าว ๆ ผ่าน mixin โดย mental model คือ hierarchy: child IS-A parent
 
-Go **ไม่มี class และไม่มี inheritance** แต่ใช้ embedding แทน type หนึ่งสามารถรวม type อื่นไว้เป็น anonymous field แล้ว method กับ field ของ type ที่ embed เข้ามาจะถูก **promote** ขึ้นมาที่ outer type โมเดลความคิดคือ composition: outer HAS-A inner
+Go **ไม่มี class และไม่มี inheritance** แต่ใช้ embedding แทน คือ type หนึ่งรวม type อื่นไว้เป็น anonymous field ได้ แล้ว method กับ field ของ type ที่ embed เข้ามาจะถูก **promote** ขึ้นมาที่ outer type โดย mental model คือ composition: outer HAS-A inner
 
 ## การ embed พื้นฐาน
 
-ประกาศ embedded type โดยการเขียนชื่อมันโดยไม่มีชื่อ field ภายใน struct body
+ประกาศ embedded type ด้วยการเขียนชื่อ type ลงไปตรง ๆ โดยไม่ต้องตั้งชื่อ field ภายใน struct body
 
 export const tsExtendsCode = `// TypeScript — class inheritance
 class Animal {
@@ -66,7 +66,7 @@ func main() {
 
 ## Method promotion
 
-เมื่อ method มีอยู่เฉพาะบน embedded type (ไม่ถูก override) มันจะถูก promote อัตโนมัติไปยัง method set ของ outer type ทำให้ outer type สามารถ satisfy interface ที่ inner type implement ได้
+เมื่อ method มีอยู่เฉพาะบน embedded type (ไม่ถูก override) Go จะ promote method นั้นขึ้นมาที่ method set ของ outer type ให้อัตโนมัติ ผลคือ outer type satisfy interface ที่ inner type implement ได้ไปด้วยเลย
 
 export const tsMixinCode = `// TypeScript — mixin pattern สำหรับ reuse
 type Serializable = {

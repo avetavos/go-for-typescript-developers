@@ -242,7 +242,7 @@ TypeScript ไม่มีแนวคิดที่เทียบเท่า
 
 <GoOnly title="Type Inference in Go Generics">
 
-Go สามารถ infer type parameters จาก argument ของ function ได้ในหลายกรณี คุณจึงแทบไม่ต้องเขียนมันออกมาตรง ๆ:
+Go สามารถ infer type parameter จาก argument ของ function ได้ในหลายกรณี คุณจึงแทบไม่ต้องเขียน type parameter ออกมาตรง ๆ:
 
 ```go
 // Explicit — verbose, rarely needed
@@ -256,7 +256,7 @@ result := Map([]int{1, 2, 3}, func(n int) string {
 })
 ```
 
-Type inference จะทำงานได้เมื่อ type parameters ทั้งหมดสามารถระบุได้จาก argument เมื่อการอนุมานกำกวมหรือเป็นไปไม่ได้ (เช่น return type ไม่ได้ถูกกำหนดโดย argument ใดเลย) คุณต้องระบุมันออกมาชัดเจน
+Type inference ทำงานได้เมื่อระบุ type parameter ครบทุกตัวได้จาก argument ถ้าการอนุมานกำกวมหรือทำไม่ได้ (เช่น return type ไม่ได้ถูกกำหนดจาก argument ตัวไหนเลย) คุณต้องเขียน type parameter ออกมาเองให้ชัด
 
 </GoOnly>
 

@@ -19,7 +19,7 @@ setTimeout(() => controller.abort(), 5000); // timeout 5 วินาที
 const res = await fetch(url, { signal: controller.signal });
 ```
 
-ใน Go `context.Context` ทำหน้าที่เดียวกัน — และไปไกลกว่านั้น มันเป็น interface มาตรฐานที่พก cancellation signal, deadline (ถ้ามี) และ request-scoped value ติดตัวไปด้วย คุณส่งมันเป็น argument แรกของทุก I/O function ใน call chain เพื่อให้การ cancel ที่ด้านบนสุดส่งต่อลงไปทั้งสายโดยอัตโนมัติ
+ใน Go `context.Context` ทำหน้าที่เดียวกัน — และไปไกลกว่านั้น เพราะเป็น interface มาตรฐานที่พก cancellation signal, deadline (ถ้ามี) และ request-scoped value ติดตัวไปด้วย วิธีใช้คือส่ง context เป็น argument แรกของทุก I/O function ใน call chain การ cancel ที่ด้านบนสุดจะได้ส่งต่อลงไปทั้งสายโดยอัตโนมัติ
 
 ## context.WithCancel
 

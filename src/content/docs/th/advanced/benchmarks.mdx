@@ -134,7 +134,7 @@ BenchmarkConcatBuilder-8   2134500     562 ns/op     128 B/op     1 allocs/op
 
 <GoOnly title="b.ResetTimer และ setup costs">
 
-ถ้า benchmark ของคุณมี setup ที่แพง (เช่น สร้าง dataset ขนาดใหญ่) ให้กันมันออกจากการวัด:
+ถ้า benchmark ของคุณมี setup ที่แพง (เช่น สร้าง dataset ขนาดใหญ่) ให้กัน setup ออกจากการวัด:
 
 ```go
 func BenchmarkSearch(b *testing.B) {

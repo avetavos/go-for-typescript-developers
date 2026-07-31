@@ -10,7 +10,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## ทำไมต้อง Echo?
 
-ถ้าคุณมาจาก Node.js คุณคงคุ้นเคยกับแนวคิดของ HTTP framework แบบเบาอยู่แล้ว: ฟังก์ชันที่แมป path + verb ไปยัง handler, middleware pipeline และวิธี serialize JSON **Echo** คือ framework แบบนั้นของ Go
+ถ้าคุณมาจาก Node.js คุณคงคุ้นเคยกับแนวคิดของ HTTP framework แบบเบาอยู่แล้ว: ฟังก์ชันที่แมป path + verb ไปยัง handler, middleware pipeline และวิธี serialize JSON ฝั่ง Go ก็มี **Echo** เป็น framework แบบนั้น
 
 | สิ่งที่ต้องการ | Node.js / Express | Go / Echo |
 |---|---|---|
@@ -81,7 +81,7 @@ func main() {
 
 <GoOnly title="รันโค้ดนี้บนเครื่องของคุณ">
 
-Echo ต้องใช้ network port จริงและ Go module ที่มี third-party dependency ตัว playground ในเบราว์เซอร์รัน Echo ไม่ได้ ตัวอย่างทั้งหมดในบทนี้จึงต้องรันบนเครื่องของคุณเอง:
+Echo ต้องใช้ network port จริงและ Go module ที่มี third-party dependency ตัว playground ใน browser รัน Echo ไม่ได้ ตัวอย่างทั้งหมดในบทนี้จึงต้องรันบนเครื่องของคุณเอง:
 
 ```bash
 mkdir books-api && cd books-api
@@ -89,7 +89,7 @@ go mod init github.com/you/books-api
 go get github.com/labstack/echo/v4
 ```
 
-จากนั้น `go run main.go` จะเริ่มเซิร์ฟเวอร์บน `:1323`
+จากนั้น `go run main.go` จะเริ่ม server บน `:1323`
 
 </GoOnly>
 
@@ -105,7 +105,7 @@ export const quizQuestionsIndex = [
     answer: 2,
   },
   {
-    q: 'เมธอดใดที่ใช้เริ่มเซิร์ฟเวอร์ Echo บน address ที่กำหนด?',
+    q: 'method ไหนที่ใช้เริ่ม Echo server บน address ที่กำหนด?',
     options: ['e.Run()', 'e.Listen()', 'e.Start()', 'e.Serve()'],
     answer: 2,
   },

@@ -102,7 +102,7 @@ func main() {
 
 **value receiver** (`func (u User) Greet()`) จะได้รับสำเนาของ struct method จึงเปลี่ยนแปลงตัวต้นฉบับไม่ได้
 
-**pointer receiver** (`func (u *User) SetName(name string)`) จะได้รับ pointer ไปยัง struct และเปลี่ยนแปลงมันได้
+**pointer receiver** (`func (u *User) SetName(name string)`) จะได้ pointer ไปยัง struct ตัวจริง จึงแก้ไขค่าข้างในได้
 
 ```go
 // Value receiver — reads, does not mutate

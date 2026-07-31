@@ -15,7 +15,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## Arrays เทียบกับ Slices
 
-array ของ Go มีขนาดคงที่ฝังอยู่ใน type เลย คุณจะแทบไม่ได้ใช้มันตรงๆ **Slices** คือเวอร์ชันไดนามิกที่ยืดหยุ่น — มี array รองรับอยู่เบื้องหลังแต่มี length และ capacity ที่ขยายได้ตามต้องการ
+array ของ Go มีขนาดคงที่ฝังอยู่ใน type เลย ในทางปฏิบัติคุณแทบไม่ได้ใช้ array ตรง ๆ ตัวที่ใช้จริงคือ **slice** — เวอร์ชันไดนามิกที่มี array หนุนอยู่เบื้องหลัง แต่มี length และ capacity ที่ขยายได้ตามต้องการ
 
 export const tsArrayCode = `// TypeScript — always dynamic
 const nums: number[] = [1, 2, 3];
@@ -112,7 +112,7 @@ val, ok := scores["alice"]   // val == 0, ok == true  (present!)
 val, ok  = scores["bob"]     // val == 0, ok == false (absent)
 ```
 
-สำนวน `ok` เป็น idiomatic ของ Go — คุณจะเห็นมันกับ type assertion และการรับค่าจาก channel เช่นกัน
+สำนวน `ok` เป็น idiomatic ของ Go — เจอได้อีกทั้งกับ type assertion และการรับค่าจาก channel
 
 </GoOnly>
 
@@ -133,7 +133,7 @@ m := make(map[string]int, 100)
 export const quizQuestionsColl = [
   { q: 'collection type ใดของ Go ที่ขยายตัวได้แบบไดนามิก (เหมือน array ของ JS)?', options: ['Array', 'Slice', 'Map', 'Channel'], answer: 1 },
   { q: 'คุณ append เข้าไปใน slice ใน Go อย่างไร?', options: ['slice.push(val)', 'slice + val', 'append(slice, val)', 'slice.append(val)'], answer: 2 },
-  { q: 'การ lookup map แบบสองค่า (val, ok := m[key]) บอกอะไรคุณ?', options: ['ค่าและ type ของมัน', 'ค่าและว่าคีย์มีอยู่หรือไม่', 'ค่าและ index ของมัน', 'ไม่มีอะไรเพิ่มเติม'], answer: 1 },
+  { q: 'การ lookup map แบบสองค่า (val, ok := m[key]) บอกอะไรคุณ?', options: ['ค่าและ type ของค่านั้น', 'ค่าและว่าคีย์มีอยู่หรือไม่', 'ค่าและ index ของค่านั้น', 'ไม่มีอะไรเพิ่มเติม'], answer: 1 },
   { q: 'zero value ที่คืนมาเมื่อเข้าถึงคีย์ int ที่ไม่มีอยู่ใน map คืออะไร?', options: ['null', 'undefined', '-1', '0'], answer: 3 },
 ];
 

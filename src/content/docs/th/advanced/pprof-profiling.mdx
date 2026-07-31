@@ -140,7 +140,7 @@ Showing nodes accounting for 2.40s, 96.77% of 2.48s total
 |---|---|
 | `flat` | เวลาที่ใช้ **ใน** ฟังก์ชันนี้ (ไม่รวม callees) |
 | `flat%` | เปอร์เซ็นต์ของ total profile time |
-| `cum` | เวลา cumulative (ฟังก์ชันนี้ + ฟังก์ชันทั้งหมดที่มันเรียก) |
+| `cum` | เวลา cumulative (ฟังก์ชันนี้ + ฟังก์ชันทั้งหมดที่ฟังก์ชันนี้เรียกต่อ) |
 | `cum%` | เปอร์เซ็นต์ cumulative |
 
 ## Heap profile
@@ -199,9 +199,9 @@ execution trace คือมุมมองที่ละเอียดที�
 
 export const quizQuestionsPprof = [
   { q: 'blank import ใดที่ register HTTP endpoints /debug/pprof/?', options: ['"runtime/pprof"', '"net/http/pprof"', '"debug/pprof"', '"os/pprof"'], answer: 1 },
-  { q: 'ใน pprof output คอลัมน์ "flat" แสดงถึงอะไร?', options: ['เวลาที่ใช้ในฟังก์ชันนี้บวกกับทุกฟังก์ชันที่มันเรียก', 'เวลาที่ใช้ในฟังก์ชันนี้เท่านั้น ไม่รวม callees', 'Bytes ทั้งหมดที่ allocate โดยฟังก์ชันนี้', 'จำนวนครั้งที่ฟังก์ชันนี้ถูกเรียก'], answer: 1 },
+  { q: 'ใน pprof output คอลัมน์ "flat" แสดงถึงอะไร?', options: ['เวลาที่ใช้ในฟังก์ชันนี้บวกกับ callee ทั้งหมด', 'เวลาที่ใช้ในฟังก์ชันนี้เท่านั้น ไม่รวม callees', 'Bytes ทั้งหมดที่ allocate โดยฟังก์ชันนี้', 'จำนวนครั้งที่ฟังก์ชันนี้ถูกเรียก'], answer: 1 },
   { q: 'คำสั่งใดที่เปิด interactive flame graph web UI สำหรับ profile file?', options: ['go pprof -ui cpu.out', 'go tool pprof -http=:8080 cpu.out', 'go tool trace cpu.out', 'go run pprof cpu.out'], answer: 1 },
-  { q: 'ทำไมถึงไม่ควร expose pprof endpoints บน public interface?', options: ['มันทำให้ server ช้าลงภายใต้ load', 'มันเปิดเผย heap snapshot และ goroutine dump ที่อาจรั่วข้อมูลภายในที่ sensitive ได้', 'ต้องการ root permission ในการอ่าน', 'มัน disable garbage collector'], answer: 1 },
+  { q: 'ทำไมถึงไม่ควร expose pprof endpoints บน public interface?', options: ['ทำให้ server ช้าลงเมื่อเจอ load หนัก', 'เปิดเผย heap snapshot และ goroutine dump ที่อาจรั่วข้อมูลภายในที่ sensitive ได้', 'ต้องการ root permission ในการอ่าน', 'ปิดการทำงานของ garbage collector'], answer: 1 },
 ];
 
 <Quiz client:visible id="advanced/pprof-profiling" questions={quizQuestionsPprof} />

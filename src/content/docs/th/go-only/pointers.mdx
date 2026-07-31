@@ -143,7 +143,7 @@ func main() {
 
 <GoOnly title="nil Pointer — null ของ Go">
 
-ตัวแปร pointer ที่ยังไม่ได้ assign จะมีค่าเป็น `nil` — zero value ของ pointer type ทุกชนิดใน Go การ dereference nil pointer จะทำให้เกิด **runtime panic** (คล้ายกับ NullPointerException ใน Java) ควรตรวจสอบ pointer ก่อน dereference เสมอเมื่อมันอาจเป็น nil
+ตัวแปร pointer ที่ยังไม่ได้ assign จะมีค่าเป็น `nil` — zero value ของ pointer type ทุกชนิดใน Go การ dereference nil pointer จะทำให้เกิด **runtime panic** (คล้ายกับ NullPointerException ใน Java) ควรเช็ค pointer ก่อน dereference เสมอเมื่อมีโอกาสเป็น nil
 
 ```go
 var p *int        // p == nil

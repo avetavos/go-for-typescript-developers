@@ -11,7 +11,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## ปรับ gear จาก TypeScript มา Go
 
-ก่อนจะเขียน Go แม้แต่บรรทัดเดียว การ "ลืม" นิสัยแบบ Node/TypeScript บางอย่างจะช่วยได้มาก Go ไม่ใช่ "TypeScript ที่ไม่มีเบราว์เซอร์" — แต่เป็นชุด trade-off คนละแบบที่เลือกมาอย่างตั้งใจ บทนี้จะพาคุณผ่านการปรับ mindset 5 อย่างที่สำคัญที่สุด
+ก่อนจะเขียน Go แม้แต่บรรทัดเดียว การ "ลืม" นิสัยแบบ Node/TypeScript บางอย่างจะช่วยได้มาก Go ไม่ใช่ "TypeScript ที่ไม่มี browser" — แต่เป็นชุด trade-off คนละแบบที่เลือกมาอย่างตั้งใจ บทนี้จะพาคุณผ่านการปรับ mindset 5 อย่างที่สำคัญที่สุด
 
 ## 1. Compiled vs Interpreted (ไม่มี `node` ที่ runtime)
 
@@ -83,7 +83,7 @@ func doWork(ch chan int) {
 
 ## 4. Error แบบ Explicit vs Exception
 
-นี่คือนิสัยที่เลิกยากที่สุด ใน TypeScript/JavaScript ทุกอย่าง throw ได้หมด คุณป้องกันด้วย `try/catch` แต่ดูจาก signature ของ function ไม่ออกเลยว่ามันจะ throw ไหม ส่วนใน Go error คือ return value — เป็นส่วนหนึ่งของ contract ของ function
+นี่คือนิสัยที่เลิกยากที่สุด ใน TypeScript/JavaScript ทุกอย่าง throw ได้หมด คุณป้องกันด้วย `try/catch` แต่ดูจาก signature ของ function ไม่ออกเลยว่าจะ throw หรือเปล่า ส่วนใน Go error คือ return value — เป็นส่วนหนึ่งของ contract ของ function
 
 export const tsThrowCode = `// TypeScript: function ใดๆ ก็ throw ได้
 function parseConfig(raw: string): Config {

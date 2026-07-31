@@ -11,7 +11,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## Packages: ระบบโมดูลของ Go
 
-TypeScript ใช้ ES modules (`import`/`export`) ร่วมกับ npm สำหรับ package Go มีแนวคิดที่คล้ายกัน: **packages** (ไดเรกทอรีของไฟล์ `.go` ที่ใช้คำประกาศ `package` ร่วมกัน) และ **modules** (กลุ่มของ package ที่นิยามโดย `go.mod` เหมือนกับ `package.json`)
+TypeScript ใช้ ES modules (`import`/`export`) ร่วมกับ npm ในการจัดการ package ส่วน Go มีแนวคิดที่คล้ายกัน: **package** (ไดเรกทอรีของไฟล์ `.go` ที่ใช้คำประกาศ `package` ร่วมกัน) และ **module** (กลุ่มของ package ที่นิยามโดย `go.mod` เทียบได้กับ `package.json`)
 
 ## Packages และคำประกาศ package
 
@@ -145,7 +145,7 @@ type User struct {
 }
 ```
 
-แค่อ่านโค้ด คุณก็ดูจาก identifier ใดๆ ได้ทันทีว่ามันเป็นส่วนหนึ่งของ public API ของ package หรือไม่
+แค่อ่านโค้ด คุณก็ดูจากตัว identifier ได้ทันทีว่าเป็นส่วนหนึ่งของ public API ของ package หรือไม่
 
 </GoOnly>
 

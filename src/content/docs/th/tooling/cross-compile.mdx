@@ -123,7 +123,7 @@ ssh server "/usr/local/bin/myapp"`;
 
 <GoOnly title="ไม่มี runtime — binary คือแอปพลิเคชัน">
 
-Go binary ที่คอมไพล์แล้วเป็น self-contained อย่างสมบูรณ์ มันรวม Go runtime (goroutine scheduler, garbage collector) ไว้แบบ statically linked ภายใน binary เอง ไม่มีอะไรต้องติดตั้งบนเครื่องเป้าหมาย
+Go binary ที่คอมไพล์แล้วเป็น self-contained อย่างสมบูรณ์ ตัว Go runtime (goroutine scheduler, garbage collector) ถูก link แบบ static ฝังอยู่ใน binary เลย ไม่มีอะไรต้องติดตั้งเพิ่มบนเครื่องเป้าหมาย
 
 ข้อนี้ส่งผลในทางปฏิบัติหลายอย่าง:
 
@@ -132,14 +132,14 @@ Go binary ที่คอมไพล์แล้วเป็น self-contained 
 - **Air-gapped environments:** Binary รัน offline ได้ ไม่มี `npm install` ที่ต้องออกไปอินเทอร์เน็ต
 - **Containers:** ดังที่แสดงใน Docker lesson image สามารถเป็น `FROM scratch` — รวมแค่ 5–15 MB
 
-เวลาเดียวที่ cross-compilation ซับซ้อนขึ้นคือเมื่อโค้ดของคุณใช้ `CGO` (การเรียก C libraries) `CGO_ENABLED=0` ปิด CGO และบังคับ pure Go ซึ่งเป็นเหตุผลที่คุณเห็นมันในแทบทุก production build script
+กรณีเดียวที่ cross-compilation ยุ่งขึ้นคือเมื่อโค้ดของคุณใช้ `CGO` (เรียก C library) การตั้ง `CGO_ENABLED=0` จะปิด CGO และบังคับให้ build เป็น pure Go เพราะแบบนี้คุณถึงเห็น flag ตัวนี้ในแทบทุก production build script
 
 </GoOnly>
 
 export const quizQuestionsCrossCompile = [
   { q: 'Environment variable ไหนระบุ target operating system สำหรับ Go cross-compile?', options: ['GOARCH', 'GOOS', 'GO_TARGET_OS', 'GOPLATFORM'], answer: 1 },
   { q: '`CGO_ENABLED=0` ทำอะไรในบริบทของ cross-compilation?', options: ['ปิด garbage collection', 'บังคับ pure Go โดยไม่มี C library dependencies', 'เปิดใช้ CPU optimizations เพิ่มเติม', 'ตั้ง minimum OS version'], answer: 1 },
-  { q: 'หลัง cross-compile Go binary สำหรับ Linux แล้ว Linux server เป้าหมายต้องติดตั้งอะไรเพื่อรันมัน?', options: ['Go runtime', 'glibc และ libpthread', 'ไม่มีอะไร — binary เป็น self-contained', 'Go version เดียวกับที่ใช้คอมไพล์'], answer: 2 },
+  { q: 'หลัง cross-compile Go binary สำหรับ Linux แล้ว Linux server เป้าหมายต้องติดตั้งอะไรเพิ่มถึงจะรัน binary นั้นได้?', options: ['Go runtime', 'glibc และ libpthread', 'ไม่มีอะไร — binary เป็น self-contained', 'Go version เดียวกับที่ใช้คอมไพล์'], answer: 2 },
   { q: 'ค่า GOOS ไหนที่จะใช้ build Go binary ที่รันบน Apple Silicon Mac?', options: ['macos', 'osx', 'darwin', 'apple'], answer: 2 },
 ];
 

@@ -115,7 +115,7 @@ export const goErrHandler = `// Echo — custom HTTP error handler
 func customErrorHandler(err error, c echo.Context) {
     var he *echo.HTTPError
     if errors.As(err, &he) {
-        // Echo HTTPError — ใช้ status code ของมัน
+        // Echo HTTPError — ใช้ status code ของตัวเอง
         _ = c.JSON(he.Code, map[string]any{
             "message": he.Message,
         })
@@ -136,7 +136,7 @@ e.HTTPErrorHandler = customErrorHandler`;
 
 <GoOnly title="Sentinel error — เทียบเท่า custom exception ของ Go">
 
-ประกาศ sentinel error ระดับ package ไว้แทน failure mode ที่รู้จัก แล้ว handler กับ service ก็เช็คมันได้ด้วย `errors.Is`:
+ประกาศ sentinel error ระดับ package ไว้แทน failure mode ที่รู้จัก แล้ว handler กับ service ก็เช็คได้ด้วย `errors.Is`:
 
 ```go
 // store/errors.go

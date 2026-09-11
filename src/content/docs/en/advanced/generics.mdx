@@ -173,7 +173,6 @@ const n = new Box(21).map(v => v * 2);   // Box<number>
 const s = n.map(v => \`\${v}!\`);         // Box<string>`;
 
 export const goGenericMethodCode = `// Go 1.27+: methods may declare their own type parameters
-// (needs Go 1.27+ — run on go.dev/play)
 type Box[T any] struct{ Value T }
 
 func (b Box[T]) Map[U any](fn func(T) U) Box[U] {

@@ -71,18 +71,27 @@ func main() {
     var wg sync.WaitGroup
     counter := &SafeCounter{}
 
-    for i := 0; i < 100; i++ {
-        wg.Add(1)
-        go func() {
-            defer wg.Done()
-            counter.Increment()
-        }()
+    for range 100 {                 // Go 1.22+: range over int
+        wg.Go(counter.Increment)    // Go 1.25+: Add + go + Done in one call
     }
     wg.Wait()
     fmt.Println("Final count:", counter.count) // always 100
 }`;
 
 <TsGo ts={tsLockCode} go={goMutexCode} />
+
+## WaitGroup.Go (Go 1.25+)
+
+`wg.Go(f)` replaces the `Add(1)` / `go` / `defer Done()` triple. It is the form used in the Go example above and the one to reach for in new code:
+
+```go
+var wg sync.WaitGroup
+wg.Go(func() { counter.Increment() })
+wg.Go(func() { counter.Increment() })
+wg.Wait()
+```
+
+The playground below still shows the explicit form because you will meet it constantly in existing code — both are correct, `wg.Go` is just harder to get wrong.
 
 ## RWMutex — multiple readers, exclusive writer
 

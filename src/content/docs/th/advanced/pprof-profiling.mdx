@@ -184,6 +184,19 @@ if os.Getenv("DEBUG") == "true" {
 
 </GoOnly>
 
+## ความเปลี่ยนแปลงใน runtime ที่กระทบสิ่งที่คุณเห็น (Go 1.25–1.27)
+
+- **Green Tea GC** (default ตั้งแต่ 1.26) ลด overhead ของ GC ลง 10–40 % ในโปรแกรมจริง ตัวเลข "ต้นทุน GC" ใน heap profile จากบทความเก่าจึงมองโลกในแง่ร้ายเกินไป ถ้าจะปิดชั่วคราวใช้ `GOEXPERIMENT=nogreenteagc`
+- **`GOMAXPROCS` รู้จัก container** (1.25): บน Linux runtime เคารพ cgroup CPU limit และอ่านค่าใหม่เป็นระยะ — คำแนะนำเก่าให้ import `automaxprocs` ทุก service ล้าสมัยแล้ว Node ไม่มีอะไรเทียบเท่า มันเห็นจำนวน CPU ของ host เสมอ
+- **Goroutine leak profile** (experimental ใน 1.26, GA ใน 1.27): GC หา goroutine ที่ block บน primitive ที่ไม่มีใครปลุกได้อีกแล้ว
+
+```bash
+# Go 1.27+: เฉพาะ goroutine ที่ไม่มีทางกลับมารันได้อีก
+go tool pprof http://localhost:6060/debug/pprof/goroutineleak
+```
+
+นี่คมกว่าการนั่งดูจำนวน `/debug/pprof/goroutine` ค่อย ๆ ไต่ขึ้น ซึ่งคือสิ่งที่ section ด้านล่างอธิบายมาก
+
 ## Goroutine และ trace profiles
 
 ```bash

@@ -63,10 +63,10 @@ export const tsPackageJson = `// package.json
 export const goModFile = `// go.mod
 module github.com/you/books-api
 
-go 1.22
+go 1.27
 
 require (
-    github.com/labstack/echo/v4 v4.12.0
+    github.com/labstack/echo/v5 v5.3.1
 )`;
 
 <TsGo ts={tsPackageJson} go={goModFile} />
@@ -90,10 +90,11 @@ export const goMainGo = `// main.go
 package main
 
 import (
-    "net/http"
+    "log/slog"
+    "os"
 
-    "github.com/labstack/echo/v4"
-    "github.com/labstack/echo/v4/middleware"
+    "github.com/labstack/echo/v5"
+    "github.com/labstack/echo/v5/middleware"
 
     "github.com/you/books-api/internal/handler"
     "github.com/you/books-api/internal/store"
@@ -103,7 +104,7 @@ func main() {
     e := echo.New()
 
     // Middleware
-    e.Use(middleware.Logger())
+    e.Use(middleware.RequestLogger())
     e.Use(middleware.Recover())
 
     // Dependency wiring (manual, ไม่มี container)
@@ -118,10 +119,22 @@ func main() {
     api.PUT("/books/:id", bookHandler.Update)
     api.DELETE("/books/:id", bookHandler.Delete)
 
-    e.Logger.Fatal(e.Start(":1323"))
+    if err := e.Start(":1323"); err != nil {
+        slog.Error("server stopped", "err", err)
+        os.Exit(1)
+    }
 }`;
 
 <TsGo ts={tsMainTs} go={goMainGo} />
+
+`e.Start` จะ block จนกว่า server จะหยุด แล้วคืนสาเหตุมาเป็น error — `*slog.Logger` ไม่มี `Fatal` คุณจึงต้อง log และ exit เอง ถ้าต้องการ graceful shutdown หรือ TLS ให้ใช้ `echo.StartConfig` แทน:
+
+```go
+sc := echo.StartConfig{Address: ":1323", GracefulTimeout: 10 * time.Second}
+if err := sc.Start(ctx, e); err != nil {   // คืนค่าเมื่อ ctx ถูก cancel
+    slog.Error("server stopped", "err", err)
+}
+```
 
 <GoOnly title="ทำไมต้องใช้ internal/?">
 

@@ -28,7 +28,7 @@ export const npmManifestCode = `// package.json
 export const goManifestCode = `// go.mod
 module github.com/myorg/my-app
 
-go 1.21
+go 1.27
 
 require (
     github.com/gin-gonic/gin v1.9.1
@@ -47,7 +47,7 @@ require (
 
 ```
 module github.com/myorg/my-app   ← module path (import prefix)
-go 1.21                          ← minimum Go version
+go 1.27                          ← minimum Go version
 require (...)                    ← direct dependencies
 ```
 
@@ -94,6 +94,28 @@ go list -m all
 
 # Show available versions of a module
 go list -m -versions github.com/gin-gonic/gin
+```
+
+## What changed recently in go.mod (Go 1.25–1.27)
+
+- **`go mod init` picks a conservative version** (1.26+): a Go 1.27.x toolchain writes `go 1.26.0`, not `go 1.27.0`, so your module does not accidentally require the newest release. Bump it by hand (`go 1.27`) when you want 1.27-only features — the `stdversion` vet check will remind you.
+- **`ignore` directive** (1.25+): tell the `go` command to skip directories it should never treat as packages, such as a frontend build output — the `.npmignore` of modules.
+- **Two-block `require` layout** (1.27+, for `go 1.27` modules): `go mod tidy` merges duplicate blocks into exactly one block of direct dependencies and one of `// indirect` ones, keeping attached comments.
+
+```
+module github.com/myorg/my-app
+
+go 1.27
+
+ignore ./web/dist
+
+require (
+    github.com/labstack/echo/v5 v5.3.1
+)
+
+require (
+    golang.org/x/net v0.45.0 // indirect
+)
 ```
 
 ## Major version semantics
@@ -179,7 +201,7 @@ export const npmWorkspaceCode = `// npm workspaces — package.json at root
 }`;
 
 export const goWorkspaceCode = `// Go workspaces — go.work at repo root
-go 1.21
+go 1.27
 
 use (
     ./api        // module: github.com/myorg/api

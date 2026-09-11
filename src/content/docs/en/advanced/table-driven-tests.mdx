@@ -157,6 +157,41 @@ func TestDivide(t *testing.T) {
 
 <TsGo ts={jestStructureCode} go={goStructureCode} />
 
+## Testing time-based code: testing/synctest vs Jest fake timers (Go 1.25+)
+
+Jest's `useFakeTimers()` lets a test that sleeps for an hour finish instantly. Go 1.25 shipped the same idea in the standard library: `synctest.Test` runs your function in a "bubble" with a fake clock, and `synctest.Wait` blocks until every goroutine in the bubble is idle.
+
+export const jestFakeTimersCode = `// Jest
+jest.useFakeTimers();
+test('debounce fires once', () => {
+  const fn = jest.fn();
+  const d = debounce(fn, 1000);
+  d(); d(); d();
+  jest.advanceTimersByTime(1000);
+  expect(fn).toHaveBeenCalledTimes(1);
+});`;
+
+export const goSynctestCode = `// Go 1.25+
+import "testing/synctest"
+
+func TestDebounce(t *testing.T) {
+    synctest.Test(t, func(t *testing.T) {
+        calls := 0
+        d := debounce(func() { calls++ }, time.Second)
+        d(); d(); d()
+        time.Sleep(time.Second) // fake clock: returns instantly
+        synctest.Wait()         // let the timer goroutine run
+        if calls != 1 {
+            t.Fatalf("calls = %d, want 1", calls)
+        }
+    })
+}
+// Go 1.27+: synctest.Sleep(d) == time.Sleep(d) + synctest.Wait()`;
+
+<TsGo ts={jestFakeTimersCode} go={goSynctestCode} />
+
+Inside the bubble `time.Now`, `time.Sleep`, timers and tickers all use the virtual clock, so tests are fast and deterministic. Combine it with `httptest.NewTestServer()` (Go 1.27) for an in-memory HTTP server that lives inside the same bubble.
+
 <GoOnly title="Testify — the optional assertion library">
 
 Go's standard `testing` package has no `expect(...).toBe(...)` DSL. If you find `t.Errorf` too verbose, the community commonly uses [`github.com/stretchr/testify/assert`](https://github.com/stretchr/testify):

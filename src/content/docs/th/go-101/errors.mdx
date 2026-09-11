@@ -134,6 +134,32 @@ errors.Is(wrapped, original) // true — unwraps the chain
 
 </GoOnly>
 
+## errors.AsType — errors.As แบบ generic (Go 1.26+)
+
+`errors.As` ต้องประกาศตัวแปร pointer ไว้ก่อนแล้วค่อยตรวจตอน runtime ตั้งแต่ Go 1.26 `errors.AsType[T]` คืนค่าที่มี type ถูกต้องให้เลย — ใกล้เคียง `instanceof` narrowing ของ TypeScript ที่สุดเท่าที่ Go มี:
+
+export const tsInstanceofCode = `// TypeScript: instanceof narrow type ให้ตรงจุด
+try {
+  await findUser(-1);
+} catch (err) {
+  if (err instanceof ValidationError) {
+    console.log(err.field); // narrow เป็น ValidationError แล้ว
+  }
+}`;
+
+export const goAsTypeCode = `// Go 1.26+: errors.AsType คืน (T, bool) — ไม่ต้องประกาศ var ไม่ต้องส่ง pointer-to-pointer
+if ve, ok := errors.AsType[*ValidationError](err); ok {
+    fmt.Println(ve.Field) // ve เป็น *ValidationError แล้ว
+}
+
+// แบบก่อน 1.26 ยังใช้ได้และจะเจอทั่วไปในโค้ดเก่า:
+var ve *ValidationError
+if errors.As(err, &ve) { ... }`;
+
+<TsGo ts={tsInstanceofCode} go={goAsTypeCode} />
+
+ทั้งสองแบบไล่ chain ที่ wrap ไว้เหมือนกัน แต่ `AsType` เช็ค type ตอน compile (ส่ง pointer ผิดชนิดไม่ได้) และเร็วกว่าเล็กน้อย โค้ดใหม่ควรใช้ `AsType` ส่วน `errors.As` คงไว้เพื่อความเข้ากันได้
+
 <GoOnly title="panic / recover — ทางเลือกสุดท้ายของ Go">
 
 Go มีกลไก `panic` สำหรับสถานการณ์ที่กู้คืนไม่ได้จริงๆ (เช่น index out of bounds) การเรียก `recover()` ภายในฟังก์ชันที่ defer ไว้จะดักจับ panic ได้ แต่ต่างจาก exception ของ TypeScript ตรงที่ **panic ไม่ได้มีไว้สำหรับ error flow ปกติ** — ให้ใช้การคืน `error` สำหรับความล้มเหลวที่คาดการณ์ได้

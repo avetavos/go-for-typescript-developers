@@ -81,6 +81,26 @@ func main() {
 
 > **Rule:** always call `wg.Add(1)` *before* `go f()`. If you call it inside the goroutine the scheduler might reach `wg.Wait()` before the goroutine even starts, and `Wait` returns immediately with work still pending.
 
+### wg.Go — Add, go, and Done in one call (Go 1.25+)
+
+The `Add`-before-`go` rule is easy to get wrong, so Go 1.25 added `WaitGroup.Go`. It does the `Add(1)`, launches the goroutine, and calls `Done` when the function returns — the shape now reads almost exactly like `Promise.all` over a list of async calls:
+
+export const tsPromiseAllCode = `// TypeScript
+await Promise.all(urls.map(async (url) => {
+  await fetchOne(url);
+}));`;
+
+export const goWgGoCode = `// Go 1.25+
+var wg sync.WaitGroup
+for _, url := range urls {
+    wg.Go(func() { fetchOne(url) }) // Add(1) + go + Done, handled for you
+}
+wg.Wait()`;
+
+<TsGo ts={tsPromiseAllCode} go={goWgGoCode} />
+
+Use `wg.Go` in new code; you will still see `wg.Add(1)` / `defer wg.Done()` in most existing codebases (and in some examples below), and `go vet` now flags an `Add` placed inside the goroutine.
+
 ## Anonymous goroutines
 
 Just like immediately-invoked arrow functions in JS, you can launch an anonymous goroutine inline:

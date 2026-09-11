@@ -159,6 +159,24 @@ TypeScript's equivalent risk is accessing a property on `null` or `undefined`. G
 
 </GoOnly>
 
+<GoOnly title="new(expr) — a pointer to a value in one step (Go 1.26+)">
+
+`new(T)` gives you a pointer to a zero value. Before Go 1.26, getting a pointer to an actual value meant a temporary variable. Now `new` accepts an expression:
+
+```go
+// Before 1.26 — the classic two-liner
+age := 42
+u := User{Age: &age}
+
+// Go 1.26+ — same thing, no temp variable
+u := User{Age: new(42)}
+u2 := User{Age: new(yearsSince(born))}
+```
+
+This is mostly useful for optional fields (`*int`, `*string`, `*time.Time`) that JSON or database libraries treat as "absent when nil".
+
+</GoOnly>
+
 <GoOnly title="Automatic Dereferencing on Struct Fields">
 
 Go automatically dereferences pointers when accessing struct fields, so you write `p.Field` instead of `(*p).Field`. Both mean the same thing. This applies to method calls too — Go will automatically take an address or dereference to match the receiver type when calling methods, as long as the variable is addressable.

@@ -14,7 +14,7 @@ If you come from Node.js you already think in terms of a lightweight HTTP framew
 
 | Concern | Node.js / Express | Go / Echo |
 |---|---|---|
-| Core abstraction | `(req, res, next)` functions | `func(c echo.Context) error` |
+| Core abstraction | `(req, res, next)` functions | `func(c *echo.Context) error` |
 | Routing | `app.get('/path', handler)` | `e.GET("/path", handler)` |
 | Middleware | `app.use(fn)` | `e.Use(fn)` |
 | JSON response | `res.json({ … })` | `c.JSON(200, payload)` |
@@ -29,7 +29,22 @@ Go has several web frameworks (Gin, Chi, Fiber, stdlib `net/http`). Echo sits in
 - **Minimal surface area** — you can read the entire source in a weekend.
 - **Idiomatic** — handlers return `error`; Go's error-as-value pattern maps directly.
 - **Rich built-ins** — Logger, Recover, CORS, GZIP, BasicAuth out of the box.
-- **Stable** — Echo v4 has been production-hardened for years.
+- **Stable** — Echo v5 (2026) is the current major; v4 keeps receiving security fixes until the end of 2026.
+
+## Coming from Echo v4?
+
+Most tutorials on the web still show v4. This module uses **v5** (`github.com/labstack/echo/v5`, Go 1.25+). The differences you will notice:
+
+| v4 | v5 |
+|---|---|
+| `func(c echo.Context) error` — `Context` is an interface | `func(c *echo.Context) error` — `Context` is a struct |
+| `middleware.Logger()`, custom `e.Logger` interface | `middleware.RequestLogger()`, `e.Logger` is `*slog.Logger` |
+| `e.Logger.Fatal(e.Start(":1323"))` | `if err := e.Start(":1323"); err != nil { … }` (or `echo.StartConfig` for graceful shutdown) |
+| `e.HTTPErrorHandler = func(err error, c echo.Context)` | `e.HTTPErrorHandler = func(c *echo.Context, err error)` |
+| `err.(*echo.HTTPError)` on `echo.ErrNotFound` | `echo.StatusCode(err)` — predefined errors are no longer `*HTTPError` |
+| `c.ParamNames()` / `c.ParamValues()` | `c.PathValues()`; typed `echo.PathParam[int](c, "id")` |
+
+Two `sed` one-liners do most of a migration: replace `echo/v4` with `echo/v5`, and ` echo.Context` with ` *echo.Context`.
 
 export const tsBootstrap = `// Express (Node.js)
 import express from 'express';
@@ -46,20 +61,26 @@ export const goBootstrap = `// Echo (Go)
 package main
 
 import (
+    "log/slog"
     "net/http"
-    "github.com/labstack/echo/v4"
+    "os"
+
+    "github.com/labstack/echo/v5"
 )
 
 func main() {
     e := echo.New()
 
-    e.GET("/ping", func(c echo.Context) error {
+    e.GET("/ping", func(c *echo.Context) error {
         return c.JSON(http.StatusOK, map[string]string{
             "message": "pong",
         })
     })
 
-    e.Logger.Fatal(e.Start(":1323"))
+    if err := e.Start(":1323"); err != nil {
+        slog.Error("server stopped", "err", err)
+        os.Exit(1)
+    }
 }`;
 
 <TsGo ts={tsBootstrap} go={goBootstrap} />
@@ -86,7 +107,7 @@ Echo requires a live network port and a Go module with a third-party dependency.
 ```bash
 mkdir books-api && cd books-api
 go mod init github.com/you/books-api
-go get github.com/labstack/echo/v4
+go get github.com/labstack/echo/v5
 ```
 
 From that point on, `go run main.go` starts the server on `:1323`.

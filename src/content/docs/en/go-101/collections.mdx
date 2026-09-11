@@ -100,6 +100,35 @@ func main() {
 
 <Playground code={playgroundCollCode} />
 
+## Iterators — Go's answer to generators and `for…of` (Go 1.23+)
+
+Since Go 1.23 a `for range` loop can iterate over a **function** of type `iter.Seq[T]` (or `iter.Seq2[K, V]`). That is Go's version of a JS generator: values are produced lazily, one per `yield`, and the loop body is the consumer. The `slices` and `maps` packages ship iterator-based helpers (`slices.Values`, `maps.Keys`, `slices.Collect`, `slices.Sorted`).
+
+export const tsGeneratorCode = `// TypeScript: generator + for…of
+function* evens(limit: number) {
+  for (let n = 0; n <= limit; n += 2) yield n;
+}
+for (const n of evens(6)) console.log(n); // 0 2 4 6
+
+const keys = [...new Map([["a", 1], ["b", 2]]).keys()];`;
+
+export const goIteratorCode = `// Go 1.23+: a func(yield func(T) bool) is an iterator
+func evens(limit int) iter.Seq[int] {
+    return func(yield func(int) bool) {
+        for n := 0; n <= limit; n += 2 {
+            if !yield(n) { return } // consumer broke out of the loop
+        }
+    }
+}
+for n := range evens(6) { fmt.Println(n) } // 0 2 4 6
+
+// stdlib helpers return iterators; Collect/Sorted turn them back into slices
+keys := slices.Sorted(maps.Keys(map[string]int{"a": 1, "b": 2})) // [a b]`;
+
+<TsGo ts={tsGeneratorCode} go={goIteratorCode} />
+
+The `yield` callback returning `false` is how `break` reaches the producer — there is no generator object to `.return()`. Unlike JS generators, Go iterators are plain functions, so they inline well and cost no allocation for the common cases. You can also `for i := range 10` over an int since Go 1.22.
+
 <GoOnly title="Checking map key existence">
 
 In TypeScript, accessing a missing key returns `undefined`. In Go, accessing a missing map key returns the **zero value** for the value type. To distinguish "key present with zero value" from "key absent", use the two-value form:

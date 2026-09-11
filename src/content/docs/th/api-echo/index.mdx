@@ -14,7 +14,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 | สิ่งที่ต้องการ | Node.js / Express | Go / Echo |
 |---|---|---|
-| หน่วยหลัก | `(req, res, next)` functions | `func(c echo.Context) error` |
+| หน่วยหลัก | `(req, res, next)` functions | `func(c *echo.Context) error` |
 | Routing | `app.get('/path', handler)` | `e.GET("/path", handler)` |
 | Middleware | `app.use(fn)` | `e.Use(fn)` |
 | ตอบกลับ JSON | `res.json({ … })` | `c.JSON(200, payload)` |
@@ -29,7 +29,22 @@ Go มีหลาย web framework (Gin, Chi, Fiber, stdlib `net/http`) Echo �
 - **พื้นที่ผิวขนาดเล็ก** — อ่าน source code ทั้งหมดได้ในสุดสัปดาห์เดียว
 - **Idiomatic** — handler คืนค่า `error` ตรงกับ pattern errors-as-values ของ Go
 - **มี built-in ครบ** — Logger, Recover, CORS, GZIP, BasicAuth มาพร้อมกัน
-- **เสถียร** — Echo v4 ผ่านการใช้งาน production มาหลายปี
+- **เสถียร** — Echo v5 (2026) คือ major version ปัจจุบัน ส่วน v4 ยังได้รับ security fix จนถึงสิ้นปี 2026
+
+## ย้ายมาจาก Echo v4?
+
+tutorial ส่วนใหญ่บนเว็บยังเป็น v4 อยู่ บทนี้ใช้ **v5** (`github.com/labstack/echo/v5`, ต้องใช้ Go 1.25 ขึ้นไป) ความต่างที่คุณจะเจอ:
+
+| v4 | v5 |
+|---|---|
+| `func(c echo.Context) error` — `Context` เป็น interface | `func(c *echo.Context) error` — `Context` เป็น struct |
+| `middleware.Logger()`, `e.Logger` เป็น interface ของ Echo เอง | `middleware.RequestLogger()`, `e.Logger` เป็น `*slog.Logger` |
+| `e.Logger.Fatal(e.Start(":1323"))` | `if err := e.Start(":1323"); err != nil { … }` (หรือ `echo.StartConfig` สำหรับ graceful shutdown) |
+| `e.HTTPErrorHandler = func(err error, c echo.Context)` | `e.HTTPErrorHandler = func(c *echo.Context, err error)` |
+| `err.(*echo.HTTPError)` กับ `echo.ErrNotFound` | `echo.StatusCode(err)` — error สำเร็จรูปไม่ใช่ `*HTTPError` อีกแล้ว |
+| `c.ParamNames()` / `c.ParamValues()` | `c.PathValues()` และ helper แบบมี type `echo.PathParam[int](c, "id")` |
+
+`sed` สองบรรทัดจัดการงาน migration ได้เกือบหมด: แทน `echo/v4` ด้วย `echo/v5` และแทน ` echo.Context` ด้วย ` *echo.Context`
 
 export const tsBootstrap = `// Express (Node.js)
 import express from 'express';
@@ -46,20 +61,26 @@ export const goBootstrap = `// Echo (Go)
 package main
 
 import (
+    "log/slog"
     "net/http"
-    "github.com/labstack/echo/v4"
+    "os"
+
+    "github.com/labstack/echo/v5"
 )
 
 func main() {
     e := echo.New()
 
-    e.GET("/ping", func(c echo.Context) error {
+    e.GET("/ping", func(c *echo.Context) error {
         return c.JSON(http.StatusOK, map[string]string{
             "message": "pong",
         })
     })
 
-    e.Logger.Fatal(e.Start(":1323"))
+    if err := e.Start(":1323"); err != nil {
+        slog.Error("server stopped", "err", err)
+        os.Exit(1)
+    }
 }`;
 
 <TsGo ts={tsBootstrap} go={goBootstrap} />
@@ -86,7 +107,7 @@ Echo ต้องใช้ network port จริงและ Go module ที�
 ```bash
 mkdir books-api && cd books-api
 go mod init github.com/you/books-api
-go get github.com/labstack/echo/v4
+go get github.com/labstack/echo/v5
 ```
 
 จากนั้น `go run main.go` จะเริ่ม server บน `:1323`

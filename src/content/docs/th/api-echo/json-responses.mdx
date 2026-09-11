@@ -23,7 +23,7 @@ app.get('/books/:id', (req, res) => {
 res.status(404).json({ message: 'not found' });`;
 
 export const goJsonResp = `// Echo
-func getBook(c echo.Context) error {
+func getBook(c *echo.Context) error {
     book := map[string]string{
         "id":    c.Param("id"),
         "title": "Go in Action",
@@ -176,7 +176,7 @@ return c.JSON(http.StatusOK, PaginatedBooks{
 สำหรับ DELETE handler ที่ไม่ return อะไร ใช้ `c.NoContent(http.StatusNoContent)` เทียบเท่า `res.status(204).send()`:
 
 ```go
-func deleteBook(c echo.Context) error {
+func deleteBook(c *echo.Context) error {
     id := c.Param("id")
     if err := store.Delete(c.Request().Context(), id); err != nil {
         return echo.NewHTTPError(http.StatusNotFound, err.Error())

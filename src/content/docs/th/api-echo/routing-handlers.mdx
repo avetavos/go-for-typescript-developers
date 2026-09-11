@@ -13,10 +13,10 @@ import GoOnly from '../../../../components/GoOnly.astro';
 ใน Express handler รับ `(req, res, next)` ส่วนใน Echo ทุก handler ใช้ signature มาตรฐานเดียวกัน:
 
 ```go
-func(c echo.Context) error
+func(c *echo.Context) error
 ```
 
-`echo.Context` รวม request, response writer, path parameter, query parameter และ helper method ไว้ด้วยกัน คืน `nil` เมื่อสำเร็จ หรือคืน `error` เพื่อให้ Echo จัดการ response กรณีล้มเหลว
+`*echo.Context` รวม request, response writer, path parameter, query parameter และ helper method ไว้ด้วยกัน คืน `nil` เมื่อสำเร็จ หรือคืน `error` เพื่อให้ Echo จัดการ response กรณีล้มเหลว
 
 export const tsHandler = `// Express handler
 app.get('/books/:id', (req, res, next) => {
@@ -27,7 +27,7 @@ app.get('/books/:id', (req, res, next) => {
 });`;
 
 export const goHandler = `// Echo handler
-func getBook(c echo.Context) error {
+func getBook(c *echo.Context) error {
     id := c.Param("id")
     book, err := findBook(id)
     if err != nil {
@@ -69,7 +69,7 @@ app.get('/users/:id/posts/:postId', (req, res) => {
 });`;
 
 export const goParam = `// Echo
-e.GET("/users/:id/posts/:postId", func(c echo.Context) error {
+e.GET("/users/:id/posts/:postId", func(c *echo.Context) error {
     userID  := c.Param("id")
     postID  := c.Param("postId")
     return c.JSON(http.StatusOK, map[string]string{
@@ -82,7 +82,7 @@ e.GET("/users/:id/posts/:postId", func(c echo.Context) error {
 
 ## Query parameter
 
-`c.QueryParam("name")` อ่านค่า query ตัวเดียว ส่วน `c.QueryParams()` คืนทั้งหมดเป็น `url.Values` (คือ `map[string][]string`)
+`c.QueryParam("name")` อ่านค่า query ตัวเดียว ส่วน `c.QueryParams()` คืนทั้งหมดเป็น `url.Values` (คือ `map[string][]string`) และ `c.QueryParamOr("page", "1")` ใช้ใส่ค่า default
 
 export const tsQuery = `// Express
 app.get('/books', (req, res) => {
@@ -91,17 +91,35 @@ app.get('/books', (req, res) => {
 });`;
 
 export const goQuery = `// Echo
-e.GET("/books", func(c echo.Context) error {
-    page  := c.QueryParam("page")
-    limit := c.QueryParam("limit")
-    if page == "" { page = "1" }
-    if limit == "" { limit = "10" }
+e.GET("/books", func(c *echo.Context) error {
+    page  := c.QueryParamOr("page", "1")
+    limit := c.QueryParamOr("limit", "10")
     return c.JSON(http.StatusOK, map[string]string{
         "page": page, "limit": limit,
     })
 })`;
 
 <TsGo ts={tsQuery} go={goQuery} />
+
+## Parameter แบบมี type — ไม่ต้อง strconv เอง
+
+ใน Express คุณต้องแปลง `req.params.id` เอง Echo v5 มี generic helper ที่ parse และตรวจสอบให้ในครั้งเดียว แล้วคืน error ที่คุณเอาไปตอบ 400 ได้เลย:
+
+```go
+e.GET("/items/:id", func(c *echo.Context) error {
+    id, err := echo.PathParam[int](c, "id")
+    if err != nil {
+        return echo.NewHTTPError(http.StatusBadRequest, "id must be an integer")
+    }
+    limit, err := echo.QueryParamOr[int](c, "limit", 10)
+    if err != nil {
+        return echo.NewHTTPError(http.StatusBadRequest, "limit must be an integer")
+    }
+    return c.JSON(http.StatusOK, map[string]int{"id": id, "limit": limit})
+})
+```
+
+มีครบทุกแหล่งข้อมูล: `echo.QueryParam[T]`, `echo.QueryParams[T]` (key ซ้ำหลายค่า), `echo.FormValue[T]` และ `echo.PathParamOr[T]`
 
 ## ผูก handler เข้ากับ struct (แบบ NestJS controller)
 
@@ -127,7 +145,7 @@ func NewBookHandler(s BookStore) *BookHandler {
     return &BookHandler{store: s}
 }
 
-func (h *BookHandler) Get(c echo.Context) error {
+func (h *BookHandler) Get(c *echo.Context) error {
     id := c.Param("id")
     book, err := h.store.FindByID(c.Request().Context(), id)
     if err != nil {

@@ -157,6 +157,41 @@ func TestDivide(t *testing.T) {
 
 <TsGo ts={jestStructureCode} go={goStructureCode} />
 
+## ทดสอบโค้ดที่อิงเวลา: testing/synctest vs Jest fake timers (Go 1.25+)
+
+`useFakeTimers()` ของ Jest ทำให้ test ที่ต้อง sleep หนึ่งชั่วโมงจบได้ทันที Go 1.25 ใส่ไอเดียเดียวกันเข้า standard library: `synctest.Test` รัน function ของคุณใน "bubble" ที่มี fake clock และ `synctest.Wait` block จนกว่า goroutine ทุกตัวใน bubble จะว่าง
+
+export const jestFakeTimersCode = `// Jest
+jest.useFakeTimers();
+test('debounce fires once', () => {
+  const fn = jest.fn();
+  const d = debounce(fn, 1000);
+  d(); d(); d();
+  jest.advanceTimersByTime(1000);
+  expect(fn).toHaveBeenCalledTimes(1);
+});`;
+
+export const goSynctestCode = `// Go 1.25+
+import "testing/synctest"
+
+func TestDebounce(t *testing.T) {
+    synctest.Test(t, func(t *testing.T) {
+        calls := 0
+        d := debounce(func() { calls++ }, time.Second)
+        d(); d(); d()
+        time.Sleep(time.Second) // fake clock: return ทันที
+        synctest.Wait()         // ให้ timer goroutine ได้รัน
+        if calls != 1 {
+            t.Fatalf("calls = %d, want 1", calls)
+        }
+    })
+}
+// Go 1.27+: synctest.Sleep(d) == time.Sleep(d) + synctest.Wait()`;
+
+<TsGo ts={jestFakeTimersCode} go={goSynctestCode} />
+
+ใน bubble ทั้ง `time.Now`, `time.Sleep`, timer และ ticker ใช้ virtual clock ทั้งหมด test จึงเร็วและ deterministic ใช้คู่กับ `httptest.NewTestServer()` (Go 1.27) จะได้ HTTP server ในหน่วยความจำที่อยู่ใน bubble เดียวกัน
+
 <GoOnly title="Testify — ไลบรารี assertion ที่เป็น optional">
 
 `testing` package มาตรฐานของ Go ไม่มี DSL แบบ `expect(...).toBe(...)` ถ้าคุณรู้สึกว่า `t.Errorf` ยืดยาวเกินไป community มักใช้ [`github.com/stretchr/testify/assert`](https://github.com/stretchr/testify):

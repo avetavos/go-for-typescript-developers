@@ -91,6 +91,27 @@ go vet ./...
 
 <TsGo ts={tsVetCode} go={goVetCode} />
 
+### Newer vet checks worth knowing
+
+Recent releases keep adding analyzers you get for free:
+
+- `waitgroup` (1.25) — a `wg.Add` inside the goroutine it is meant to count
+- `hostport` (1.25) — `fmt.Sprintf("%s:%d", host, port)` breaks on IPv6; use `net.JoinHostPort`
+- `stdversion` — now run by `go test` by default (1.27): flags a stdlib symbol newer than your `go.mod`'s `go` line
+
+## go fix — the modernizer (Go 1.26+)
+
+ESLint's `--fix` rewrites code to match newer idioms. Go 1.26 rebuilt `go fix` on the same analysis framework as `go vet`, with a suite of **modernizers**: loops that should be `for range n`, hand-written `Min`/`Max` → built-ins, `wg.Add(1); go f()` → `wg.Go(f)` (`waitgroupgo`), `sort.Slice` → `slices.SortFunc`, and more.
+
+```bash
+go fix ./...          # apply every modernizer
+go fix -diff ./...    # preview as a diff first
+```
+
+Library authors can also mark a function `//go:fix inline` so callers get migrated to the replacement automatically — the Go equivalent of a codemod shipped with the package.
+
+Two small `go doc` upgrades from 1.27 while we are here: `go doc example.com/pkg@v1.2.3` documents a specific version, and `go doc -ex pkg` lists runnable examples.
+
 ## staticcheck and golangci-lint
 
 `go vet` catches the most obvious bugs. For a richer set of checks — unused exports, deprecated API usage, simplifiable code — the community relies on:
@@ -122,7 +143,7 @@ linters:
 
 linters-settings:
   staticcheck:
-    go: "1.22"
+    go: "1.27"
 ```
 
 > Run this in your terminal after installing golangci-lint. There is no browser-runnable equivalent for a linter.

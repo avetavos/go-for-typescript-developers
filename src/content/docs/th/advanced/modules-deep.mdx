@@ -28,7 +28,7 @@ export const npmManifestCode = `// package.json
 export const goManifestCode = `// go.mod
 module github.com/myorg/my-app
 
-go 1.21
+go 1.27
 
 require (
     github.com/gin-gonic/gin v1.9.1
@@ -47,7 +47,7 @@ require (
 
 ```
 module github.com/myorg/my-app   ← module path (import prefix)
-go 1.21                          ← minimum Go version
+go 1.27                          ← minimum Go version
 require (...)                    ← direct dependencies
 ```
 
@@ -94,6 +94,28 @@ go list -m all
 
 # แสดง versions ที่มีของ module
 go list -m -versions github.com/gin-gonic/gin
+```
+
+## สิ่งที่เพิ่งเปลี่ยนใน go.mod (Go 1.25–1.27)
+
+- **`go mod init` เลือกเวอร์ชันแบบระวังตัว** (1.26+): toolchain Go 1.27.x จะเขียน `go 1.26.0` ไม่ใช่ `go 1.27.0` เพื่อไม่ให้ module ของคุณเผลอบังคับใช้รุ่นใหม่ล่าสุด อยากใช้ฟีเจอร์เฉพาะ 1.27 ก็แก้เป็น `go 1.27` เอง — vet check `stdversion` จะคอยเตือนให้
+- **directive `ignore`** (1.25+): บอกคำสั่ง `go` ให้ข้ามโฟลเดอร์ที่ไม่ควรถูกมองเป็น package เช่น build output ของ frontend — `.npmignore` ในโลก module
+- **`require` แบบสองบล็อก** (1.27+, สำหรับ module ที่ระบุ `go 1.27`): `go mod tidy` รวมบล็อกซ้ำให้เหลือบล็อก direct dependency หนึ่งบล็อกและ `// indirect` อีกหนึ่งบล็อกพอดี โดยเก็บ comment ที่ติดอยู่ไว้
+
+```
+module github.com/myorg/my-app
+
+go 1.27
+
+ignore ./web/dist
+
+require (
+    github.com/labstack/echo/v5 v5.3.1
+)
+
+require (
+    golang.org/x/net v0.45.0 // indirect
+)
 ```
 
 ## Major version semantics
@@ -179,7 +201,7 @@ export const npmWorkspaceCode = `// npm workspaces — package.json ที่ ro
 }`;
 
 export const goWorkspaceCode = `// Go workspaces — go.work ที่ repo root
-go 1.21
+go 1.27
 
 use (
     ./api        // module: github.com/myorg/api

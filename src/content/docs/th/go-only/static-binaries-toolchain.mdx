@@ -37,7 +37,7 @@ npx tsc --build
 node dist/index.js
 
 # Dockerfile must include:
-# FROM node:20-alpine
+# FROM node:24-alpine
 # COPY package*.json ./
 # RUN npm ci
 # COPY dist/ ./dist/
@@ -140,7 +140,7 @@ Go modules (`go.mod` / `go.sum`) คือคำตอบของ Go ที่�
 # go.mod — direct dependencies only
 module github.com/example/myapp
 
-go 1.22
+go 1.27
 
 require (
     github.com/gin-gonic/gin v1.9.1

@@ -134,6 +134,32 @@ Always wrap errors with `%w` when propagating up the stack. This is one of Go's 
 
 </GoOnly>
 
+## errors.AsType — the generic errors.As (Go 1.26+)
+
+`errors.As` needs a pre-declared pointer variable and does its check at runtime. Since Go 1.26, `errors.AsType[T]` returns the typed value directly — the closest Go gets to a TypeScript `instanceof` narrowing:
+
+export const tsInstanceofCode = `// TypeScript: instanceof narrows the type in place
+try {
+  await findUser(-1);
+} catch (err) {
+  if (err instanceof ValidationError) {
+    console.log(err.field); // narrowed to ValidationError
+  }
+}`;
+
+export const goAsTypeCode = `// Go 1.26+: errors.AsType returns (T, bool) — no var, no pointer-to-pointer
+if ve, ok := errors.AsType[*ValidationError](err); ok {
+    fmt.Println(ve.Field) // ve is already *ValidationError
+}
+
+// The pre-1.26 form still works and you will see it everywhere:
+var ve *ValidationError
+if errors.As(err, &ve) { ... }`;
+
+<TsGo ts={tsInstanceofCode} go={goAsTypeCode} />
+
+Both walk the wrapped chain the same way; `AsType` is type-safe at compile time (you cannot pass the wrong pointer kind) and slightly faster. Prefer it in new code; `errors.As` stays for compatibility.
+
 <GoOnly title="panic / recover — Go's last resort">
 
 Go does have a `panic` mechanism for truly unrecoverable situations (like an index out of bounds). A `recover()` call inside a deferred function can catch a panic. But unlike TypeScript exceptions, **panic is not for normal error flow** — use `error` returns for expected failures.

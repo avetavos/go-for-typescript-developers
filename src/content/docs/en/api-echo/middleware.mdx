@@ -1,6 +1,6 @@
 ---
 title: Middleware
-description: Use Echo's built-in middleware (Logger, Recover, CORS) and write your own — compared to Express middleware.
+description: Use Echo's built-in middleware (RequestLogger, Recover, CORS) and write your own — compared to Express middleware.
 ---
 
 import TsGo from '../../../../components/TsGo.astro';
@@ -28,7 +28,7 @@ app.use(requestLogger);`;
 
 export const goMiddleware = `// Echo middleware
 func RequestLogger(next echo.HandlerFunc) echo.HandlerFunc {
-    return func(c echo.Context) error {
+    return func(c *echo.Context) error {
         fmt.Printf("%s %s\\n", c.Request().Method, c.Request().URL.Path)
         return next(c)   // pass control forward
     }
@@ -51,11 +51,11 @@ app.use(cors({ origin: '*' }));
 // No built-in recover — need express-async-errors or similar`;
 
 export const goBuiltIn = `// Echo built-ins — no extra packages needed
-import "github.com/labstack/echo/v4/middleware"
+import "github.com/labstack/echo/v5/middleware"
 
-e.Use(middleware.Logger())   // structured request log to stdout
-e.Use(middleware.Recover())  // catches panics, returns 500
-e.Use(middleware.CORS())     // default: allows all origins
+e.Use(middleware.RequestLogger())  // request log via log/slog
+e.Use(middleware.Recover())        // catches panics, returns 500
+e.Use(middleware.CORS())           // default: allows all origins
 
 // Restrict CORS to specific origins:
 e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
@@ -65,14 +65,27 @@ e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 
 <TsGo ts={tsBuiltIn} go={goBuiltIn} />
 
-## Middleware ordering
-
-Just like Express, order matters. Middleware registered first runs first. Logger and Recover should always be outermost so they see every request and catch every panic.
+Echo v5 logs with the standard library's `log/slog` — no custom logger interface. `RequestLogger()` uses `e.Logger` (a `*slog.Logger`); to control the fields, use `RequestLoggerWithConfig` and log the values yourself:
 
 ```go
-e.Use(middleware.Logger())   // 1st — log all requests
-e.Use(middleware.Recover())  // 2nd — catch panics from any later handler
-e.Use(authMiddleware)        // 3rd — auth checks after logging is set up
+e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+    LogStatus: true,
+    LogURI:    true,
+    LogValuesFunc: func(c *echo.Context, v middleware.RequestLoggerValues) error {
+        slog.Info("request", "uri", v.URI, "status", v.Status)
+        return nil
+    },
+}))
+```
+
+## Middleware ordering
+
+Just like Express, order matters. Middleware registered first runs first. RequestLogger and Recover should always be outermost so they see every request and catch every panic.
+
+```go
+e.Use(middleware.RequestLogger())  // 1st — log all requests
+e.Use(middleware.Recover())        // 2nd — catch panics from any later handler
+e.Use(authMiddleware)              // 3rd — auth checks after logging is set up
 ```
 
 ## Route-level and group-level middleware
@@ -115,7 +128,7 @@ function requireAuth(req, res, next) {
 
 export const goAuthMiddleware = `// Echo custom auth middleware
 func RequireAuth(next echo.HandlerFunc) echo.HandlerFunc {
-    return func(c echo.Context) error {
+    return func(c *echo.Context) error {
         header := c.Request().Header.Get("Authorization")
         if header == "" {
             return echo.NewHTTPError(http.StatusUnauthorized, "missing token")
@@ -138,10 +151,12 @@ func RequireAuth(next echo.HandlerFunc) echo.HandlerFunc {
 
 <GoOnly title="Storing values in context">
 
-`c.Set(key, value)` stores an arbitrary value in the request-scoped context. Retrieve it with `c.Get(key)`. This is equivalent to `req.user = claims` in Express but type-safe with an explicit cast:
+`c.Set(key, value)` stores an arbitrary value in the request-scoped context. Retrieve it with `c.Get(key)` and a type assertion, or with the generic `echo.ContextGet`, which returns an error instead of panicking on the wrong type. This is the equivalent of `req.user = claims` in Express:
 
 ```go
-claims := c.Get("user").(*MyClaims)
+claims := c.Get("user").(*MyClaims)            // panics if the type is wrong
+
+claims, err := echo.ContextGet[*MyClaims](c, "user")   // error if missing or wrong type
 ```
 
 Use typed keys (a local `type contextKey string`) to avoid collisions in larger codebases.
@@ -155,7 +170,7 @@ export const quizQuestionsMiddleware = [
     q: 'What is the signature of an Echo middleware function?',
     options: [
       '(req, res, next) => void',
-      'func(c echo.Context) error',
+      'func(c *echo.Context) error',
       'func(next echo.HandlerFunc) echo.HandlerFunc',
       'func(w http.ResponseWriter, r *http.Request)',
     ],
@@ -163,7 +178,12 @@ export const quizQuestionsMiddleware = [
   },
   {
     q: 'Which built-in middleware catches panics and returns a 500 response?',
-    options: ['middleware.Logger()', 'middleware.Recover()', 'middleware.CORS()', 'middleware.Secure()'],
+    options: ['middleware.RequestLogger()', 'middleware.Recover()', 'middleware.CORS()', 'middleware.Secure()'],
+    answer: 1,
+  },
+  {
+    q: 'Which logging API does Echo v5 use for e.Logger and RequestLogger()?',
+    options: ['A custom echo.Logger interface', 'The standard library log/slog', 'fmt.Println', 'zap'],
     answer: 1,
   },
   {

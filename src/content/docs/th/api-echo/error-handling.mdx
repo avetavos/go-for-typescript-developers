@@ -35,7 +35,7 @@ func findBook(ctx context.Context, id string) (Book, error) {
 }
 
 // Handler — ส่งต่อ error ไปยัง error handler ของ Echo
-func getBook(c echo.Context) error {
+func getBook(c *echo.Context) error {
     book, err := findBook(c.Request().Context(), c.Param("id"))
     if err != nil {
         return echo.NewHTTPError(http.StatusNotFound, err.Error())
@@ -47,7 +47,9 @@ func getBook(c echo.Context) error {
 
 ## echo.NewHTTPError — error ที่รู้จัก HTTP
 
-`echo.NewHTTPError(statusCode, message)` สร้าง `*echo.HTTPError` เมื่อ handler คืนค่านี้ default error handler ของ Echo จะ serialize เป็น `{"message": "..."}` พร้อม HTTP status code ที่ถูกต้อง สำหรับ `error` ธรรมดา Echo จะคืน `500 Internal Server Error`
+`echo.NewHTTPError(statusCode, message)` สร้าง `*echo.HTTPError` (ใน v5 message เป็น `string` ธรรมดา) เมื่อ handler คืนค่านี้ default error handler ของ Echo จะ serialize เป็น `{"message": "..."}` พร้อม HTTP status code ที่ถูกต้อง สำหรับ `error` ธรรมดา Echo จะคืน `500 Internal Server Error`
+
+error ตัวไหนก็ตามที่ implement `StatusCode() int` จะได้รับการปฏิบัติแบบเดียวกัน — error สำเร็จรูป (`echo.ErrNotFound`, `echo.ErrUnauthorized`, …) ทำงานด้วยวิธีนี้ ถ้าอยากอ่าน status กลับออกมาจาก error ใด ๆ ใช้ `echo.StatusCode(err)` ซึ่งจะคืน `0` เมื่อ error นั้นไม่มี status
 
 ```go
 // 400
@@ -84,7 +86,7 @@ func (s *BookService) Create(ctx context.Context, req CreateBookRequest) (Book, 
 }
 
 // Handler — ตรวจสอบชนิด error
-func createBook(c echo.Context) error {
+func createBook(c *echo.Context) error {
     book, err := svc.Create(c.Request().Context(), req)
     if err != nil {
         // errors.Is เดิน wrap chain
@@ -100,7 +102,7 @@ func createBook(c echo.Context) error {
 
 ## Central error handler
 
-Echo ให้คุณแทน default error handler ด้วย `e.HTTPErrorHandler` ตรงนี้คือจุดที่คุณจะ log error, แปลง domain error เป็น HTTP code และทำให้ response envelope สม่ำเสมอ
+Echo ให้คุณแทน default error handler ด้วย `e.HTTPErrorHandler` ตรงนี้คือจุดที่คุณจะ log error, แปลง domain error เป็น HTTP code และทำให้ response envelope สม่ำเสมอ ตัว default เป็น factory — `echo.DefaultHTTPErrorHandler(exposeError bool)` — และมัน **ไม่** log ให้ การ log เป็นหน้าที่ของคุณ (หรือของ middleware)
 
 export const tsErrMiddleware = `// Express — error middleware (4 argument, ต้องอยู่ท้ายสุด)
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
@@ -111,19 +113,26 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ message: 'internal server error' });
 });`;
 
-export const goErrHandler = `// Echo — custom HTTP error handler
-func customErrorHandler(err error, c echo.Context) {
-    var he *echo.HTTPError
-    if errors.As(err, &he) {
-        // Echo HTTPError — ใช้ status code ของตัวเอง
-        _ = c.JSON(he.Code, map[string]any{
-            "message": he.Message,
-        })
+export const goErrHandler = `// Echo — custom HTTP error handler (v5: context ก่อน error ทีหลัง)
+func customErrorHandler(c *echo.Context, err error) {
+    // ห้ามเขียน response ซ้ำ: middleware อาจส่ง response ไปแล้ว
+    if resp, uerr := echo.UnwrapResponse(c.Response()); uerr == nil && resp.Committed {
         return
     }
 
-    // Error ที่ไม่รู้จัก — log และคืน 500
-    c.Logger().Errorf("unhandled error: %v", err)
+    // อะไรก็ตามที่มี HTTP status ติดมา (echo.NewHTTPError, echo.ErrNotFound, ...)
+    if code := echo.StatusCode(err); code != 0 {
+        var he *echo.HTTPError
+        msg := http.StatusText(code)
+        if errors.As(err, &he) {
+            msg = he.Message
+        }
+        _ = c.JSON(code, map[string]any{"message": msg})
+        return
+    }
+
+    // Error ที่ไม่รู้จัก — log (slog) และคืน 500
+    c.Logger().Error("unhandled error", "err", err)
     _ = c.JSON(http.StatusInternalServerError, map[string]any{
         "message": "internal server error",
     })
@@ -133,6 +142,8 @@ func customErrorHandler(err error, c echo.Context) {
 e.HTTPErrorHandler = customErrorHandler`;
 
 <TsGo ts={tsErrMiddleware} go={goErrHandler} />
+
+สองจุดของ v5 ที่ควรจำ: `c.Response()` ตอนนี้เป็น `http.ResponseWriter` ธรรมดา ข้อมูลภายในของ Echo (`Status`, `Size`, `Committed`) จึงต้องดึงผ่าน `echo.UnwrapResponse` และ `errors.As(err, &he)` จับได้เฉพาะ error ที่สร้างจาก `echo.NewHTTPError` เท่านั้น — ค่า `echo.Err*` สำเร็จรูปเป็นคนละ type (ไม่ export) นี่คือเหตุผลที่ handler ถาม `echo.StatusCode` ก่อน
 
 <GoOnly title="Sentinel error — เทียบเท่า custom exception ของ Go">
 
@@ -187,6 +198,16 @@ export const quizQuestionsError = [
       'e.ErrorHandler(errorHandler)',
     ],
     answer: 2,
+  },
+  {
+    q: 'ใน Echo v5 จะอ่าน HTTP status ที่ติดมากับ error ใด ๆ (รวมถึง echo.ErrNotFound) ได้อย่างไร?',
+    options: [
+      'err.(*echo.HTTPError).Code — ใช้ได้เสมอ',
+      'echo.StatusCode(err) ซึ่งคืน 0 เมื่อไม่มี status',
+      'c.Response().Status',
+      'errors.Unwrap(err).(int)',
+    ],
+    answer: 1,
   },
 ];
 

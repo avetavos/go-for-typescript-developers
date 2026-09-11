@@ -159,6 +159,24 @@ fmt.Println(*p)   // 42 — ปลอดภัยแล้ว
 
 </GoOnly>
 
+<GoOnly title="new(expr) — pointer ไปยังค่าในขั้นเดียว (Go 1.26+)">
+
+`new(T)` ให้ pointer ไปยัง zero value ก่อน Go 1.26 ถ้าอยากได้ pointer ไปยังค่าจริง ๆ ต้องผ่านตัวแปรชั่วคราว ตอนนี้ `new` รับ expression ได้แล้ว:
+
+```go
+// ก่อน 1.26 — ท่าคลาสสิกสองบรรทัด
+age := 42
+u := User{Age: &age}
+
+// Go 1.26+ — เหมือนกันเป๊ะ ไม่ต้องมีตัวแปรชั่วคราว
+u := User{Age: new(42)}
+u2 := User{Age: new(yearsSince(born))}
+```
+
+มีประโยชน์กับ field แบบ optional (`*int`, `*string`, `*time.Time`) ที่ไลบรารี JSON หรือ database ตีความว่า "ไม่มีค่าเมื่อเป็น nil"
+
+</GoOnly>
+
 <GoOnly title="Auto-Dereference บน Struct Field">
 
 Go dereference pointer ให้อัตโนมัติเมื่อเข้าถึง struct field คุณจึงเขียน `p.Field` แทน `(*p).Field` ได้ ทั้งสองมีความหมายเหมือนกัน เรื่องนี้ใช้กับการเรียก method ด้วย Go จะ dereference หรือ take address ให้อัตโนมัติเพื่อให้ตรงกับ receiver type ตราบใดที่ตัวแปรนั้น addressable

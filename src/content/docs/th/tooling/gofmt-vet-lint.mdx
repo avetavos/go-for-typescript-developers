@@ -91,6 +91,27 @@ go vet ./...
 
 <TsGo ts={tsVetCode} go={goVetCode} />
 
+### vet check รุ่นใหม่ที่ควรรู้จัก
+
+ทุกรุ่นล่าสุดเพิ่ม analyzer ที่ได้มาฟรี:
+
+- `waitgroup` (1.25) — `wg.Add` ที่วางอยู่ข้างใน goroutine ที่มันควรจะนับ
+- `hostport` (1.25) — `fmt.Sprintf("%s:%d", host, port)` พังกับ IPv6 ให้ใช้ `net.JoinHostPort`
+- `stdversion` — ตอนนี้ `go test` รันให้อัตโนมัติ (1.27): เตือนเมื่อใช้ symbol ใน stdlib ที่ใหม่กว่าบรรทัด `go` ใน `go.mod`
+
+## go fix — ตัว modernize โค้ด (Go 1.26+)
+
+`--fix` ของ ESLint เขียนโค้ดใหม่ให้ตรง idiom รุ่นล่าสุด Go 1.26 สร้าง `go fix` ขึ้นใหม่บน analysis framework เดียวกับ `go vet` พร้อมชุด **modernizer**: loop ที่ควรเป็น `for range n`, `Min`/`Max` ที่เขียนเอง → built-in, `wg.Add(1); go f()` → `wg.Go(f)` (`waitgroupgo`), `sort.Slice` → `slices.SortFunc` และอื่น ๆ
+
+```bash
+go fix ./...          # apply modernizer ทุกตัว
+go fix -diff ./...    # ดู diff ก่อน
+```
+
+คนเขียนไลบรารีก็ mark function ด้วย `//go:fix inline` ได้ เพื่อให้ผู้เรียกถูก migrate ไปใช้ตัวแทนอัตโนมัติ — เทียบเท่า codemod ที่ ship มากับ package ในโลก JS
+
+ของแถมจาก `go doc` ใน 1.27 อีกสองอย่าง: `go doc example.com/pkg@v1.2.3` ดู doc ของ version ที่ระบุ และ `go doc -ex pkg` แสดงรายการ example ที่รันได้
+
 ## staticcheck และ golangci-lint
 
 `go vet` จับบักที่ชัดเจนที่สุด ส่วนการตรวจที่ครอบคลุมกว่า — exports ที่ไม่ถูกใช้, การใช้ deprecated API, โค้ดที่เขียนให้สั้นลงได้ — ชุมชนจะพึ่ง:
@@ -122,7 +143,7 @@ linters:
 
 linters-settings:
   staticcheck:
-    go: "1.22"
+    go: "1.27"
 ```
 
 > รันคำสั่งพวกนี้ใน terminal หลังติดตั้ง golangci-lint ตัว linter ไม่มีเวอร์ชันที่รันบน browser

@@ -35,7 +35,7 @@ func findBook(ctx context.Context, id string) (Book, error) {
 }
 
 // Handler — propagate the error to Echo's error handler
-func getBook(c echo.Context) error {
+func getBook(c *echo.Context) error {
     book, err := findBook(c.Request().Context(), c.Param("id"))
     if err != nil {
         return echo.NewHTTPError(http.StatusNotFound, err.Error())
@@ -47,7 +47,9 @@ func getBook(c echo.Context) error {
 
 ## echo.NewHTTPError — HTTP-aware errors
 
-`echo.NewHTTPError(statusCode, message)` creates an `*echo.HTTPError`. When a handler returns one, Echo's default error handler serializes it as `{"message": "..."}` with the correct HTTP status code. For bare `error` values, Echo returns `500 Internal Server Error`.
+`echo.NewHTTPError(statusCode, message)` creates an `*echo.HTTPError` (the message is a plain `string` in v5). When a handler returns one, Echo's default error handler serializes it as `{"message": "..."}` with the correct HTTP status code. For bare `error` values, Echo returns `500 Internal Server Error`.
+
+Any error that implements `StatusCode() int` gets the same treatment — that is how the predefined values (`echo.ErrNotFound`, `echo.ErrUnauthorized`, …) work. To read a status back out of an arbitrary error, use `echo.StatusCode(err)`; it returns `0` when the error carries none.
 
 ```go
 // 400
@@ -84,7 +86,7 @@ func (s *BookService) Create(ctx context.Context, req CreateBookRequest) (Book, 
 }
 
 // In the handler — check error type
-func createBook(c echo.Context) error {
+func createBook(c *echo.Context) error {
     book, err := svc.Create(c.Request().Context(), req)
     if err != nil {
         // errors.Is walks the wrap chain
@@ -100,7 +102,7 @@ func createBook(c echo.Context) error {
 
 ## Central error handler
 
-Echo lets you replace its default error handler with `e.HTTPErrorHandler`. This is where you log errors, translate domain errors to HTTP codes, and ensure a consistent response envelope.
+Echo lets you replace its default error handler with `e.HTTPErrorHandler`. This is where you log errors, translate domain errors to HTTP codes, and ensure a consistent response envelope. The default is a factory — `echo.DefaultHTTPErrorHandler(exposeError bool)` — and it does **not** log; logging is your job (or a middleware's).
 
 export const tsErrMiddleware = `// Express — error middleware (4-arg function, must be last)
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
@@ -111,19 +113,26 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ message: 'internal server error' });
 });`;
 
-export const goErrHandler = `// Echo — custom HTTP error handler
-func customErrorHandler(err error, c echo.Context) {
-    var he *echo.HTTPError
-    if errors.As(err, &he) {
-        // Echo HTTPError — use its status code
-        _ = c.JSON(he.Code, map[string]any{
-            "message": he.Message,
-        })
+export const goErrHandler = `// Echo — custom HTTP error handler (v5: context first, error second)
+func customErrorHandler(c *echo.Context, err error) {
+    // Never write twice: a middleware may already have sent a response.
+    if resp, uerr := echo.UnwrapResponse(c.Response()); uerr == nil && resp.Committed {
         return
     }
 
-    // Unknown error — log it, return 500
-    c.Logger().Errorf("unhandled error: %v", err)
+    // Anything carrying an HTTP status (echo.NewHTTPError, echo.ErrNotFound, ...)
+    if code := echo.StatusCode(err); code != 0 {
+        var he *echo.HTTPError
+        msg := http.StatusText(code)
+        if errors.As(err, &he) {
+            msg = he.Message
+        }
+        _ = c.JSON(code, map[string]any{"message": msg})
+        return
+    }
+
+    // Unknown error — log it (slog), return 500
+    c.Logger().Error("unhandled error", "err", err)
     _ = c.JSON(http.StatusInternalServerError, map[string]any{
         "message": "internal server error",
     })
@@ -133,6 +142,8 @@ func customErrorHandler(err error, c echo.Context) {
 e.HTTPErrorHandler = customErrorHandler`;
 
 <TsGo ts={tsErrMiddleware} go={goErrHandler} />
+
+Two v5 details worth memorising: `c.Response()` is now a plain `http.ResponseWriter`, so Echo's own bookkeeping (`Status`, `Size`, `Committed`) lives behind `echo.UnwrapResponse`; and `errors.As(err, &he)` only matches errors built with `echo.NewHTTPError` — the predefined `echo.Err*` values are a different (unexported) type, which is why the handler asks `echo.StatusCode` first.
 
 <GoOnly title="Sentinel errors — the Go equivalent of custom exceptions">
 
@@ -187,6 +198,16 @@ export const quizQuestionsError = [
       'e.ErrorHandler(errorHandler)',
     ],
     answer: 2,
+  },
+  {
+    q: 'In Echo v5, how do you read the HTTP status carried by an arbitrary error (including echo.ErrNotFound)?',
+    options: [
+      'err.(*echo.HTTPError).Code — it always works',
+      'echo.StatusCode(err), which returns 0 when there is none',
+      'c.Response().Status',
+      'errors.Unwrap(err).(int)',
+    ],
+    answer: 1,
   },
 ];
 

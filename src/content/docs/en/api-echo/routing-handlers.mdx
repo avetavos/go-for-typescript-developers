@@ -13,10 +13,10 @@ import GoOnly from '../../../../components/GoOnly.astro';
 In Express a handler receives `(req, res, next)`. In Echo every handler has a single, uniform signature:
 
 ```go
-func(c echo.Context) error
+func(c *echo.Context) error
 ```
 
-`echo.Context` bundles the request, response writer, path parameters, query parameters, and helper methods. You return `nil` on success or an `error` to let Echo handle the failure response.
+`*echo.Context` bundles the request, response writer, path parameters, query parameters, and helper methods. You return `nil` on success or an `error` to let Echo handle the failure response.
 
 export const tsHandler = `// Express handler
 app.get('/books/:id', (req, res, next) => {
@@ -27,7 +27,7 @@ app.get('/books/:id', (req, res, next) => {
 });`;
 
 export const goHandler = `// Echo handler
-func getBook(c echo.Context) error {
+func getBook(c *echo.Context) error {
     id := c.Param("id")
     book, err := findBook(id)
     if err != nil {
@@ -69,7 +69,7 @@ app.get('/users/:id/posts/:postId', (req, res) => {
 });`;
 
 export const goParam = `// Echo
-e.GET("/users/:id/posts/:postId", func(c echo.Context) error {
+e.GET("/users/:id/posts/:postId", func(c *echo.Context) error {
     userID  := c.Param("id")
     postID  := c.Param("postId")
     return c.JSON(http.StatusOK, map[string]string{
@@ -82,7 +82,7 @@ e.GET("/users/:id/posts/:postId", func(c echo.Context) error {
 
 ## Query parameters
 
-`c.QueryParam("name")` reads a single query value. `c.QueryParams()` returns all of them as `url.Values` (a `map[string][]string`).
+`c.QueryParam("name")` reads a single query value. `c.QueryParams()` returns all of them as `url.Values` (a `map[string][]string`). `c.QueryParamOr("page", "1")` supplies a default.
 
 export const tsQuery = `// Express
 app.get('/books', (req, res) => {
@@ -91,17 +91,35 @@ app.get('/books', (req, res) => {
 });`;
 
 export const goQuery = `// Echo
-e.GET("/books", func(c echo.Context) error {
-    page  := c.QueryParam("page")
-    limit := c.QueryParam("limit")
-    if page == "" { page = "1" }
-    if limit == "" { limit = "10" }
+e.GET("/books", func(c *echo.Context) error {
+    page  := c.QueryParamOr("page", "1")
+    limit := c.QueryParamOr("limit", "10")
     return c.JSON(http.StatusOK, map[string]string{
         "page": page, "limit": limit,
     })
 })`;
 
 <TsGo ts={tsQuery} go={goQuery} />
+
+## Typed parameters — no manual strconv
+
+In Express you convert `req.params.id` yourself. Echo v5 ships generic helpers that parse and validate in one call, returning an error you can turn into a 400:
+
+```go
+e.GET("/items/:id", func(c *echo.Context) error {
+    id, err := echo.PathParam[int](c, "id")
+    if err != nil {
+        return echo.NewHTTPError(http.StatusBadRequest, "id must be an integer")
+    }
+    limit, err := echo.QueryParamOr[int](c, "limit", 10)
+    if err != nil {
+        return echo.NewHTTPError(http.StatusBadRequest, "limit must be an integer")
+    }
+    return c.JSON(http.StatusOK, map[string]int{"id": id, "limit": limit})
+})
+```
+
+The same family exists for every source: `echo.QueryParam[T]`, `echo.QueryParams[T]` (repeated keys), `echo.FormValue[T]`, and `echo.PathParamOr[T]`.
 
 ## Attaching handlers to a struct (NestJS controller style)
 
@@ -127,7 +145,7 @@ func NewBookHandler(s BookStore) *BookHandler {
     return &BookHandler{store: s}
 }
 
-func (h *BookHandler) Get(c echo.Context) error {
+func (h *BookHandler) Get(c *echo.Context) error {
     id := c.Param("id")
     book, err := h.store.FindByID(c.Request().Context(), id)
     if err != nil {

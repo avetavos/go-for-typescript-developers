@@ -45,8 +45,7 @@ import (
     "sync"
 )
 
-func worker(id int, jobs <-chan int, results chan<- int, wg *sync.WaitGroup) {
-    defer wg.Done()
+func worker(id int, jobs <-chan int, results chan<- int) {
     for j := range jobs { // blocks until a job arrives or channel is closed
         results <- j * j
     }
@@ -61,8 +60,7 @@ func main() {
 
     var wg sync.WaitGroup
     for w := 1; w <= numWorkers; w++ {
-        wg.Add(1)
-        go worker(w, jobs, results, &wg)
+        wg.Go(func() { worker(w, jobs, results) }) // Go 1.25+
     }
 
     for j := 1; j <= numJobs; j++ {

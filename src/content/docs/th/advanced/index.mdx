@@ -42,9 +42,9 @@ export const goBatteriesCode = `// Go: คำสั่งเดียวจั�
 
 <TsGo ts={tsBatteriesCode} go={goBatteriesCode} />
 
-<GoOnly title="ข้อกำหนดเบื้องต้น: Go 1.21+">
+<GoOnly title="ข้อกำหนดเบื้องต้น: Go 1.25+">
 
-โค้ดทั้งหมดในโมดูลนี้ใช้ **Go 1.21 ขึ้นไป** generics เข้ามาตั้งแต่ 1.18 ส่วน package `slices` และ `maps` เข้า stdlib ใน 1.21 ถ้าคุณใช้เวอร์ชันเก่ากว่านี้ `go get golang.org/x/exp` มี backport ของ package เหล่านั้นให้
+คอร์สนี้เขียนอิง **Go 1.27** (stable ปัจจุบันคือ go1.27.1) และโค้ดทั้งหมดในโมดูลนี้ต้องใช้ **Go 1.25 ขึ้นไป** ประวัติเวอร์ชันช่วยให้อ่านโค้ดเก่ารู้เรื่อง: generics เข้ามาตั้งแต่ 1.18; package `slices`, `maps` และ `cmp` เข้า stdlib ใน 1.21; range-over-func iterator ใน 1.23; `sync.WaitGroup.Go` และ `testing/synctest` ใน 1.25; `errors.AsType` ใน 1.26; generic method และ `encoding/json/v2` ใน 1.27 snippet ที่ต้องใช้ฟีเจอร์เฉพาะ 1.27 จะมีป้ายกำกับไว้ — ให้รันบน [go.dev/play](https://go.dev/play/) เพราะ playground ในเบราว์เซอร์เป็น interpreter ของ Go 1.26
 
 ตรวจสอบเวอร์ชัน: `go version`
 

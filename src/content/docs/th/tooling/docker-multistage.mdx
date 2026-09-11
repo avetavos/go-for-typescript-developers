@@ -26,7 +26,7 @@ Multi-stage build ใช้ Go builder image เต็มรูปแบบใ�
 
 ```dockerfile
 # ---- Stage 1: Build ----
-FROM golang:1.22-alpine AS builder
+FROM golang:1.27-alpine AS builder
 
 WORKDIR /app
 
@@ -59,7 +59,7 @@ ENTRYPOINT ["/app/server"]
 
 ```dockerfile
 # ---- Stage 1: Build ----
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 
 WORKDIR /app
 
@@ -73,7 +73,7 @@ RUN npm run build      # tsc output → dist/
 RUN npm prune --omit=dev
 
 # ---- Stage 2: Run ----
-FROM node:20-alpine
+FROM node:24-alpine
 
 WORKDIR /app
 
@@ -92,7 +92,7 @@ CMD ["node", "dist/main.js"]
 export const tsDockerCode = `# ขนาด Node image สุดท้าย: ~150-300 MB
 # มี: node runtime + node_modules + dist/
 
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
@@ -100,7 +100,7 @@ COPY . .
 RUN npm run build
 RUN npm prune --omit=dev
 
-FROM node:20-alpine
+FROM node:24-alpine
 WORKDIR /app
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
@@ -110,7 +110,7 @@ CMD ["node", "dist/main.js"]`;
 export const goDockerCode = `# ขนาด Go image สุดท้าย: ~5-20 MB
 # มี: binary เท่านั้น (ไม่มี runtime)
 
-FROM golang:1.22-alpine AS builder
+FROM golang:1.27-alpine AS builder
 WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
@@ -143,7 +143,7 @@ export const quizQuestionsDocker = [
   { q: '`CGO_ENABLED=0` ทำอะไรเมื่อ build Go binary สำหรับ Docker?', options: ['เปิดใช้ C extensions เพื่อประสิทธิภาพดีขึ้น', 'ปิด C bindings เพื่อสร้าง binary แบบ fully static', 'ตั้งค่า target OS เป็น Linux', 'Strip debug symbols จาก binary'], answer: 1 },
   { q: 'ทำไม Go Docker image ถึงใช้ `FROM scratch` ได้ แต่ Node image ทำไม่ได้?', options: ['Go image ถูกบีบอัดได้ดีกว่า', 'Go binary แบบ statically linked ไม่ต้องการ runtime', 'scratch รองรับเฉพาะ Linux', 'Node image ต้องการ database driver'], answer: 1 },
   { q: '`-ldflags="-s -w"` ใน Go build command มีจุดประสงค์อะไร?', options: ['เปิด link-time optimization เพื่อความเร็ว', 'Strip debug symbols เพื่อลดขนาด binary', 'ตั้งชื่อ output binary', 'บังคับ static linking บน Windows'], answer: 1 },
-  { q: 'Go production image ไหนที่แนะนำสำหรับ service ที่ต้องการ CA certificates?', options: ['FROM scratch', 'FROM ubuntu:latest', 'FROM gcr.io/distroless/static-debian12', 'FROM golang:1.22'], answer: 2 },
+  { q: 'Go production image ไหนที่แนะนำสำหรับ service ที่ต้องการ CA certificates?', options: ['FROM scratch', 'FROM ubuntu:latest', 'FROM gcr.io/distroless/static-debian12', 'FROM golang:1.27'], answer: 2 },
 ];
 
 <Quiz client:visible id="tooling/docker-multistage" questions={quizQuestionsDocker} />

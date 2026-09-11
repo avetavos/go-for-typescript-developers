@@ -158,6 +158,46 @@ func Filter[T any](s []T, fn func(T) bool) []T {
 
 <TsGo ts={tsFpCode} go={goFpCode} />
 
+## Generic methods and friends (Go 1.26–1.27)
+
+TypeScript has always allowed a method to declare its own type parameter (`class Box { map<U>(fn: (v: T) => U) }`). Go could not — until 1.27. Two smaller additions from 1.26 round out the picture.
+
+export const tsGenericMethodCode = `// TypeScript: method-level type parameter
+class Box<T> {
+  constructor(public value: T) {}
+  map<U>(fn: (v: T) => U): Box<U> {
+    return new Box(fn(this.value));
+  }
+}
+const n = new Box(21).map(v => v * 2);   // Box<number>
+const s = n.map(v => \`\${v}!\`);         // Box<string>`;
+
+export const goGenericMethodCode = `// Go 1.27+: methods may declare their own type parameters
+// (needs Go 1.27+ — run on go.dev/play)
+type Box[T any] struct{ Value T }
+
+func (b Box[T]) Map[U any](fn func(T) U) Box[U] {
+    return Box[U]{Value: fn(b.Value)}
+}
+
+n := Box[int]{21}.Map(func(v int) int { return v * 2 })      // Box[int]
+s := n.Map(func(v int) string { return fmt.Sprint(v, "!") }) // Box[string]
+
+// Rule: interface methods cannot declare type parameters,
+// so a generic method never satisfies an interface.
+
+// Go 1.26+: new() takes an initial value (handy for *int / *string fields)
+type User struct{ Age *int }
+u := User{Age: new(42)}
+
+// Go 1.26+: a constraint may refer to the type being constrained
+type Adder[A Adder[A]] interface{ Add(A) A }
+func Sum[A Adder[A]](x, y A) A { return x.Add(y) }`;
+
+<TsGo ts={tsGenericMethodCode} go={goGenericMethodCode} />
+
+The stdlib already uses generic methods: `math/rand/v2`'s `(*Rand).N[Int intType](Int)`. Because interfaces cannot carry them, generic methods stay a convenience for concrete types — they are not a route to Java-style generic interfaces.
+
 ## Generics vs interfaces — when to use which
 
 <GoOnly title="Decision guide">

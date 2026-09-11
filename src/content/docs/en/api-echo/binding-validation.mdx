@@ -33,7 +33,7 @@ type CreateBookRequest struct {
     Year   int    \`json:"year"\`
 }
 
-func createBook(c echo.Context) error {
+func createBook(c *echo.Context) error {
     var req CreateBookRequest
     if err := c.Bind(&req); err != nil {
         return echo.NewHTTPError(http.StatusBadRequest, err.Error())
@@ -141,7 +141,7 @@ func (cv *CustomValidator) Validate(i any) error {
 e.Validator = &CustomValidator{v: validator.New()}
 
 // Handler — bind then validate
-func createBook(c echo.Context) error {
+func createBook(c *echo.Context) error {
     var req CreateBookRequest
     if err := c.Bind(&req); err != nil {
         return echo.NewHTTPError(http.StatusBadRequest, err.Error())

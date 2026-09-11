@@ -42,9 +42,9 @@ export const goBatteriesCode = `// Go: one command rules them all
 
 <TsGo ts={tsBatteriesCode} go={goBatteriesCode} />
 
-<GoOnly title="Prerequisite: Go 1.21+">
+<GoOnly title="Prerequisite: Go 1.25+">
 
-All code in this module targets **Go 1.21 or later**. Generics landed in 1.18; the `slices` and `maps` stdlib packages in 1.21. If you are on an older version, `go get golang.org/x/exp` provides backports of those packages.
+This course is written against **Go 1.27** (current stable: go1.27.1) and all code in this module needs **Go 1.25 or later**. The history matters for reading older code: generics landed in 1.18; the `slices`, `maps`, and `cmp` stdlib packages in 1.21; range-over-func iterators in 1.23; `sync.WaitGroup.Go` and `testing/synctest` in 1.25; `errors.AsType` in 1.26; generic methods and `encoding/json/v2` in 1.27. Snippets that need 1.27-only features are marked — run those on [go.dev/play](https://go.dev/play/), because the in-browser playground is a Go 1.26 interpreter.
 
 Check your version: `go version`
 

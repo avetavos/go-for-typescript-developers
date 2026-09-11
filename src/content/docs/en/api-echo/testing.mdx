@@ -32,7 +32,7 @@ import (
     "strings"
     "testing"
 
-    "github.com/labstack/echo/v4"
+    "github.com/labstack/echo/v5"
     "github.com/you/books-api/internal/handler"
 )
 
@@ -42,8 +42,8 @@ func TestGetBook_OK(t *testing.T) {
     req := httptest.NewRequest(http.MethodGet, "/books/1", nil)
     rec := httptest.NewRecorder()
     c   := e.NewContext(req, rec)
-    c.SetParamNames("id")
-    c.SetParamValues("1")
+    // No router ran, so set the path params by hand (v5: PathValues)
+    c.SetPathValues(echo.PathValues{{Name: "id", Value: "1"}})
 
     h := handler.NewBookHandler(&fakeBookStore{})
     if err := h.Get(c); err != nil {
@@ -135,19 +135,15 @@ func TestGetBook_NotFound(t *testing.T) {
     req := httptest.NewRequest(http.MethodGet, "/books/999", nil)
     rec := httptest.NewRecorder()
     c   := e.NewContext(req, rec)
-    c.SetParamNames("id")
-    c.SetParamValues("999")
+    c.SetPathValues(echo.PathValues{{Name: "id", Value: "999"}})
 
     h := handler.NewBookHandler(&notFoundStore{})
     err := h.Get(c)
 
-    // Echo handlers return HTTPError instead of writing to rec
-    var he *echo.HTTPError
-    if !errors.As(err, &he) {
-        t.Fatalf("expected HTTPError, got %T", err)
-    }
-    if he.Code != http.StatusNotFound {
-        t.Errorf("expected 404, got %d", he.Code)
+    // Echo handlers return an error instead of writing to rec —
+    // echo.StatusCode reads the status from any HTTP-aware error
+    if got := echo.StatusCode(err); got != http.StatusNotFound {
+        t.Errorf("expected 404, got %d (err: %v)", got, err)
     }
 }
 
@@ -200,11 +196,16 @@ func TestGetBook(t *testing.T) {
             req := httptest.NewRequest(http.MethodGet, "/books/"+tc.id, nil)
             rec := httptest.NewRecorder()
             c   := e.NewContext(req, rec)
-            c.SetParamNames("id")
-            c.SetParamValues(tc.id)
+            c.SetPathValues(echo.PathValues{{Name: "id", Value: tc.id}})
 
             h := NewBookHandler(tc.store)
-            h.Get(c) // ignore error — check rec.Code or the returned HTTPError
+            got := rec.Code
+            if err := h.Get(c); err != nil {
+                got = echo.StatusCode(err) // error path: status lives on the error
+            }
+            if got != tc.wantStatus {
+                t.Errorf("want %d, got %d", tc.wantStatus, got)
+            }
         })
     }
 }

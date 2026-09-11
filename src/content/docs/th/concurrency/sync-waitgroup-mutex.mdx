@@ -68,18 +68,27 @@ func main() {
     var wg sync.WaitGroup
     counter := &SafeCounter{}
 
-    for i := 0; i < 100; i++ {
-        wg.Add(1)
-        go func() {
-            defer wg.Done()
-            counter.Increment()
-        }()
+    for range 100 {                 // Go 1.22+: range บน int
+        wg.Go(counter.Increment)    // Go 1.25+: Add + go + Done ในคำสั่งเดียว
     }
     wg.Wait()
     fmt.Println("Final count:", counter.count) // 100 เสมอ
 }`;
 
 <TsGo ts={tsLockCode} go={goMutexCode} />
+
+## WaitGroup.Go (Go 1.25+)
+
+`wg.Go(f)` มาแทนสามชุด `Add(1)` / `go` / `defer Done()` เป็นรูปแบบที่ใช้ในตัวอย่าง Go ด้านบน และเป็นแบบที่ควรหยิบใช้ในโค้ดใหม่:
+
+```go
+var wg sync.WaitGroup
+wg.Go(func() { counter.Increment() })
+wg.Go(func() { counter.Increment() })
+wg.Wait()
+```
+
+playground ด้านล่างยังแสดงแบบเขียนเต็ม เพราะคุณจะเจอมันตลอดในโค้ดที่มีอยู่แล้ว — ถูกทั้งคู่ แค่ `wg.Go` พลาดยากกว่า
 
 ## RWMutex — อ่านได้พร้อมกัน เขียนได้ครั้งเดียว
 

@@ -37,17 +37,18 @@ async function processWithPool<T>(
 
 ## Worker Pool Pattern พื้นฐาน
 
-export const tsPromisePoolCode = `// TypeScript: p-limit library สำหรับ concurrency control
+export const tsPromisePoolCode = `// TypeScript: p-limit for bounded concurrency
 import pLimit from 'p-limit';
 
-const limit = pLimit(3); // max 3 concurrent
+const limit = pLimit(3); // at most 3 concurrent tasks
 const tasks = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 const results = await Promise.all(
-  tasks.map(n => limit(() => processTask(n)))
-);`;
+  tasks.map(n => limit(async () => n * n))
+);
+console.log(results.reduce((a, b) => a + b, 0)); // 285`;
 
-export const goWorkerPoolCode = `// Go: Worker Pool ด้วย goroutines + channels
+export const goWorkerPoolCode = `// Go: worker pool — goroutines pull from a jobs channel
 package main
 
 import (
@@ -56,8 +57,8 @@ import (
 )
 
 func worker(id int, jobs <-chan int, results chan<- int) {
-    for j := range jobs { // รับงานจาก jobs channel
-        results <- j * j  // ส่งผลลัพธ์ไปยัง results channel
+    for j := range jobs { // blocks until a job arrives or channel is closed
+        results <- j * j
     }
 }
 
@@ -69,16 +70,14 @@ func main() {
     results := make(chan int, numJobs)
 
     var wg sync.WaitGroup
-    // launch workers
     for w := 1; w <= numWorkers; w++ {
         wg.Go(func() { worker(w, jobs, results) }) // Go 1.25+
     }
 
-    // ส่งงาน
     for j := 1; j <= numJobs; j++ {
         jobs <- j
     }
-    close(jobs) // แจ้งว่าไม่มีงานแล้ว
+    close(jobs) // signal: no more jobs — workers will exit their for-range
 
     wg.Wait()
     close(results)
@@ -96,15 +95,15 @@ func main() {
 
 Channel ต่อกันเป็น pipeline ได้อย่างเป็นธรรมชาติ: output channel ของ stage หนึ่งกลายเป็น input channel ของ stage ถัดไป เทียบได้กับการ chain async generator ใน JS
 
-export const tsPipelineCode = `// TypeScript: pipeline ด้วย async generators
-async function* stage1(input: AsyncIterable<number>) {
-  for await (const n of input) yield n * 2;
+export const tsPipelineCode = `// TypeScript: pipeline via chained async generators
+async function* double(src: AsyncIterable<number>) {
+  for await (const n of src) yield n * 2;
 }
-async function* stage2(input: AsyncIterable<number>) {
-  for await (const n of input) yield n + 1;
+async function* addOne(src: AsyncIterable<number>) {
+  for await (const n of src) yield n + 1;
 }`;
 
-export const goPipelineCode = `// Go: pipeline ด้วย channels
+export const goPipelineCode = `// Go: pipeline via chained channel-returning functions
 package main
 
 import "fmt"

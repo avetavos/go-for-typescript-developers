@@ -19,23 +19,23 @@ Go มีของที่เทียบเคียงได้ครบท�
 
 `defer` ตั้งเวลาเรียก function ให้รันตอนที่ **function ที่ครอบอยู่ return** ไม่ว่าจะ return ด้วยวิธีไหน (ปกติ, ผ่าน `return`, หรือหลัง `panic`) วิธีนี้มาแทน pattern cleanup แบบ `try/finally` ทั่วไป
 
-export const tsFinallyCode = `// TypeScript — try/finally สำหรับ cleanup
+export const tsFinallyCode = `// TypeScript — try/finally for cleanup
 async function readFile(path: string): Promise<string> {
   const fd = await openFile(path);
   try {
     return await fd.read();
   } finally {
-    fd.close(); // รันเสมอ
+    fd.close(); // always runs
   }
 }`;
 
-export const goDeferCode = `// Go — defer แทน try/finally
+export const goDeferCode = `// Go — defer replaces try/finally
 func readFile(path string) (string, error) {
     f, err := os.Open(path)
     if err != nil {
         return "", err
     }
-    defer f.Close()    // จะรันเมื่อ readFile return
+    defer f.Close()    // will run when readFile returns
 
     data, err := io.ReadAll(f)
     if err != nil {
@@ -50,24 +50,24 @@ func readFile(path string) (string, error) {
 
 การเรียก defer หลายครั้งจะ stack ขึ้นและรัน **last-in, first-out** — ย้อนกลับจากลำดับที่ register ไว้ ซึ่งสะท้อนวิธีที่คุณมักต้องการ undo ขั้นตอน setup
 
-export const tsLifoCode = `// TypeScript — ต้องระบุลำดับใน finally อย่างชัดเจน
+export const tsLifoCode = `// TypeScript — explicit ordering in finally
 try {
   connectDB();
   startTransaction();
   doWork();
 } finally {
-  rollbackTransaction(); // ต้องระบุเอง
+  rollbackTransaction(); // must be explicit
   disconnectDB();
 }`;
 
 export const goLifoCode = `func doWork() {
     connectDB()
-    defer disconnectDB()     // register ที่ 1, รันที่ 2
+    defer disconnectDB()     // registered 1st, runs 2nd
 
     startTransaction()
-    defer rollbackTransaction() // register ที่ 2, รันที่ 1
+    defer rollbackTransaction() // registered 2nd, runs 1st
 
-    // ถ้าขั้นตอนใด panic ทั้งสอง defer ก็ยังรัน (LIFO)
+    // if any step panics, both defers still run (LIFO)
     processRows()
 }`;
 
@@ -77,7 +77,7 @@ export const goLifoCode = `func doWork() {
 
 `panic` หยุด goroutine ปัจจุบัน unwind stack (รัน deferred function ทั้งหมดระหว่างทาง) แล้ว crash โปรแกรมถ้าไม่มีใครดักไว้ ใช้เฉพาะกับ **programming error** ที่ไม่ควรเกิดขึ้นในโค้ดที่ถูกต้อง ไม่ใช่สำหรับ error ที่คาดการณ์ได้ที่คุณต้องการส่งต่อให้ caller
 
-export const tsThrowCode = `// TypeScript — throw สำหรับ error ทุกประเภท
+export const tsThrowCode = `// TypeScript — throw for any error
 function divide(a: number, b: number): number {
   if (b === 0) throw new Error("division by zero");
   return a / b;
@@ -88,18 +88,18 @@ try {
   console.error(e.message);
 }`;
 
-export const goPanicCode = `// Go — return error สำหรับกรณีที่คาดการณ์ได้; panic สำหรับสถานะที่เป็นไปไม่ได้
+export const goPanicCode = `// Go — return error for expected cases; panic for impossible states
 func divide(a, b float64) float64 {
     if b == 0 {
-        panic("หารด้วยศูนย์ — นี่คือ programming error")
+        panic("divide by zero — this is a programming error")
     }
     return a / b
 }
 
-// สำหรับ error ที่คาดการณ์ได้ ให้ return (T, error) แทน:
+// For expected errors, return (T, error) instead:
 func safeDivide(a, b float64) (float64, error) {
     if b == 0 {
-        return 0, fmt.Errorf("ไม่สามารถหาร %v ด้วยศูนย์", a)
+        return 0, fmt.Errorf("cannot divide %v by zero", a)
     }
     return a / b, nil
 }`;
@@ -110,7 +110,7 @@ func safeDivide(a, b float64) (float64, error) {
 
 `recover` หยุด panic จากการแพร่กระจาย ต้องเรียกใน **deferred function** เท่านั้นจึงจะทำงาน นี่คือวิธีที่ Go library (และ HTTP server) ป้องกันไม่ให้ request เดียวที่มีปัญหา crash โปรแกรมทั้งหมด
 
-export const tsCatchCode = `// TypeScript — catch ครอบ throw
+export const tsCatchCode = `// TypeScript — catch wraps throw
 function safe(fn: () => void) {
   try {
     fn();
@@ -119,7 +119,7 @@ function safe(fn: () => void) {
   }
 }`;
 
-export const goRecoverCode = `// Go — recover ใน defer
+export const goRecoverCode = `// Go — recover inside a defer
 func safeRun(fn func()) (err error) {
     defer func() {
         if r := recover(); r != nil {
@@ -191,16 +191,16 @@ func main() {
 
 ```go
 x := 1
-defer fmt.Println("deferred value:", x) // จับ x=1 ตอนนี้
+defer fmt.Println("deferred value:", x) // captures x=1 NOW
 x = 99
-fmt.Println("current value:", x)        // print 99 ก่อน
-// จากนั้น deferred print: deferred value: 1
+fmt.Println("current value:", x)        // prints 99 first
+// then deferred prints: deferred value: 1
 ```
 
 เพื่อจับค่าตอนที่รันจริงแทน ให้ใช้ closure:
 
 ```go
-defer func() { fmt.Println("late value:", x) }() // จับ x by reference
+defer func() { fmt.Println("late value:", x) }() // captures x by reference
 ```
 
 </GoOnly>
@@ -215,7 +215,7 @@ defer func() { fmt.Println("late value:", x) }() // จับ x by reference
 Go standard library ใช้ convention นี้อย่างเคร่งครัด ตัวอย่างเช่น `json.Unmarshal` return error; `json.Marshal` panic เฉพาะเมื่อคุณส่ง type ที่ encode ไม่ได้ (programming mistake ไม่ใช่ user error)
 
 ```go
-// ดี — expected error, return มัน
+// Good — expected error, return it
 func parseAge(s string) (int, error) {
     n, err := strconv.Atoi(s)
     if err != nil {
@@ -224,10 +224,10 @@ func parseAge(s string) (int, error) {
     return n, nil
 }
 
-// ดี — invariant violation, panic เหมาะสม
+// Good — invariant violation, panic is appropriate
 func mustPositive(n int) int {
     if n <= 0 {
-        panic(fmt.Sprintf("mustPositive ถูกเรียกด้วย %d", n))
+        panic(fmt.Sprintf("mustPositive called with %d", n))
     }
     return n
 }

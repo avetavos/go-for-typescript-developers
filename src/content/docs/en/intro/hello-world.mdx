@@ -72,8 +72,8 @@ func main() {
 export const tsLogCode = `// TypeScript logging
 console.log("Hello");                    // simple
 console.log("Name:", name);             // multiple args
-console.log(\`Score: \${score}\`);         // template literal
-const msg = \`Hello, \${name}!\`;          // build a string`;
+console.log("Score: " + score);         // string concatenation
+const msg = "Hello, " + name + "!";     // build a string`;
 
 export const goFmtCode = `// Go fmt package
 fmt.Println("Hello")                    // simple

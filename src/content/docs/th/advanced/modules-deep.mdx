@@ -35,9 +35,9 @@ require (
     github.com/stretchr/testify v1.8.4
 )
 
-// ไม่มี devDependencies แยกต่างหากใน Go
-// deps ที่ใช้เฉพาะ test รวมอยู่ใน require;
-// compiler ไม่รวมมันใน production binaries`;
+// No separate devDependencies in Go.
+// Test-only deps are included in require; the
+// compiler excludes them from production binaries.`;
 
 <TsGo ts={npmManifestCode} go={goManifestCode} />
 
@@ -74,25 +74,25 @@ github.com/gin-gonic/gin v1.9.1/go.mod h1:hPrL7YrpYKXt5YId3A/Tnip5kqbEAP+KLuI3SU
 ## คำสั่ง module ทั่วไป
 
 ```bash
-# เริ่มต้น module ใหม่
+# Initialise a new module
 go mod init github.com/myorg/my-app
 
-# เพิ่ม dependency (อัพเดท go.mod + go.sum)
+# Add a dependency (updates go.mod + go.sum)
 go get github.com/gin-gonic/gin@v1.9.1
 
-# Upgrade ไป latest patch/minor
+# Upgrade to latest patch/minor
 go get github.com/gin-gonic/gin@latest
 
-# ลบ dependencies ที่ไม่ใช้
+# Remove unused dependencies
 go mod tidy
 
-# ตรวจสอบ modules ที่ download ทั้งหมด match go.sum
+# Verify all downloaded modules match go.sum
 go mod verify
 
-# แสดง direct + indirect dependencies ทั้งหมด
+# List all direct + indirect dependencies
 go list -m all
 
-# แสดง versions ที่มีของ module
+# Show available versions of a module
 go list -m -versions github.com/gin-gonic/gin
 ```
 
@@ -122,21 +122,21 @@ require (
 
 Go modules ฝัง **major version ไว้ใน import path** สำหรับ v2 ขึ้นไป นี่คือจุดที่ต่างจาก npm มากที่สุดจนหลายคนแปลกใจ:
 
-export const npmMajorCode = `// npm — ชื่อ package เดิม แค่ version ใหม่
+export const npmMajorCode = `// npm — same package name, just a new version
 // package.json
 "dependencies": {
-  "some-lib": "^3.0.0"  // v3, import เดิม
+  "some-lib": "^3.0.0"  // v3, same import
 }
-// import someLib from 'some-lib';  ← ไม่เปลี่ยน`;
+// import someLib from 'some-lib';  ← unchanged`;
 
-export const goMajorCode = `// Go — v2+ เปลี่ยน import path
+export const goMajorCode = `// Go — v2+ changes the import path
 // go.mod
 require github.com/some-lib/core v2.0.0+incompatible
 
-// ถ้าไลบรารีมี /v2 module ที่เหมาะสม:
+// If the library has a proper /v2 module:
 require github.com/some-lib/core/v2 v2.0.0
 
-// imports ของคุณเปลี่ยน:
+// Your imports change:
 import "github.com/some-lib/core/v2"
 // v1:  import "github.com/some-lib/core"
 // v2:  import "github.com/some-lib/core/v2"`;
@@ -161,13 +161,13 @@ replace github.com/myorg/shared-lib => ../shared-lib
 Vendoring คือการ copy dependency ทั้งหมดมาไว้ใน directory `vendor/` ภายใน repo — มีประโยชน์กับ build แบบ air-gapped หรือเวลาต้องการรับประกัน reproducibility โดยไม่ต้องพึ่ง module proxy:
 
 ```bash
-# สร้าง/อัพเดท vendor directory
+# Create/update vendor directory
 go mod vendor
 
-# Build โดยใช้เฉพาะ vendored deps (ไม่สนใจ module cache)
+# Build using only vendored deps (ignores module cache)
 go build -mod=vendor ./...
 
-# ตรวจสอบ vendor match go.sum
+# Verify vendor matches go.sum
 go mod verify
 ```
 
@@ -176,13 +176,13 @@ go mod verify
 คุณตั้งค่า `GONOSUMCHECK`, `GONOSUMDB`, `GOPROXY` และ `GOFLAGS` ได้ใน shell หรือผ่าน `go env -w`:
 
 ```bash
-# ใช้ corporate module proxy
+# Use a corporate module proxy
 go env -w GOPROXY=https://proxy.corp.example.com,direct
 
-# Disable sum database สำหรับ private repos
+# Disable the sum database for private repos
 go env -w GONOSUMDB=github.com/myorg/*
 
-# ใช้ vendor เสมอถ้ามี
+# Always use vendor if it exists
 go env -w GOFLAGS=-mod=vendor
 ```
 
@@ -192,7 +192,7 @@ go env -w GOFLAGS=-mod=vendor
 
 Workspace (เพิ่มเข้ามาใน Go 1.18) ให้คุณ develop หลาย module ที่พึ่งพากันได้พร้อมกัน โดยไม่ต้องใช้ `replace` directive — เทียบเท่า npm workspaces หรือ yarn workspaces:
 
-export const npmWorkspaceCode = `// npm workspaces — package.json ที่ root
+export const npmWorkspaceCode = `// npm workspaces — package.json at root
 {
   "workspaces": [
     "packages/api",
@@ -200,7 +200,7 @@ export const npmWorkspaceCode = `// npm workspaces — package.json ที่ ro
   ]
 }`;
 
-export const goWorkspaceCode = `// Go workspaces — go.work ที่ repo root
+export const goWorkspaceCode = `// Go workspaces — go.work at repo root
 go 1.27
 
 use (
@@ -208,19 +208,19 @@ use (
     ./shared     // module: github.com/myorg/shared
 )
 
-// ตอนนี้ api import shared ได้โดยตรงจาก disk
-// ไม่ต้องใช้ replace directive`;
+// Now api can import shared directly from disk,
+// no replace directive needed.`;
 
 <TsGo ts={npmWorkspaceCode} go={goWorkspaceCode} />
 
 ```bash
-# เริ่มต้น workspace (สร้าง go.work)
+# Initialise a workspace (creates go.work)
 go work init ./api ./shared
 
-# เพิ่ม module อื่นใน workspace
+# Add another module to the workspace
 go work use ./cli
 
-# Sync go.work.sum (lock file สำหรับ workspaces)
+# Sync go.work.sum (lock file for workspaces)
 go work sync
 ```
 

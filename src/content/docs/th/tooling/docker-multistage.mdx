@@ -30,11 +30,11 @@ FROM golang:1.27-alpine AS builder
 
 WORKDIR /app
 
-# Copy dependency manifests ก่อนเพื่อ layer caching
+# Copy dependency manifests first for layer caching
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Copy source และ build static binary
+# Copy source and build a static binary
 COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /app/server ./cmd/server
 
@@ -43,7 +43,7 @@ FROM gcr.io/distroless/static-debian12
 
 WORKDIR /app
 
-# Copy เฉพาะ binary จาก builder stage
+# Copy only the binary from the builder stage
 COPY --from=builder /app/server .
 
 EXPOSE 8080
@@ -77,7 +77,7 @@ FROM node:24-alpine
 
 WORKDIR /app
 
-# ต้อง copy node_modules — runtime ยังต้องการมัน
+# Must copy node_modules — runtime still needs them
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json .
@@ -89,8 +89,8 @@ CMD ["node", "dist/main.js"]
 
 แม้หลัง prune dev deps แล้ว Node runtime และ `node_modules` ที่เหลือทำให้ image ยังมีขนาด 150–300 MB
 
-export const tsDockerCode = `# ขนาด Node image สุดท้าย: ~150-300 MB
-# มี: node runtime + node_modules + dist/
+export const tsDockerCode = `# Final Node image size: ~150-300 MB
+# Includes: node runtime + node_modules + dist/
 
 FROM node:24-alpine AS builder
 WORKDIR /app
@@ -107,8 +107,8 @@ COPY --from=builder /app/dist ./dist
 EXPOSE 3000
 CMD ["node", "dist/main.js"]`;
 
-export const goDockerCode = `# ขนาด Go image สุดท้าย: ~5-20 MB
-# มี: binary เท่านั้น (ไม่มี runtime)
+export const goDockerCode = `# Final Go image size: ~5-20 MB
+# Includes: your binary only (no runtime)
 
 FROM golang:1.27-alpine AS builder
 WORKDIR /app

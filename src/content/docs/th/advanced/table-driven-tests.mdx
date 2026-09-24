@@ -28,7 +28,7 @@ it.each([
   expect(add(a, b)).toBe(want);
 });`;
 
-export const goTableCode = `// Go — table-driven ด้วย t.Run
+export const goTableCode = `// Go — table-driven with t.Run
 func add(a, b int) int { return a + b }
 
 func TestAdd(t *testing.T) {
@@ -64,23 +64,23 @@ package math_test
 import "testing"
 
 func TestDivide(t *testing.T) {
-    // 1. Table — slice ของ anonymous structs
+    // 1. The table — a slice of anonymous structs
     tests := []struct {
         name    string
         a, b    float64
         want    float64
         wantErr bool
     }{
-        {"normal",         10, 2, 5,   false},
-        {"fraction",        7, 2, 3.5, false},
-        {"divide_by_zero",  1, 0, 0,   true},
+        {"normal",       10, 2, 5, false},
+        {"fraction",     7,  2, 3.5, false},
+        {"divide_by_zero", 1, 0, 0, true},
     }
 
-    // 2. วนลูปใน table
+    // 2. Loop over the table
     for _, tc := range tests {
-        // 3. t.Run สร้าง named subtest
+        // 3. t.Run creates a named subtest
         t.Run(tc.name, func(t *testing.T) {
-            // 4. t.Parallel() — optional, รัน subtests พร้อมกัน
+            // 4. t.Parallel() — optional, runs subtests concurrently
             t.Parallel()
 
             got, err := Divide(tc.a, tc.b)
@@ -105,16 +105,16 @@ convention สำคัญ:
 ## รัน specific subtests
 
 ```bash
-# รัน tests ทั้งหมด
+# Run all tests
 go test ./...
 
-# รันเฉพาะ subtest ที่มีชื่อ (รองรับ regex)
+# Run only one subtest by name (supports regex)
 go test -run TestDivide/divide_by_zero ./...
 
-# รัน subtests ทั้งหมดที่ชื่อมี "zero"
+# Run all subtests whose name contains "zero"
 go test -run TestDivide/.*zero.* ./...
 
-# Verbose output — แสดงชื่อ subtest แต่ละตัวและ PASS/FAIL
+# Verbose output — prints each subtest name and PASS/FAIL
 go test -v ./...
 ```
 
@@ -179,8 +179,8 @@ func TestDebounce(t *testing.T) {
         calls := 0
         d := debounce(func() { calls++ }, time.Second)
         d(); d(); d()
-        time.Sleep(time.Second) // fake clock: return ทันที
-        synctest.Wait()         // ให้ timer goroutine ได้รัน
+        time.Sleep(time.Second) // fake clock: returns instantly
+        synctest.Wait()         // let the timer goroutine run
         if calls != 1 {
             t.Fatalf("calls = %d, want 1", calls)
         }

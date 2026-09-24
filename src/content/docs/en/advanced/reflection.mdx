@@ -20,7 +20,7 @@ import 'reflect-metadata';
 
 function Column(target: any, key: string) {
   const type = Reflect.getMetadata('design:type', target, key);
-  console.log(\`\${key}: \${type.name}\`);
+  console.log(key + ": " + type.name);
 }
 
 class User {

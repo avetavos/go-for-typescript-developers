@@ -19,7 +19,7 @@ async function getBook(id: string): Promise<Book> {
   return book;
 }
 
-// Express error middleware ท้ายสุด
+// Express error middleware at the bottom
 app.use((err, req, res, next) => {
   const status = err.status ?? 500;
   res.status(status).json({ message: err.message });
@@ -34,7 +34,7 @@ func findBook(ctx context.Context, id string) (Book, error) {
     return book, nil
 }
 
-// Handler — ส่งต่อ error ไปยัง error handler ของ Echo
+// Handler — propagate the error to Echo's error handler
 func getBook(c *echo.Context) error {
     book, err := findBook(c.Request().Context(), c.Param("id"))
     if err != nil {
@@ -75,21 +75,21 @@ throw new Error('failed to save book', { cause: originalError });
 // NestJS — HTTP-specific
 throw new InternalServerErrorException('failed to save book');`;
 
-export const goErrorWrap = `// Go — wrapping ด้วย %w
+export const goErrorWrap = `// Go — wrapping with %w
 func (s *BookService) Create(ctx context.Context, req CreateBookRequest) (Book, error) {
     book, err := s.store.Insert(ctx, req)
     if err != nil {
-        // %w เก็บ error ต้นฉบับไว้สำหรับ errors.Is / errors.As
+        // %w preserves the original error for errors.Is / errors.As
         return Book{}, fmt.Errorf("BookService.Create: %w", err)
     }
     return book, nil
 }
 
-// Handler — ตรวจสอบชนิด error
+// In the handler — check error type
 func createBook(c *echo.Context) error {
     book, err := svc.Create(c.Request().Context(), req)
     if err != nil {
-        // errors.Is เดิน wrap chain
+        // errors.Is walks the wrap chain
         if errors.Is(err, store.ErrDuplicate) {
             return echo.NewHTTPError(http.StatusConflict, "book already exists")
         }
@@ -104,7 +104,7 @@ func createBook(c *echo.Context) error {
 
 Echo ให้คุณแทน default error handler ด้วย `e.HTTPErrorHandler` ตรงนี้คือจุดที่คุณจะ log error, แปลง domain error เป็น HTTP code และทำให้ response envelope สม่ำเสมอ ตัว default เป็น factory — `echo.DefaultHTTPErrorHandler(exposeError bool)` — และมัน **ไม่** log ให้ การ log เป็นหน้าที่ของคุณ (หรือของ middleware)
 
-export const tsErrMiddleware = `// Express — error middleware (4 argument, ต้องอยู่ท้ายสุด)
+export const tsErrMiddleware = `// Express — error middleware (4-arg function, must be last)
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err);
   if (err instanceof HttpException) {
@@ -113,14 +113,14 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ message: 'internal server error' });
 });`;
 
-export const goErrHandler = `// Echo — custom HTTP error handler (v5: context ก่อน error ทีหลัง)
+export const goErrHandler = `// Echo — custom HTTP error handler (v5: context first, error second)
 func customErrorHandler(c *echo.Context, err error) {
-    // ห้ามเขียน response ซ้ำ: middleware อาจส่ง response ไปแล้ว
+    // Never write twice: a middleware may already have sent a response.
     if resp, uerr := echo.UnwrapResponse(c.Response()); uerr == nil && resp.Committed {
         return
     }
 
-    // อะไรก็ตามที่มี HTTP status ติดมา (echo.NewHTTPError, echo.ErrNotFound, ...)
+    // Anything carrying an HTTP status (echo.NewHTTPError, echo.ErrNotFound, ...)
     if code := echo.StatusCode(err); code != 0 {
         var he *echo.HTTPError
         msg := http.StatusText(code)
@@ -131,14 +131,14 @@ func customErrorHandler(c *echo.Context, err error) {
         return
     }
 
-    // Error ที่ไม่รู้จัก — log (slog) และคืน 500
+    // Unknown error — log it (slog), return 500
     c.Logger().Error("unhandled error", "err", err)
     _ = c.JSON(http.StatusInternalServerError, map[string]any{
         "message": "internal server error",
     })
 }
 
-// ลงทะเบียนใน main():
+// Register in main():
 e.HTTPErrorHandler = customErrorHandler`;
 
 <TsGo ts={tsErrMiddleware} go={goErrHandler} />
@@ -156,12 +156,12 @@ var (
     ErrDuplicate = errors.New("duplicate entry")
 )
 
-// store/books.go — wrap sentinel เมื่อเกิด DB error
+// store/books.go — wrap sentinel on DB error
 if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "23505" {
     return Book{}, fmt.Errorf("Insert: %w", store.ErrDuplicate)
 }
 
-// handler — แปลง domain error เป็น HTTP code
+// handler — translate domain error to HTTP code
 if errors.Is(err, store.ErrNotFound) {
     return echo.NewHTTPError(http.StatusNotFound, "book not found")
 }

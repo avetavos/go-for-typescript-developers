@@ -13,7 +13,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 Express middleware คือ `(req, res, next) => void` เรียก `next()` เพื่อส่งต่อ หรือเรียก `res.json()` เพื่อจบ request เลย ส่วน Echo ใช้แนวคิด pipeline เดียวกันแต่อาศัย error-return pattern และ closure ของ Go:
 
 ```go
-// Middleware signature ของ Echo
+// Echo middleware signature
 func(next echo.HandlerFunc) echo.HandlerFunc
 ```
 
@@ -21,7 +21,7 @@ Middleware คืน `HandlerFunc` ใหม่ที่ wrap `next` ไว้ �
 
 export const tsMiddleware = `// Express middleware
 function requestLogger(req, res, next) {
-  console.log(\`\${req.method} \${req.path}\`);
+  console.log(req.method + " " + req.path);
   next();
 }
 app.use(requestLogger);`;
@@ -30,7 +30,7 @@ export const goMiddleware = `// Echo middleware
 func RequestLogger(next echo.HandlerFunc) echo.HandlerFunc {
     return func(c *echo.Context) error {
         fmt.Printf("%s %s\\n", c.Request().Method, c.Request().URL.Path)
-        return next(c)   // ส่งต่อ
+        return next(c)   // pass control forward
     }
 }
 
@@ -42,22 +42,22 @@ e.Use(RequestLogger)`;
 
 Echo มี middleware พร้อมใช้งานใน production หลายตัวใน sub-package `middleware`
 
-export const tsBuiltIn = `// Express — ต้องการ package ภายนอก
+export const tsBuiltIn = `// Express with popular packages
 import morgan from 'morgan';
 import cors from 'cors';
 
 app.use(morgan('combined'));
 app.use(cors({ origin: '*' }));
-// ไม่มี recover built-in — ต้องใช้ express-async-errors หรืออื่น ๆ`;
+// No built-in recover — need express-async-errors or similar`;
 
-export const goBuiltIn = `// Echo built-in — ไม่ต้องการ package เพิ่ม
+export const goBuiltIn = `// Echo built-ins — no extra packages needed
 import "github.com/labstack/echo/v5/middleware"
 
-e.Use(middleware.RequestLogger())  // log request ผ่าน log/slog
-e.Use(middleware.Recover())        // จับ panic คืน 500
-e.Use(middleware.CORS())           // default: อนุญาตทุก origin
+e.Use(middleware.RequestLogger())  // request log via log/slog
+e.Use(middleware.Recover())        // catches panics, returns 500
+e.Use(middleware.CORS())           // default: allows all origins
 
-// จำกัด CORS เฉพาะ origin ที่ระบุ:
+// Restrict CORS to specific origins:
 e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
     AllowOrigins: []string{"https://example.com"},
     AllowMethods: []string{http.MethodGet, http.MethodPost},
@@ -83,9 +83,9 @@ e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
 เหมือน Express ลำดับมีความสำคัญ middleware ที่ลงทะเบียนก่อนจะทำงานก่อน RequestLogger และ Recover ควรอยู่ชั้นนอกสุดเสมอ
 
 ```go
-e.Use(middleware.RequestLogger())  // 1 — log ทุก request
-e.Use(middleware.Recover())        // 2 — จับ panic จาก handler ที่ตามมา
-e.Use(authMiddleware)              // 3 — ตรวจสอบ auth หลังจาก logging ตั้งค่าแล้ว
+e.Use(middleware.RequestLogger())  // 1st — log all requests
+e.Use(middleware.Recover())        // 2nd — catch panics from any later handler
+e.Use(authMiddleware)              // 3rd — auth checks after logging is set up
 ```
 
 ## Middleware ระดับ route และ group
@@ -141,7 +141,7 @@ func RequireAuth(next echo.HandlerFunc) echo.HandlerFunc {
         if err != nil {
             return echo.NewHTTPError(http.StatusUnauthorized, "invalid token")
         }
-        // เก็บ claims ใน context สำหรับ handler ที่ตามมา
+        // Store claims in context for downstream handlers
         c.Set("user", claims)
         return next(c)
     }
@@ -154,9 +154,9 @@ func RequireAuth(next echo.HandlerFunc) echo.HandlerFunc {
 `c.Set(key, value)` เก็บค่าอะไรก็ได้ลงใน context ที่ scoped ตาม request ดึงกลับด้วย `c.Get(key)` แล้ว type assert เอง หรือใช้ generic `echo.ContextGet` ที่คืน error แทนการ panic เมื่อ type ไม่ตรง เทียบได้กับ `req.user = claims` ใน Express:
 
 ```go
-claims := c.Get("user").(*MyClaims)            // panic ถ้า type ไม่ตรง
+claims := c.Get("user").(*MyClaims)            // panics if the type is wrong
 
-claims, err := echo.ContextGet[*MyClaims](c, "user")   // error ถ้าไม่มี key หรือ type ไม่ตรง
+claims, err := echo.ContextGet[*MyClaims](c, "user")   // error if missing or wrong type
 ```
 
 ใช้ typed key (local `type contextKey string`) เพื่อหลีกเลี่ยงการชนกันใน codebase ขนาดใหญ่

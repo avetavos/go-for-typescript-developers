@@ -82,7 +82,7 @@ async function withTimeout<T>(
   ms: number
 ): Promise<T> {
   const timeout = new Promise<never>((_, reject) =>
-    setTimeout(() => reject(new Error(\`Timed out after \${ms}ms\`)), ms)
+    setTimeout(() => reject(new Error("Timed out after " + ms + "ms")), ms)
   );
   return Promise.race([fn(), timeout]);
 }`;

@@ -135,7 +135,7 @@ In TypeScript you use `export` and `import`. In Go, visibility is determined by 
 export const tsExportCode = `// TypeScript: explicit export
 export interface User { id: string; name: string; }
 export function greet(name: string): string {
-  return \`Hello, \${name}!\`;
+  return "Hello, " + name + "!";
 }
 // internal helper (no export)
 function formatName(n: string): string { return n.trim(); }`;

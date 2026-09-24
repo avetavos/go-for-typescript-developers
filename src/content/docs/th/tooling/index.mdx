@@ -50,7 +50,7 @@ module นี้จะพาคุณไปรู้จักเครื่อ�
 - **Cross-compilation** — binary เดียวสำหรับทุก OS/arch โดยไม่ต้องมี runtime
 - **CI กับ GitHub Actions** — workflow ของ Go ที่ใช้งานได้จริง vs workflow ของ Node
 
-export const tsToolingCode = `// package.json (ส่วนหนึ่ง)
+export const tsToolingCode = `// package.json (partial)
 {
   "scripts": {
     "lint":   "eslint src --ext .ts",
@@ -70,8 +70,8 @@ export const tsToolingCode = `// package.json (ส่วนหนึ่ง)
   }
 }`;
 
-export const goToolingCode = `# Makefile (wrapper สำหรับความสะดวก — optional)
-# ทุกอย่างด้านล่างอยู่ใน binary "go" อยู่แล้ว
+export const goToolingCode = `# Makefile (optional convenience wrapper)
+# Everything below is already in the "go" binary
 
 lint:
     go vet ./...

@@ -20,12 +20,12 @@ TypeScript คือ source → JS → runtime (Node.js) คุณแทบจ�
 export const tsRuntimeCode = `// TypeScript workflow
 // tsc src/index.ts --outDir dist
 // node dist/index.js
-// (Node.js ต้องติดตั้งบน server)`;
+// (Node.js must be installed on the server)`;
 
 export const goRuntimeCode = `// Go workflow
 // go build -o myapp .
 // ./myapp
-// (ไม่ต้องการอะไรอื่นบน server)`;
+// (nothing else needed on the server)`;
 
 <TsGo ts={tsRuntimeCode} go={goRuntimeCode} />
 
@@ -42,7 +42,7 @@ export const tsDepsCode = `// package.json
     "zod": "^3.22.0"
   }
 }
-// node_modules/ → ส่งแยกหรือติดตั้งใหม่`;
+// node_modules/ → shipped separately or re-installed`;
 
 export const goDepsCode = `// go.mod
 module github.com/yourname/myapp
@@ -52,7 +52,7 @@ go 1.27
 require (
     github.com/gin-gonic/gin v1.9.1
 )
-// dependency คอมไพล์รวมเข้า binary — ไม่ต้องส่งแยก`;
+// dependencies compiled into the binary — nothing to ship separately`;
 
 <TsGo ts={tsDepsCode} go={goDepsCode} />
 
@@ -69,13 +69,13 @@ async function doWork() {
   return a + b;
 }`;
 
-export const goGoroutineCode = `// Go: goroutine, parallelism จริงๆ
+export const goGoroutineCode = `// Go: goroutines, real parallelism
 func doWork(ch chan int) {
-    a := stepOne() // รันบน goroutine
-    b := stepTwo() // รันบน goroutine
-    ch <- a + b    // ส่งผลลัพธ์ผ่าน channel
+    a := stepOne() // runs on goroutine
+    b := stepTwo() // runs on goroutine
+    ch <- a + b    // send result on channel
 }
-// เรียกใช้ด้วย: go doWork(ch)`;
+// launch with: go doWork(ch)`;
 
 <TsGo ts={tsEventLoopCode} go={goGoroutineCode} />
 
@@ -85,19 +85,19 @@ func doWork(ch chan int) {
 
 นี่คือนิสัยที่เลิกยากที่สุด ใน TypeScript/JavaScript ทุกอย่าง throw ได้หมด คุณป้องกันด้วย `try/catch` แต่ดูจาก signature ของ function ไม่ออกเลยว่าจะ throw หรือเปล่า ส่วนใน Go error คือ return value — เป็นส่วนหนึ่งของ contract ของ function
 
-export const tsThrowCode = `// TypeScript: function ใดๆ ก็ throw ได้
+export const tsThrowCode = `// TypeScript: any function can throw
 function parseConfig(raw: string): Config {
-  // อาจ throw SyntaxError — ไม่อยู่ใน signature!
+  // might throw SyntaxError — not in the signature!
   return JSON.parse(raw);
 }
 
 try {
   const cfg = parseConfig(raw);
 } catch (e) {
-  // จัดการ
+  // handle
 }`;
 
-export const goReturnErrCode = `// Go: error อยู่ใน return type — ไม่สามารถ ignore ได้
+export const goReturnErrCode = `// Go: error is in the return type — impossible to ignore
 func parseConfig(raw string) (Config, error) {
     var cfg Config
     if err := json.Unmarshal([]byte(raw), &cfg); err != nil {
@@ -108,7 +108,7 @@ func parseConfig(raw string) (Config, error) {
 
 cfg, err := parseConfig(raw)
 if err != nil {
-    // ต้องจัดการ — compiler เตือนถ้าไม่ใช้ err
+    // must handle — compiler warns if you don't use err
 }`;
 
 <TsGo ts={tsThrowCode} go={goReturnErrCode} />
@@ -117,16 +117,16 @@ if err != nil {
 
 TypeScript มีหลายวิธีทำสิ่งเดียวกัน: class, prototype, function, decorator และ module format หลายแบบ ชุมชนจึงถกเถียงเรื่อง pattern กันไม่จบ ส่วนวัฒนธรรมของ Go คิดตรงข้าม: มักมีวิธี idiomatic อยู่วิธีเดียว บังคับด้วย `gofmt` (automatic formatting), `go vet` (static analysis) และ convention ของชุมชน ถ้านักพัฒนา Go สองคนเขียน function เดียวกันแยกกัน โค้ดที่ได้จะหน้าตาเกือบเหมือนกัน
 
-export const tsStyleCode = `// TypeScript: หลาย style ที่ valid
+export const tsStyleCode = `// TypeScript: many valid styles
 class UserService {
   constructor(private db: DB) {}
   async getUser(id: string) { ... }
 }
-// หรือ plain function
+// OR a plain function
 const getUser = async (db: DB, id: string) => { ... }
-// หรือ factory function, namespace, ...`;
+// OR a factory function, OR a namespace, OR...`;
 
-export const goStyleCode = `// Go: style idiomatic ที่ชัดเจนแบบเดียว
+export const goStyleCode = `// Go: one clear idiomatic style
 type UserService struct {
     db *DB
 }
@@ -147,10 +147,10 @@ func (s *UserService) GetUser(ctx context.Context, id string) (User, error) {
 ใน TypeScript คุณต้องเลือกระหว่าง Prettier, ESLint, StandardJS หรือไม่ใช้ formatter เลย ส่วนใน Go `gofmt` มาพร้อม toolchain อยู่แล้วและเป็น formatter อย่างเป็นทางการเพียงตัวเดียว ไม่มีการเถียงเรื่อง style — โค้ดของทุกคนหน้าตาเหมือนกัน editor ส่วนใหญ่รัน `gofmt` ให้อัตโนมัติตอน save
 
 ```go
-// ก่อน gofmt
+// Before gofmt
 func  add(a int,b   int)int{return a+b}
 
-// หลัง gofmt (อัตโนมัติ)
+// After gofmt (automatic)
 func add(a int, b int) int { return a + b }
 ```
 

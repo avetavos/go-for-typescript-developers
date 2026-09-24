@@ -15,7 +15,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ```typescript
 const controller = new AbortController();
-setTimeout(() => controller.abort(), 5000); // timeout 5 วินาที
+setTimeout(() => controller.abort(), 5000); // cancel after 5 s
 const res = await fetch(url, { signal: controller.signal });
 ```
 
@@ -30,16 +30,14 @@ const controller = new AbortController();
 const { signal } = controller;
 
 async function worker(signal: AbortSignal) {
-  try {
-    await doWork(signal);
-  } catch (e) {
-    if (e.name === 'AbortError') {
-      console.log('Worker cancelled');
-    }
+  // signal.aborted becomes true when abort() is called
+  while (!signal.aborted) {
+    await doWork();
   }
+  console.log("Worker cancelled");
 }
 
-controller.abort(); // ยกเลิก`;
+controller.abort(); // broadcast cancellation`;
 
 export const goWithCancelCode = `// Go: context.WithCancel
 package main
@@ -53,7 +51,7 @@ import (
 func worker(ctx context.Context, id int, wg *sync.WaitGroup) {
     defer wg.Done()
     select {
-    case <-ctx.Done(): // รอการยกเลิก
+    case <-ctx.Done(): // unblocks when cancel() is called
         fmt.Printf("Worker %d cancelled: %v\\n", id, ctx.Err())
     }
 }
@@ -67,7 +65,7 @@ func main() {
         go worker(ctx, i, &wg)
     }
 
-    cancel()   // ยกเลิก workers ทั้งหมด
+    cancel()   // broadcast cancellation to all workers
     wg.Wait()
     fmt.Println("All workers stopped")
 }`;
@@ -78,13 +76,13 @@ func main() {
 
 สำหรับ operation ที่ต้องเสร็จภายใน deadline ใช้ `context.WithTimeout` Go จะ cancel context ให้อัตโนมัติเมื่อ timer หมดเวลา:
 
-export const tsTimeoutCode = `// TypeScript: timeout ด้วย Promise.race
+export const tsTimeoutCode = `// TypeScript: timeout via Promise.race
 async function withTimeout<T>(
   fn: () => Promise<T>,
   ms: number
 ): Promise<T> {
   const timeout = new Promise<never>((_, reject) =>
-    setTimeout(() => reject(new Error(\`Timeout after \${ms}ms\`)), ms)
+    setTimeout(() => reject(new Error("Timed out after " + ms + "ms")), ms)
   );
   return Promise.race([fn(), timeout]);
 }`;
@@ -102,7 +100,7 @@ import (
 func slowOperation(ctx context.Context, wg *sync.WaitGroup) {
     defer wg.Done()
     select {
-    case <-time.After(5 * time.Second): // จำลอง slow operation
+    case <-time.After(5 * time.Second): // simulated slow work
         fmt.Println("Operation complete")
     case <-ctx.Done():
         fmt.Println("Operation timed out:", ctx.Err())
@@ -110,12 +108,11 @@ func slowOperation(ctx context.Context, wg *sync.WaitGroup) {
 }
 
 func main() {
-    // timeout หลัง 100ms
     ctx, cancel := context.WithTimeout(
         context.Background(),
-        100*time.Millisecond,
+        100*time.Millisecond, // deadline: 100 ms
     )
-    defer cancel() // ดีที่สุดคือ defer cancel() เสมอ
+    defer cancel() // always defer cancel — prevents resource leak
 
     var wg sync.WaitGroup
     wg.Add(1)
@@ -127,13 +124,13 @@ func main() {
 
 ## Context Values — ส่งข้อมูลผ่าน Call Chain
 
-export const tsReqCode = `// TypeScript: ส่ง request-scoped data ผ่าน function args
+export const tsReqCode = `// TypeScript: pass request-scoped data via function arguments
 async function handler(req: Request) {
   const userId = req.headers.get('x-user-id');
   await processRequest(userId);
 }`;
 
-export const goCtxValueCode = `// Go: context.WithValue สำหรับ request-scoped data
+export const goCtxValueCode = `// Go: context.WithValue carries data through the call chain
 package main
 
 import (

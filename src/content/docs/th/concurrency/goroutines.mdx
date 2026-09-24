@@ -18,30 +18,29 @@ async function processUser(id: number) {
   const user = await fetchUser(id);
   return user;
 }
-// ต้อง await หรือ .then() เพื่อรอผล
-await processUser(1);
+await processUser(1); // you must await or .then() to consume it
 ```
 
 ใน Go คุณเติม keyword `go` หน้า function call ใดก็ได้ call นั้นจะถูก dispatch เป็น **goroutine** — หน่วยทำงานน้ำหนักเบาที่รันอิสระ จัดการโดย Go runtime ไม่ต้องมี `async` ที่ตัว function และไม่ต้อง `await` ตอนเรียก:
 
 ```go
-go processUser(1) // รันในพื้นหลังทันที — ไม่ต้อง async keyword
+go processUser(1) // fires immediately in the background
 ```
 
 จุดต่างที่สำคัญ: `async` function ของ JavaScript ยังรันบน thread เดียว แต่ goroutine รันแบบ parallel บน OS thread คนละตัวได้จริง
 
 ## การสร้าง Goroutines
 
-export const tsAsyncCode = `// TypeScript: async/await (single-threaded)
+export const tsAsyncCode = `// TypeScript: async/await (single-threaded event loop)
 async function greet(name: string): Promise<void> {
-  console.log(\`Hello from \${name}\`);
+  console.log("Hello from " + name);
 }
 
-// ต้อง await เพื่อรอผล
+// sequential
 await greet("Alice");
-await greet("Bob");   // รันตามลำดับ
+await greet("Bob");
 
-// Promise.all เพื่อรันพร้อมกัน (แต่ยังคง single-threaded)
+// concurrent (still one thread, interleaved via event loop)
 await Promise.all([greet("Alice"), greet("Bob")]);`;
 
 export const goGoroutineCode = `// Go: goroutines (truly concurrent)
@@ -53,7 +52,7 @@ import (
 )
 
 func greet(name string, wg *sync.WaitGroup) {
-    defer wg.Done() // แจ้ง WaitGroup เมื่อเสร็จ
+    defer wg.Done() // signal WaitGroup when done
     fmt.Printf("Hello from %s\\n", name)
 }
 
@@ -62,11 +61,11 @@ func main() {
     names := []string{"Alice", "Bob", "Carol"}
 
     for _, name := range names {
-        wg.Add(1)         // ลงทะเบียนก่อน launch
-        go greet(name, &wg) // launch goroutine
+        wg.Add(1)            // register before launching
+        go greet(name, &wg)  // launch goroutine
     }
 
-    wg.Wait() // block จนกว่าทุก goroutine เสร็จ
+    wg.Wait() // block until all goroutines finish
     fmt.Println("All done!")
 }`;
 
@@ -94,7 +93,7 @@ await Promise.all(urls.map(async (url) => {
 export const goWgGoCode = `// Go 1.25+
 var wg sync.WaitGroup
 for _, url := range urls {
-    wg.Go(func() { fetchOne(url) }) // Add(1) + go + Done จัดการให้หมด
+    wg.Go(func() { fetchOne(url) }) // Add(1) + go + Done, handled for you
 }
 wg.Wait()`;
 
@@ -112,11 +111,11 @@ export const tsAnonCode = `// TypeScript: immediately invoked async
   console.log(result);
 })();`;
 
-export const goAnonCode = `// Go: immediately launched goroutine
+export const goAnonCode = `// Go: immediately launched anonymous goroutine
 go func() {
     result := doSomething()
     fmt.Println(result)
-}() // วงเล็บ () ด้านหลังเพื่อ invoke ทันที`;
+}() // trailing () invokes the function literal immediately`;
 
 <TsGo ts={tsAnonCode} go={goAnonCode} />
 

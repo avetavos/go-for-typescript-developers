@@ -20,35 +20,35 @@ Go เปิดเผย memory address อย่างชัดเจน คุ
 `&x` ให้ pointer ไปยัง `x` — address ใน memory ที่ `x` อาศัยอยู่
 `*p` dereference pointer `p` — อ่านหรือเขียนค่าที่ address นั้น
 
-export const tsRefCode = `// TypeScript — object ถูกแชร์แบบ implicit
+export const tsRefCode = `// TypeScript — objects are implicitly shared
 function increment(obj: { count: number }) {
-  obj.count++;          // mutate ต้นฉบับ (reference)
+  obj.count++;          // mutates the original (reference)
 }
 
 const counter = { count: 0 };
 increment(counter);
 console.log(counter.count); // 1
 
-// แต่ primitive ถูก copy เสมอ:
+// BUT primitives are always copied:
 function addOne(n: number): number {
-  return n + 1;         // n คือ copy — caller ไม่เปลี่ยน
+  return n + 1;         // n is a copy — caller unchanged
 }
 let x = 5;
 addOne(x);
-console.log(x); // ยังเป็น 5`;
+console.log(x); // still 5`;
 
-export const goPointerCode = `// Go — primitive ถูก copy โดยค่าเริ่มต้น; ใช้ * เพื่อ opt in การ mutate
+export const goPointerCode = `// Go — primitives copied by default; use * to opt in to mutation
 func increment(n *int) {
-    *n++            // dereference แล้ว mutate
+    *n++            // dereference and mutate
 }
 
 func main() {
     x := 42
-    increment(&x)   // ส่ง address ของ x
-    fmt.Println(x)  // 43 — x ถูก mutate
+    increment(&x)   // pass address of x
+    fmt.Println(x)  // 43 — x was mutated
 
-    // ถ้าไม่ใช้ pointer — value จะถูก copy, caller ไม่เปลี่ยน
-    // increment(x)  จะเป็น compile error (type ไม่ตรง)
+    // Without pointer — value is copied, caller unchanged
+    // increment(x)  would be a compile error (type mismatch)
 }`;
 
 <TsGo ts={tsRefCode} go={goPointerCode} />
@@ -57,15 +57,15 @@ func main() {
 
 ทุก type `T` มี pointer type `*T` ที่สอดคล้องกัน ตัวแปร pointer เก็บ address ไม่ใช่ค่า
 
-export const tsPtrTypeCode = `// TypeScript ไม่มี pointer type
-// ที่ใกล้ที่สุดคือ wrapper object หรือ ref pattern:
-const ref = { current: 0 };   // "pointer" แบบ manual`;
+export const tsPtrTypeCode = `// TypeScript has no pointer types
+// The closest is a wrapper object or ref pattern:
+const ref = { current: 0 };   // manual "pointer" idiom`;
 
-export const goPtrTypeCode = `var p *int          // p คือ pointer ไปยัง int, ค่าคือ nil
+export const goPtrTypeCode = `var p *int          // p is a pointer to int, value is nil
 x := 10
-p = &x              // p เก็บ address ของ x
-fmt.Println(*p)     // 10 — dereference เพื่ออ่าน
-*p = 20             // เขียนผ่าน pointer
+p = &x              // p now holds the address of x
+fmt.Println(*p)     // 10 — dereference to read
+*p = 20             // write through pointer
 fmt.Println(x)      // 20`;
 
 <TsGo ts={tsPtrTypeCode} go={goPtrTypeCode} />
@@ -79,22 +79,22 @@ fmt.Println(x)      // 20`;
 
 สำหรับ struct ขนาดเล็ก (2–3 field) ที่อ่านอย่างเดียว มักใช้ value semantics ได้ สำหรับ struct ขนาดใหญ่หรือจุดที่ต้องการ mutation ให้ใช้ pointer
 
-export const tsWhenCode = `// TypeScript — struct/object ส่งเป็น reference เสมอ
-// คุณไม่มีทางเลือก; runtime ตัดสินใจ
+export const tsWhenCode = `// TypeScript — structs/objects always pass by reference
+// You have no choice; the runtime decides
 interface Config { host: string; port: number; }
-function connect(cfg: Config) { /* cfg คือ reference */ }`;
+function connect(cfg: Config) { /* cfg is a reference */ }`;
 
 export const goWhenCode = `type Config struct {
     Host string
     Port int
 }
 
-// Value receiver — method รับ copy; ไม่สามารถแก้ไขต้นฉบับ
+// Value receiver — method gets a copy; cannot modify original
 func (c Config) String() string {
     return fmt.Sprintf("%s:%d", c.Host, c.Port)
 }
 
-// Pointer receiver — method สามารถแก้ไขต้นฉบับ
+// Pointer receiver — method can modify the original
 func (c *Config) SetPort(p int) {
     c.Port = p
 }
@@ -132,10 +132,10 @@ func main() {
 	swap(&a, &b)
 	fmt.Printf("after  swap: a=%d b=%d\\n", a, b)
 
-	// Pointer ไปยัง struct
+	// Pointer to struct
 	type Point struct{ X, Y int }
 	p := &Point{X: 1, Y: 2}
-	p.X = 99 // Go auto-dereference: (*p).X = 99
+	p.X = 99 // Go auto-dereferences: (*p).X = 99
 	fmt.Println("point:", *p)
 }`;
 
@@ -152,7 +152,7 @@ fmt.Println(p)    // <nil>
 
 n := 42
 p = &n
-fmt.Println(*p)   // 42 — ปลอดภัยแล้ว
+fmt.Println(*p)   // 42 — safe now
 ```
 
 ความเสี่ยงที่เทียบเท่าใน TypeScript คือการเข้าถึง property บน `null` หรือ `undefined` Go ทำให้เกิด bug ประเภทเดียวกันได้ — แต่ด้วย error message ที่ชัดเจนกว่าและไม่มีความสับสนเรื่อง `undefined`
@@ -164,11 +164,11 @@ fmt.Println(*p)   // 42 — ปลอดภัยแล้ว
 `new(T)` ให้ pointer ไปยัง zero value ก่อน Go 1.26 ถ้าอยากได้ pointer ไปยังค่าจริง ๆ ต้องผ่านตัวแปรชั่วคราว ตอนนี้ `new` รับ expression ได้แล้ว:
 
 ```go
-// ก่อน 1.26 — ท่าคลาสสิกสองบรรทัด
+// Before 1.26 — the classic two-liner
 age := 42
 u := User{Age: &age}
 
-// Go 1.26+ — เหมือนกันเป๊ะ ไม่ต้องมีตัวแปรชั่วคราว
+// Go 1.26+ — same thing, no temp variable
 u := User{Age: new(42)}
 u2 := User{Age: new(yearsSince(born))}
 ```
@@ -185,7 +185,7 @@ Go dereference pointer ให้อัตโนมัติเมื่อเข
 type Point struct{ X, Y int }
 p := &Point{X: 1, Y: 2}
 
-// ทั้งสองเหมือนกัน:
+// Both are identical:
 fmt.Println((*p).X) // manual dereference
 fmt.Println(p.X)    // auto dereference — idiomatic Go
 ```

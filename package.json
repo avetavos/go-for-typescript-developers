@@ -9,6 +9,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "test": "vitest run",
+    "check": "node tools/check-parity.mjs",
+    "verify:playgrounds": "node tools/verify-playgrounds.mjs",
     "build:wasm": "cd wasm-runner && go mod tidy && GOOS=js GOARCH=wasm go build -ldflags=\"-s -w\" -o ../public/go-runner.wasm . && cp \"$(go env GOROOT)/lib/wasm/wasm_exec.js\" ../public/wasm_exec.js",
     "prebuild": "test -f public/go-runner.wasm || npm run build:wasm"
   },

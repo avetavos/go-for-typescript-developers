@@ -31,7 +31,7 @@ func getBook(c *echo.Context) error {
     return c.JSON(http.StatusOK, book)
 }
 
-// 404 (ผ่าน HTTPError — ดูในบท Error Handling)
+// 404 (via HTTPError — covered in Error Handling)
 return echo.NewHTTPError(http.StatusNotFound, "not found")`;
 
 <TsGo ts={tsJsonResp} go={goJsonResp} />
@@ -122,7 +122,7 @@ func main() {
 		PublishedAt: time.Date(2015, 10, 26, 0, 0, 0, 0, time.UTC),
 	}
 
-	// Marshal เป็น JSON (สิ่งที่ c.JSON ทำภายใน)
+	// Marshal to JSON (what c.JSON does internally)
 	data, err := json.MarshalIndent(book, "", "  ")
 	if err != nil {
 		fmt.Println("marshal error:", err)
@@ -130,7 +130,7 @@ func main() {
 	}
 	fmt.Println(string(data))
 
-	// Unmarshal กลับ
+	// Unmarshal back
 	var decoded BookResponse
 	if err := json.Unmarshal(data, &decoded); err != nil {
 		fmt.Println("unmarshal error:", err)

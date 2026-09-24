@@ -21,7 +21,7 @@ export const tsInterfaceCode = `interface Greeter {
 // TypeScript: no implements needed (structural)
 class User {
     constructor(public name: string) {}
-    greet(): string { return \`Hello from \${this.name}\`; }
+    greet(): string { return "Hello from " + this.name; }
 }
 
 function sayHello(g: Greeter) {

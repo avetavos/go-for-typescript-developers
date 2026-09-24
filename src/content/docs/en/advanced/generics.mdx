@@ -170,7 +170,7 @@ class Box<T> {
   }
 }
 const n = new Box(21).map(v => v * 2);   // Box<number>
-const s = n.map(v => \`\${v}!\`);         // Box<string>`;
+const s = n.map(v => v + "!");           // Box<string>`;
 
 export const goGenericMethodCode = `// Go 1.27+: methods may declare their own type parameters
 type Box[T any] struct{ Value T }

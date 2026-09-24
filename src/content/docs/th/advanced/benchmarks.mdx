@@ -18,7 +18,7 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ## Signature ของ benchmark function
 
-export const jsBenchCode = `// JavaScript — benchmark.js (ไลบรารีภายนอก)
+export const jsBenchCode = `// JavaScript — benchmark.js (external library)
 import Benchmark from 'benchmark';
 
 const suite = new Benchmark.Suite();
@@ -32,7 +32,7 @@ suite
   })
   .run();`;
 
-export const goBenchCode = `// Go — built-in ใน testing package
+export const goBenchCode = `// Go — built into testing package
 // sum_test.go
 package main
 
@@ -47,7 +47,7 @@ func sum(n int) int {
 }
 
 func BenchmarkSum(b *testing.B) {
-    for b.Loop() {        // Go 1.24+: b.Loop() เป็น form ที่แนะนำ
+    for b.Loop() {        // Go 1.24+: b.Loop() is the preferred form
         sum(1000)
     }
 }`;
@@ -57,22 +57,22 @@ func BenchmarkSum(b *testing.B) {
 ## การรัน benchmarks
 
 ```bash
-# รัน benchmarks ทั้งหมดใน package ปัจจุบัน
+# Run all benchmarks in the current package
 go test -bench=. ./...
 
-# รัน benchmarks ที่ match regex
+# Run benchmarks matching a regex
 go test -bench=BenchmarkSum ./...
 
-# รัน unit tests ควบคู่ไปกับ benchmarks ด้วย
+# Also run unit tests alongside benchmarks
 go test -bench=. -run=. ./...
 
-# ข้าม unit tests (รันเฉพาะ benchmarks)
+# Skip unit tests (run benchmarks only)
 go test -bench=. -run='^$' ./...
 
-# ควบคุมเวลา benchmark (default 1s)
+# Control benchmark time (default 1s)
 go test -bench=. -benchtime=5s ./...
 
-# รายงาน memory allocations
+# Report memory allocations
 go test -bench=. -benchmem ./...
 ```
 
@@ -108,7 +108,7 @@ func BenchmarkConcatPlus(b *testing.B) {
     for b.Loop() {
         var s string
         for i := 0; i < 100; i++ {
-            s += "x"  // allocates ทุก iteration
+            s += "x"  // allocates on every iteration
         }
         _ = s
     }
@@ -138,11 +138,11 @@ BenchmarkConcatBuilder-8   2134500     562 ns/op     128 B/op     1 allocs/op
 
 ```go
 func BenchmarkSearch(b *testing.B) {
-    // Expensive setup — ไม่ถูกวัด
+    // Expensive setup — not measured
     data := generateLargeSlice(100_000)
     target := data[50_000]
 
-    b.ResetTimer() // เริ่มนาฬิกาหลัง setup
+    b.ResetTimer() // Start the clock AFTER setup
 
     for b.Loop() {
         _ = linearSearch(data, target)
@@ -157,13 +157,13 @@ func BenchmarkSearch(b *testing.B) {
 ## Profiling ระหว่าง benchmarks
 
 ```bash
-# เขียน CPU profile ขณะ benchmark
+# Write a CPU profile while benchmarking
 go test -bench=BenchmarkSearch -cpuprofile=cpu.out ./...
 
-# เขียน heap (memory) profile
+# Write a heap (memory) profile
 go test -bench=BenchmarkSearch -memprofile=mem.out ./...
 
-# เปิด profile ใน interactive pprof tool
+# Open the profile in the interactive pprof tool
 go tool pprof cpu.out
 ```
 

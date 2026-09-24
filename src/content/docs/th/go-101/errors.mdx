@@ -23,7 +23,7 @@ async function readConfig(path: string): Promise<Config> {
         const data = await fs.readFile(path, "utf-8");
         return JSON.parse(data);
     } catch (err) {
-        throw new Error(\`failed to read config: \${err}\`);
+        throw new Error("failed to read config: " + err);
     }
 }`;
 
@@ -49,7 +49,7 @@ throw new Error("something went wrong");
 
 class NotFoundError extends Error {
     constructor(public id: string) {
-        super(\`item \${id} not found\`);
+        super("item " + id + " not found");
     }
 }`;
 
@@ -138,21 +138,21 @@ errors.Is(wrapped, original) // true — unwraps the chain
 
 `errors.As` ต้องประกาศตัวแปร pointer ไว้ก่อนแล้วค่อยตรวจตอน runtime ตั้งแต่ Go 1.26 `errors.AsType[T]` คืนค่าที่มี type ถูกต้องให้เลย — ใกล้เคียง `instanceof` narrowing ของ TypeScript ที่สุดเท่าที่ Go มี:
 
-export const tsInstanceofCode = `// TypeScript: instanceof narrow type ให้ตรงจุด
+export const tsInstanceofCode = `// TypeScript: instanceof narrows the type in place
 try {
   await findUser(-1);
 } catch (err) {
   if (err instanceof ValidationError) {
-    console.log(err.field); // narrow เป็น ValidationError แล้ว
+    console.log(err.field); // narrowed to ValidationError
   }
 }`;
 
-export const goAsTypeCode = `// Go 1.26+: errors.AsType คืน (T, bool) — ไม่ต้องประกาศ var ไม่ต้องส่ง pointer-to-pointer
+export const goAsTypeCode = `// Go 1.26+: errors.AsType returns (T, bool) — no var, no pointer-to-pointer
 if ve, ok := errors.AsType[*ValidationError](err); ok {
-    fmt.Println(ve.Field) // ve เป็น *ValidationError แล้ว
+    fmt.Println(ve.Field) // ve is already *ValidationError
 }
 
-// แบบก่อน 1.26 ยังใช้ได้และจะเจอทั่วไปในโค้ดเก่า:
+// The pre-1.26 form still works and you will see it everywhere:
 var ve *ValidationError
 if errors.As(err, &ve) { ... }`;
 

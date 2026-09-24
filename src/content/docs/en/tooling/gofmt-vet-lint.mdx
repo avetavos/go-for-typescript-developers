@@ -101,7 +101,7 @@ Recent releases keep adding analyzers you get for free:
 
 ## go fix — the modernizer (Go 1.26+)
 
-ESLint's `--fix` rewrites code to match newer idioms. Go 1.26 rebuilt `go fix` on the same analysis framework as `go vet`, with a suite of **modernizers**: loops that should be `for range n`, hand-written `Min`/`Max` → built-ins, `wg.Add(1); go f()` → `wg.Go(f)` (`waitgroupgo`), `sort.Slice` → `slices.SortFunc`, and more.
+ESLint's `--fix` rewrites code to match newer idioms. Go 1.26 rebuilt `go fix` on the same analysis framework as `go vet`, with a suite of **modernizers**: loops that should be `for range n`, hand-written `Min`/`Max` → built-ins, `wg.Add(1); go f()` → `wg.Go(f)` (named `waitgroup` in 1.26, renamed `waitgroupgo` in 1.27), `sort.Slice` → `slices.SortFunc`, and more.
 
 ```bash
 go fix ./...          # apply every modernizer

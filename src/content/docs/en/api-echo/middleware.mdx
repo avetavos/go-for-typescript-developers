@@ -21,7 +21,7 @@ A middleware returns a new `HandlerFunc` that wraps `next`. Call `next(c)` to pa
 
 export const tsMiddleware = `// Express middleware
 function requestLogger(req, res, next) {
-  console.log(\`\${req.method} \${req.path}\`);
+  console.log(req.method + " " + req.path);
   next();
 }
 app.use(requestLogger);`;

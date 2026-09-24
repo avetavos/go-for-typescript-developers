@@ -22,7 +22,7 @@ interface CreateBookDTO {
 
 app.post('/books', (req, res) => {
   const body = req.body as CreateBookDTO;
-  // body.title, body.author, body.year พร้อมใช้
+  // body.title, body.author, body.year available
   res.status(201).json(body);
 });`;
 
@@ -38,7 +38,7 @@ func createBook(c *echo.Context) error {
     if err := c.Bind(&req); err != nil {
         return echo.NewHTTPError(http.StatusBadRequest, err.Error())
     }
-    // req.Title, req.Author, req.Year พร้อมใช้
+    // req.Title, req.Author, req.Year available
     return c.JSON(http.StatusCreated, req)
 }`;
 
@@ -64,7 +64,7 @@ class CreateBookDTO {
   year: number;
 }`;
 
-export const goStructTags = `// Go struct tag
+export const goStructTags = `// Go struct tags
 type CreateBookRequest struct {
     Title  string \`json:"title"  validate:"required"\`
     Author string \`json:"author" validate:"required"\`
@@ -88,7 +88,7 @@ type Book struct {
 	Title  string \`json:"title"\`
 	Author string \`json:"author"\`
 	Year   int    \`json:"year"\`
-	// omitempty: field ถูกละเว้นจาก JSON เมื่อเป็น zero/empty
+	// omitempty: field is omitted from JSON when it is zero/empty
 	ISBN   string \`json:"isbn,omitempty"\`
 }
 
@@ -103,7 +103,7 @@ func main() {
 	fmt.Printf("Title:  %s\\n", b.Title)
 	fmt.Printf("Author: %s\\n", b.Author)
 	fmt.Printf("Year:   %d\\n", b.Year)
-	fmt.Printf("ISBN:   %q (empty — ละเว้นใน output)\\n", b.ISBN)
+	fmt.Printf("ISBN:   %q (empty — omitted in output)\\n", b.ISBN)
 
 	// Marshal (struct -> JSON)
 	out, _ := json.MarshalIndent(b, "", "  ")
@@ -126,7 +126,7 @@ class CreateBookDTO {
   @IsInt() @Min(1000) year: number;
 }`;
 
-export const goValidation = `// เชื่อม validator ครั้งเดียวใน main.go
+export const goValidation = `// Wire validator once in main.go
 import "github.com/go-playground/validator/v10"
 
 type CustomValidator struct {
@@ -137,10 +137,10 @@ func (cv *CustomValidator) Validate(i any) error {
     return cv.v.Struct(i)
 }
 
-// ใน main():
+// In main():
 e.Validator = &CustomValidator{v: validator.New()}
 
-// Handler — bind แล้ว validate
+// Handler — bind then validate
 func createBook(c *echo.Context) error {
     var req CreateBookRequest
     if err := c.Bind(&req); err != nil {
@@ -149,7 +149,7 @@ func createBook(c *echo.Context) error {
     if err := c.Validate(req); err != nil {
         return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
     }
-    // req พร้อมใช้งานอย่างปลอดภัย
+    // req is safe to use
     return c.JSON(http.StatusCreated, req)
 }`;
 

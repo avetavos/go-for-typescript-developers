@@ -20,20 +20,20 @@ function fetchUser(id: number): Promise<User> {
     resolve(user);
   });
 }
-const user = await fetchUser(1); // รอรับค่า
+const user = await fetchUser(1); // await the Promise
 ```
 
 ใน Go **channels** เป็น typed pipe ระดับ first-class สำหรับส่งค่าระหว่าง goroutines channel เป็นทั้งช่องทางสื่อสารและกลไก synchronization ในตัว:
 
 ```go
-ch := make(chan User)      // สร้าง channel ชนิด User
-go func() { ch <- user }() // ส่งค่าเข้า channel
-user := <-ch               // รับค่าจาก channel (blocking)
+ch := make(chan User)       // create a channel for User values
+go func() { ch <- user }() // send into the channel
+user := <-ch               // receive from the channel (blocks until a value arrives)
 ```
 
 ## Unbuffered vs Buffered Channels
 
-export const tsPromiseCode = `// TypeScript: Promise สำหรับค่าเดียว
+export const tsPromiseCode = `// TypeScript: Promise for a single future value
 function getResult(): Promise<number> {
   return new Promise(resolve => {
     setTimeout(() => resolve(42), 100);
@@ -42,19 +42,19 @@ function getResult(): Promise<number> {
 const result = await getResult();
 console.log(result); // 42`;
 
-export const goChannelCode = `// Go: channel สำหรับส่งค่าระหว่าง goroutines
+export const goChannelCode = `// Go: unbuffered channel — sender and receiver sync up
 package main
 
 import "fmt"
 
 func getResult(ch chan<- int) {
-    ch <- 42 // ส่งค่าเข้า channel
+    ch <- 42 // send; blocks until someone receives
 }
 
 func main() {
-    ch := make(chan int) // unbuffered channel
+    ch := make(chan int) // unbuffered
     go getResult(ch)
-    result := <-ch // รับค่า (blocking จนกว่าจะมีค่า)
+    result := <-ch // receive; blocks until sender sends
     fmt.Println(result) // 42
 }`;
 
@@ -64,26 +64,26 @@ func main() {
 
 Buffered channel มี queue อยู่ภายใน sender จะไม่ block จนกว่า buffer จะเต็ม และ receiver จะไม่ block ตราบใดที่ buffer ยังมีค่าอยู่ ช่วยแยก producer ออกจาก consumer:
 
-export const tsQueueCode = `// TypeScript: คล้ายกับ buffered queue ด้วย array
+export const tsQueueCode = `// TypeScript: simulate a buffer with an array
 const queue: number[] = [];
 function enqueue(val: number) {
-  queue.push(val); // ไม่ block
+  queue.push(val); // does not block
 }
 enqueue(1); enqueue(2); enqueue(3);
-// ต้อง process ด้วยตัวเอง`;
+// must drain it yourself`;
 
-export const goBufferedCode = `// Go: buffered channel (queue ขนาด 3)
+export const goBufferedCode = `// Go: buffered channel with a queue of 3
 package main
 
 import "fmt"
 
 func main() {
-    ch := make(chan int, 3) // buffer size 3
+    ch := make(chan int, 3) // buffer capacity 3
 
-    ch <- 1 // ไม่ block (buffer ยังว่างอยู่)
+    ch <- 1 // does not block (space available)
     ch <- 2
     ch <- 3
-    // ch <- 4 // จะ block เพราะ buffer เต็ม
+    // ch <- 4 // would block — buffer full
 
     fmt.Println(<-ch) // 1
     fmt.Println(<-ch) // 2
@@ -96,7 +96,7 @@ func main() {
 
 ใช้ `for range` ไล่อ่านค่าจาก channel จนกว่าจะถูก close ฝั่ง producer จะ close channel เพื่อบอกว่าส่งครบแล้ว คล้ายกับการ return ออกจาก async generator:
 
-export const tsIterableCode = `// TypeScript: iterate over async iterable
+export const tsIterableCode = `// TypeScript: async generator as an iterable stream
 async function* generate() {
   yield 1; yield 2; yield 3;
 }
@@ -104,7 +104,7 @@ for await (const val of generate()) {
   console.log(val);
 }`;
 
-export const goRangeChannelCode = `// Go: range over closed channel
+export const goRangeChannelCode = `// Go: range over a channel closed by the producer
 package main
 
 import (
@@ -125,9 +125,9 @@ func main() {
     wg.Add(1)
     go produce(ch, &wg)
     wg.Wait()
-    close(ch) // ต้อง close ก่อน range
+    close(ch) // signal: no more values
 
-    for v := range ch {
+    for v := range ch { // drains until channel is closed
         fmt.Println(v)
     }
 }`;
@@ -139,11 +139,11 @@ func main() {
 Go ให้คุณจำกัด channel เป็น send-only หรือ receive-only ได้ใน function signature ช่วยสื่อเจตนาและให้ compiler บังคับใช้ให้:
 
 ```go
-func producer(ch chan<- int) { // send-only: ส่งได้อย่างเดียว
+func producer(ch chan<- int) { // send-only: ch <- value
     ch <- 42
 }
 
-func consumer(ch <-chan int) { // receive-only: รับได้อย่างเดียว
+func consumer(ch <-chan int) { // receive-only: v := <-ch
     val := <-ch
     fmt.Println(val)
 }

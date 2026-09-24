@@ -35,8 +35,8 @@ require (
     github.com/gin-gonic/gin v1.9.1
 )
 
-// go.sum คือ lockfile (เหมือน package-lock.json)
-// จัดการอัตโนมัติ — ไม่ควรแก้ด้วยตัวเอง`;
+// go.sum is the lockfile (like package-lock.json)
+// it is auto-managed — never edit it manually`;
 
 <TsGo ts={tsPackageJsonCode} go={goModCode} />
 
@@ -46,19 +46,19 @@ require (
 
 ใน Go **package** คือ directory ที่รวมไฟล์ `.go` ซึ่งประกาศ `package name` เดียวกันทั้งหมด เข้มงวดกว่า TypeScript/ESM ที่ทุกไฟล์เป็น module ของตัวเอง เพราะใน Go คุณ import ที่ระดับ package ไม่ใช่ระดับไฟล์
 
-export const tsImportsCode = `// TypeScript: imports ระดับไฟล์
+export const tsImportsCode = `// TypeScript: file-level imports
 import { UserService } from './services/user.service';
 import type { User } from './models/user.model';
 import * as utils from '../shared/utils';`;
 
-export const goImportsCode = `// Go: imports ระดับ package
+export const goImportsCode = `// Go: package-level imports
 import (
     "github.com/yourname/myapp/internal/services"
     "github.com/yourname/myapp/internal/models"
     "github.com/yourname/myapp/pkg/utils"
 )
 
-// แล้วใช้: services.NewUserService(...)
+// then use: services.NewUserService(...)
 //            models.User{...}
 //            utils.SomeHelper(...)`;
 
@@ -71,9 +71,9 @@ import (
 export const tsProjectStructCode = `// TypeScript / Node.js project
 my-app/
   src/
-    controllers/     # route handler
+    controllers/     # route handlers
     services/        # business logic
-    models/          # TypeScript interface/type
+    models/          # TypeScript interfaces/types
     middleware/      # Express middleware
     index.ts         # entry point
   dist/              # compiled output
@@ -87,11 +87,11 @@ myapp/
     myapp/
       main.go        # entry point (package main)
   internal/
-    handlers/        # HTTP handler
+    handlers/        # HTTP handlers
     services/        # business logic
-    models/          # struct definition
+    models/          # struct definitions
     middleware/      # HTTP middleware
-  pkg/               # package ที่นำกลับมาใช้ได้ (public API)
+  pkg/               # reusable packages (public API)
   go.mod
   go.sum
   .env`;
@@ -110,16 +110,16 @@ myapp/
 ```
 myapp/
   internal/
-    database/   # เฉพาะ myapp/** ที่ import ได้
+    database/   # only myapp/** can import this
   pkg/
-    utils/      # ใครก็ import ได้
+    utils/      # anyone can import this
 ```
 
 ```go
-// สำเร็จ (same module):
+// This works (same module):
 import "github.com/yourname/myapp/internal/database"
 
-// ล้มเหลวตอน compile time (external module):
+// This fails at compile time (external module):
 // import "github.com/yourname/myapp/internal/database"
 // cannot use internal package
 ```
@@ -132,21 +132,21 @@ import "github.com/yourname/myapp/internal/database"
 
 ใน TypeScript คุณใช้ `export` กับ `import` ส่วนใน Go ตัวอักษรแรกของชื่อ identifier เป็นตัวกำหนด visibility — ไม่ต้องมี keyword `export`
 
-export const tsExportCode = `// TypeScript: export แบบ explicit
+export const tsExportCode = `// TypeScript: explicit export
 export interface User { id: string; name: string; }
 export function greet(name: string): string {
-  return \`Hello, \${name}!\`;
+  return "Hello, " + name + "!";
 }
-// helper ภายใน (ไม่มี export)
+// internal helper (no export)
 function formatName(n: string): string { return n.trim(); }`;
 
-export const goExportCode = `// Go: ตัวพิมพ์ใหญ่ = exported, ตัวพิมพ์เล็ก = unexported
-type User struct {         // exported (U ตัวใหญ่)
+export const goExportCode = `// Go: uppercase = exported, lowercase = unexported
+type User struct {         // exported (capital U)
     ID   string
     Name string
 }
 
-func Greet(name string) string {  // exported (G ตัวใหญ่)
+func Greet(name string) string {  // exported (capital G)
     return "Hello, " + formatName(name) + "!"
 }
 
@@ -165,12 +165,12 @@ import (
 	"strings"
 )
 
-// Exported function — ตัวพิมพ์ใหญ่
+// Exported function — capital letter
 func Greet(name string) string {
 	return "Hello, " + formatName(name) + "!"
 }
 
-// unexported helper — ตัวพิมพ์เล็ก
+// unexported helper — lowercase letter
 func formatName(n string) string {
 	return strings.ToUpper(n[:1]) + n[1:]
 }
@@ -179,7 +179,7 @@ func main() {
 	fmt.Println(Greet("gopher"))
 	fmt.Println(Greet("world"))
 
-	// Standard library import โดย path
+	// The standard library is imported by path
 	// "strings" -> the strings package
 	fmt.Println(strings.ToUpper("go is great"))
 }`;

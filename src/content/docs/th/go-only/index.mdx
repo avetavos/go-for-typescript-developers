@@ -31,12 +31,12 @@ Module นี้ครอบคลุมฟีเจอร์เหล่าน�
 
 ทุกฟีเจอร์มีแรงจูงใจเดียวกัน คือ **ความชัดเจนและคาดเดาได้ในราคาถูก** Go เลือกทำให้ side-effect มองเห็นได้ (ใครเป็นเจ้าของ memory นี้? function นี้รับ copy หรือแชร์ข้อมูลเดิม?) มากกว่าความสะดวกแบบ implicit ที่ JavaScript/TypeScript ให้ การแลกนี้ทำให้เจอบั๊กแปลก ๆ บน production น้อยลง แต่แลกกับการคิดเผื่อมากขึ้นนิดหน่อยตั้งแต่ต้น
 
-export const tsNoneCode = `// TypeScript ไม่มี pointer, value-copy semantics แบบชัดเจน,
-// keyword defer, struct embedding, goroutine,
-// หรือแนวคิด "compile เป็น static binary"
-// สิ่งเหล่านี้เป็นของ Go โดยเฉพาะ`;
+export const tsNoneCode = `// TypeScript has no pointers, no explicit value-copy semantics,
+// no defer keyword, no struct embedding, no goroutines,
+// and no notion of "compile to a static binary".
+// These are all Go-specific.`;
 
-export const goPreviewCode = `// Go — ชิมรสแต่ละคอนเซปต์ใน module นี้
+export const goPreviewCode = `// Go — a taste of each concept in this module
 package main
 
 import "fmt"
@@ -45,12 +45,12 @@ type Logger struct{ prefix string }
 func (l Logger) Log(msg string) { fmt.Println(l.prefix+":", msg) }
 
 type Service struct {
-    Logger          // embedded — ไม่ต้องมี inheritance
+    Logger          // embedded — no inheritance needed
     name   string
 }
 
 func riskyOp() (err error) {
-    defer func() {               // defer: รันเสมอเมื่อออกจาก function
+    defer func() {               // defer: always runs on exit
         if r := recover(); r != nil {
             err = fmt.Errorf("recovered: %v", r)
         }
@@ -62,11 +62,11 @@ func double[T int | float64](v T) T { return v * 2 } // generics
 
 func main() {
     svc := Service{Logger: Logger{prefix: "SVC"}, name: "demo"}
-    svc.Log("starting")          // method ที่ promote มาจาก Logger
+    svc.Log("starting")          // promoted method from Logger
 
     x := 10
-    p := &x                      // pointer ไปยัง x
-    *p = 99                      // แก้ไขผ่าน pointer
+    p := &x                      // pointer to x
+    *p = 99                      // mutate through pointer
     fmt.Println("x via pointer:", x)
 
     err := riskyOp()

@@ -70,7 +70,7 @@ function add<T extends Numeric>(a: T, b: T): T {
   return (a as any) + (b as any) as T;
 }`;
 
-export const goConstraintCode = `// Go — constraint interface พร้อม type union
+export const goConstraintCode = `// Go — constraint interface with type union
 type Number interface {
     ~int | ~int32 | ~int64 | ~float64
 }
@@ -79,7 +79,7 @@ func Add[T Number](a, b T) T {
     return a + b
 }
 
-// การใช้งาน
+// Usage
 x := Add(1, 2)         // int
 y := Add(1.5, 2.5)     // float64`;
 
@@ -91,12 +91,12 @@ syntax `~int` หมายถึง "type ใดก็ตามที่มี *
 
 TypeScript เทียบอะไรก็ได้ด้วย `===` ส่วน operator `==` ของ Go ใช้ได้เฉพาะกับ type ที่ **comparable** เท่านั้น (ไม่ใช่ slice, map หรือ function) constraint `comparable` ที่มีมาในตัวสื่อถึงข้อจำกัดนี้:
 
-export const tsComparableCode = `// TypeScript — == ใช้ได้กับทุกอย่าง
+export const tsComparableCode = `// TypeScript — == works on anything
 function contains<T>(arr: T[], val: T): boolean {
   return arr.some(x => x === val);
 }`;
 
-export const goComparableCode = `// Go — ต้องใช้ comparable constraint สำหรับ ==
+export const goComparableCode = `// Go — comparable constraint required for ==
 func Contains[T comparable](slice []T, val T) bool {
     for _, v := range slice {
         if v == val {
@@ -106,7 +106,7 @@ func Contains[T comparable](slice []T, val T) bool {
     return false
 }
 
-// ใช้ได้กับ int, string, struct ที่มีฟิลด์ comparable — แต่ไม่ใช่ slices หรือ maps`;
+// Works for int, string, struct with comparable fields — but NOT for slices or maps.`;
 
 <TsGo ts={tsComparableCode} go={goComparableCode} />
 
@@ -119,8 +119,8 @@ type Stringer interface {
     String() string
 }
 
-// รับ type ใดก็ตามที่เป็น int หรือ float64 และมี String() method
-// (พบได้น้อยแต่ถูกต้องในโค้ดไลบรารี)
+// Accept any type that is int OR float64 AND has a String() method
+// (rare but valid in library code)
 type StringableNumber interface {
     ~int | ~float64
     String() string
@@ -131,11 +131,11 @@ type StringableNumber interface {
 
 ## ตัวอย่างในโลกจริง: Map และ Filter
 
-export const tsFpCode = `// TypeScript — stdlib มี built-in เหล่านี้
+export const tsFpCode = `// TypeScript — stdlib has these
 const doubled = [1,2,3].map(x => x * 2);
 const evens   = [1,2,3,4].filter(x => x % 2 === 0);`;
 
-export const goFpCode = `// Go — ก่อน 1.21 คุณต้องเขียนเองเหล่านี้
+export const goFpCode = `// Go — before 1.21 you wrote these yourself
 func Map[T, U any](s []T, fn func(T) U) []U {
     out := make([]U, len(s))
     for i, v := range s {
@@ -154,7 +154,7 @@ func Filter[T any](s []T, fn func(T) bool) []T {
     return out
 }
 
-// ตั้งแต่ Go 1.23 slices.Collect + iter package จัดการได้ idiomatic มากขึ้น`;
+// Since Go 1.23 slices.Collect + iter package handles this more idiomatically`;
 
 <TsGo ts={tsFpCode} go={goFpCode} />
 
@@ -162,7 +162,7 @@ func Filter[T any](s []T, fn func(T) bool) []T {
 
 TypeScript ให้ method ประกาศ type parameter ของตัวเองได้มาตลอด (`class Box { map<U>(fn: (v: T) => U) }`) แต่ Go ทำไม่ได้ — จนกระทั่ง 1.27 บวกกับของเล็ก ๆ อีกสองอย่างจาก 1.26 ที่ทำให้ภาพครบ
 
-export const tsGenericMethodCode = `// TypeScript: type parameter ระดับ method
+export const tsGenericMethodCode = `// TypeScript: method-level type parameter
 class Box<T> {
   constructor(public value: T) {}
   map<U>(fn: (v: T) => U): Box<U> {
@@ -170,9 +170,9 @@ class Box<T> {
   }
 }
 const n = new Box(21).map(v => v * 2);   // Box<number>
-const s = n.map(v => \`\${v}!\`);         // Box<string>`;
+const s = n.map(v => v + "!");           // Box<string>`;
 
-export const goGenericMethodCode = `// Go 1.27+: method ประกาศ type parameter ของตัวเองได้
+export const goGenericMethodCode = `// Go 1.27+: methods may declare their own type parameters
 type Box[T any] struct{ Value T }
 
 func (b Box[T]) Map[U any](fn func(T) U) Box[U] {
@@ -182,14 +182,14 @@ func (b Box[T]) Map[U any](fn func(T) U) Box[U] {
 n := Box[int]{21}.Map(func(v int) int { return v * 2 })      // Box[int]
 s := n.Map(func(v int) string { return fmt.Sprint(v, "!") }) // Box[string]
 
-// กฎ: method ใน interface ประกาศ type parameter ไม่ได้
-// generic method จึงไม่มีทาง satisfy interface
+// Rule: interface methods cannot declare type parameters,
+// so a generic method never satisfies an interface.
 
-// Go 1.26+: new() รับค่าเริ่มต้นได้ (สะดวกกับ field แบบ *int / *string)
+// Go 1.26+: new() takes an initial value (handy for *int / *string fields)
 type User struct{ Age *int }
 u := User{Age: new(42)}
 
-// Go 1.26+: constraint อ้างถึง type ที่ตัวเองกำลัง constrain ได้
+// Go 1.26+: a constraint may refer to the type being constrained
 type Adder[A Adder[A]] interface{ Add(A) A }
 func Sum[A Adder[A]](x, y A) A { return x.Add(y) }`;
 

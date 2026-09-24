@@ -33,7 +33,7 @@ The critical difference: a JavaScript `async` function is still single-threaded.
 
 export const tsAsyncCode = `// TypeScript: async/await (single-threaded event loop)
 async function greet(name: string): Promise<void> {
-  console.log(\`Hello from \${name}\`);
+  console.log("Hello from " + name);
 }
 
 // sequential

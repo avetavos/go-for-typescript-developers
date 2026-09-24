@@ -42,7 +42,7 @@ func TestGetBook_OK(t *testing.T) {
     req := httptest.NewRequest(http.MethodGet, "/books/1", nil)
     rec := httptest.NewRecorder()
     c   := e.NewContext(req, rec)
-    // ไม่มี router รันให้ จึงต้องตั้ง path param เอง (v5: PathValues)
+    // No router ran, so set the path params by hand (v5: PathValues)
     c.SetPathValues(echo.PathValues{{Name: "id", Value: "1"}})
 
     h := handler.NewBookHandler(&fakeBookStore{})
@@ -68,7 +68,7 @@ func TestGetBook_OK(t *testing.T) {
 
 ประกาศ interface `BookStore` ไว้ใน handler package แล้วในเทสค่อย implement interface นั้นด้วย struct ที่คืนข้อมูลแบบควบคุมได้ — ไม่ต้องพึ่งฐานข้อมูลจริง
 
-export const tsJestMock = `// Jest — mock service
+export const tsJestMock = `// Jest — mocking a service
 const mockBooksService = {
   findById: jest.fn().mockResolvedValue({
     id: '1',
@@ -81,15 +81,15 @@ const module = await Test.createTestingModule({
   providers: [{ provide: BooksService, useValue: mockBooksService }],
 }).compile();`;
 
-export const goInterfaceMock = `// Go — interface + test double (ไม่ต้องการ mocking library)
+export const goInterfaceMock = `// Go — interface + test double (no mocking library needed)
 
-// handler/books.go — ประกาศ interface ที่ handler พึ่งพา
+// handler/books.go — declare the interface the handler depends on
 type BookStore interface {
     FindByID(ctx context.Context, id string) (model.Book, error)
     Insert(ctx context.Context, req model.CreateBookRequest) (model.Book, error)
 }
 
-// handler/books_test.go — implementation สำหรับ test
+// handler/books_test.go — in-test implementation
 type fakeBookStore struct{}
 
 func (f *fakeBookStore) FindByID(_ context.Context, id string) (model.Book, error) {
@@ -140,8 +140,8 @@ func TestGetBook_NotFound(t *testing.T) {
     h := handler.NewBookHandler(&notFoundStore{})
     err := h.Get(c)
 
-    // Echo handler คืน error แทนการเขียนลง rec โดยตรง —
-    // echo.StatusCode อ่าน status จาก error ที่รู้จัก HTTP ได้ทุกแบบ
+    // Echo handlers return an error instead of writing to rec —
+    // echo.StatusCode reads the status from any HTTP-aware error
     if got := echo.StatusCode(err); got != http.StatusNotFound {
         t.Errorf("expected 404, got %d (err: %v)", got, err)
     }
@@ -161,13 +161,13 @@ func (n *notFoundStore) Insert(_ context.Context, _ model.CreateBookRequest) (mo
 ## รัน test
 
 ```bash
-# รัน test ทั้งหมด
+# Run all tests
 go test ./...
 
-# พร้อม coverage report
+# With coverage report
 go test -cover ./...
 
-# Race detector (สำคัญสำหรับ concurrent handler)
+# Race detector (important for concurrent handlers)
 go test -race ./...
 
 # Verbose output
@@ -201,7 +201,7 @@ func TestGetBook(t *testing.T) {
             h := NewBookHandler(tc.store)
             got := rec.Code
             if err := h.Get(c); err != nil {
-                got = echo.StatusCode(err) // กรณี error: status อยู่บนตัว error
+                got = echo.StatusCode(err) // error path: status lives on the error
             }
             if got != tc.wantStatus {
                 t.Errorf("want %d, got %d", tc.wantStatus, got)

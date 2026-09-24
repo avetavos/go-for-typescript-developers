@@ -30,7 +30,7 @@ export const layoutTree = `flowchart TD
 
 <Mermaid code={layoutTree} title="Idiomatic Go project layout" />
 
-export const tsLayoutCode = `// TypeScript / Node project ทั่วไป
+export const tsLayoutCode = `// Typical TypeScript / Node project
 src/
   main.ts               // entry point
   modules/
@@ -44,7 +44,7 @@ src/
 package.json
 tsconfig.json`;
 
-export const goLayoutCode = `// Go project แบบ idiomatic
+export const goLayoutCode = `// Idiomatic Go project
 cmd/
   myapp/
     main.go             // entry point
@@ -70,9 +70,9 @@ directory `cmd/` เก็บ entry point ของโปรแกรม ชื�
 ```bash
 cmd/
   server/
-    main.go    # go build ./cmd/server  → ได้ binary ./server
+    main.go    # go build ./cmd/server  → produces ./server binary
   worker/
-    main.go    # go build ./cmd/worker  → ได้ binary ./worker
+    main.go    # go build ./cmd/worker  → produces ./worker binary
 ```
 
 ข้อนี้มีประโยชน์เพราะ Go module เดียวสร้าง binary ได้หลายตัว ฝั่ง Node ไม่มี convention เทียบเท่า — คุณมักต้องแยก workspaces หรือแยก repository
@@ -82,17 +82,17 @@ cmd/
 directory `internal/` ถูก **Go compiler บังคับใช้เอง** โค้ดใน `internal/` จะ import ได้จากโค้ดที่อยู่ใน parent tree ของ `internal/` directory นั้นเท่านั้น
 
 ```bash
-# ด้วย layout นี้:
+# Given this layout:
 myapp/
   internal/
     service/
       user.go    # package service
 
-# import นี้ได้รับอนุญาต (module เดียวกัน):
-import "myapp/internal/service"   // จาก cmd/myapp/main.go ✓
+# This import is ALLOWED (same module):
+import "myapp/internal/service"   // from cmd/myapp/main.go ✓
 
-# import นี้ถูกบล็อก (module อื่น):
-import "myapp/internal/service"   // จาก github.com/other/proj ✗
+# This import is BLOCKED (different module):
+import "myapp/internal/service"   // from github.com/other/proj ✗
 # compiler error: use of internal package not allowed
 ```
 
@@ -107,16 +107,16 @@ import "myapp/internal/service"   // จาก github.com/other/proj ✗
 ชื่อ package ใน Go เป็น **noun ตัวพิมพ์เล็กสั้น เป็น singular** — ไม่มี underscore, ไม่มี camelCase
 
 ```bash
-# ดี
+# Good
 package handler
 package service
 package repository
 package logger
 
-# หลีกเลี่ยง
+# Avoid
 package userHandlers   # camelCase
-package user_service   # underscore
-package handlers       # plural (minor แต่พบบ่อย)
+package user_service   # underscores
+package handlers       # plural (minor, but common to see singular)
 ```
 
 ชื่อ package คือสิ่งที่ caller เขียน: `handler.NewUser(...)`, `service.CreateOrder(...)` ตั้งให้สั้นเข้าไว้ เพื่อให้ชื่อแบบ fully-qualified อ่านลื่น

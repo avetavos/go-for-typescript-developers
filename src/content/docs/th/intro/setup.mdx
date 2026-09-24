@@ -29,20 +29,20 @@ go version
 นักพัฒนา Node.js ทุกคนรู้จัก `node`, `npm` และ `tsc` ส่วน Go รวมทุกอย่างนี้ไว้ใน `go` command เดียว
 
 export const tsCliCode = `# TypeScript / Node.js toolchain
-node index.js            # รัน file
-npx ts-node src/index.ts # รัน TypeScript โดยตรง
-tsc                      # คอมไพล์ TypeScript
-npm install              # ติดตั้ง dependency
-npm run build            # รัน build script
-npx <tool>              # รัน package binary`;
+node index.js            # run a file
+npx ts-node src/index.ts # run TypeScript directly
+tsc                      # compile TypeScript
+npm install              # install dependencies
+npm run build            # run a build script
+npx <tool>              # run a package binary`;
 
-export const goCliCode = `# Go toolchain (ทั้งหมดใน command เดียว)
-go run main.go           # คอมไพล์ + รันใน step เดียว
-go run .                 # รัน package ปัจจุบัน
-go build -o myapp .      # คอมไพล์เป็น binary
-go mod init github.com/you/myapp  # init module ใหม่
-go get github.com/gin-gonic/gin   # เพิ่ม dependency
-go install tool@latest   # ติดตั้ง CLI tool แบบ global`;
+export const goCliCode = `# Go toolchain (all one command)
+go run main.go           # compile + run in one step
+go run .                 # run the current package
+go build -o myapp .      # compile to a binary
+go mod init github.com/you/myapp  # init a new module
+go get github.com/gin-gonic/gin   # add a dependency
+go install tool@latest   # install a CLI tool globally`;
 
 <TsGo ts={tsCliCode} go={goCliCode} />
 
@@ -51,13 +51,13 @@ go install tool@latest   # ติดตั้ง CLI tool แบบ global`;
 `go run` คือ development loop ของคุณ — คอมไพล์แล้วรันในขั้นตอนเดียว เหมือน `ts-node` หรือ `npx tsx` ที่ใช้ตอน develop ส่วน `go build` สร้าง binary แบบ standalone ที่เอาไป deploy ได้ Go ไม่มี "watch mode" ในตัว แต่เครื่องมืออย่าง [air](https://github.com/air-verse/air) ช่วยทำ live reload ได้
 
 export const tsRunCode = `# TypeScript development loop
-npx ts-node src/index.ts    # คอมไพล์ + รัน (dev)
-tsc && node dist/index.js   # คอมไพล์แล้วรัน (CI/prod)
+npx ts-node src/index.ts    # compile + run (dev)
+tsc && node dist/index.js   # compile then run (CI/prod)
 npx tsx watch src/index.ts  # watch mode`;
 
 export const goRunCode = `# Go development loop
-go run .                    # คอมไพล์ + รัน (dev)
-go build -o ./bin/app . && ./bin/app  # คอมไพล์แล้วรัน
+go run .                    # compile + run (dev)
+go build -o ./bin/app . && ./bin/app  # compile then run
 # air                       # watch mode (third-party)`;
 
 <TsGo ts={tsRunCode} go={goRunCode} />
@@ -68,19 +68,19 @@ go build -o ./bin/app . && ./bin/app  # คอมไพล์แล้วรั�
 
 export const tsNpmInitCode = `# TypeScript
 npm init -y
-# สร้าง package.json พร้อม name, version, deps
+# creates package.json with name, version, deps
 
-# แล้วเพิ่ม dependency:
+# then add a dependency:
 npm install express
-# อัพเดท package.json + สร้าง package-lock.json`;
+# updates package.json + creates package-lock.json`;
 
 export const goModInitCode = `# Go
 go mod init github.com/yourname/myapp
-# สร้าง go.mod
+# creates go.mod
 
-# แล้วเพิ่ม dependency:
+# then add a dependency:
 go get github.com/gin-gonic/gin
-# อัพเดท go.mod + สร้าง go.sum (เหมือน package-lock.json)`;
+# updates go.mod + creates go.sum (like package-lock.json)`;
 
 <TsGo ts={tsNpmInitCode} go={goModInitCode} />
 
@@ -88,12 +88,12 @@ go get github.com/gin-gonic/gin
 
 `npm install -g` ใช้ติดตั้ง CLI tool แบบ global ส่วน `go install` ก็ทำแบบเดียวกัน — คอมไพล์ module แล้ววาง binary ไว้ใน `$GOPATH/bin` (อย่าลืมเพิ่ม path นี้ใน `PATH` ของคุณ)
 
-export const tsInstallCode = `# TypeScript: CLI tools แบบ global
+export const tsInstallCode = `# TypeScript: global CLI tools
 npm install -g typescript
 npm install -g prettier
 npx create-react-app myapp`;
 
-export const goInstallCode = `# Go: CLI tools แบบ global
+export const goInstallCode = `# Go: global CLI tools
 go install golang.org/x/tools/gopls@latest      # LSP server
 go install github.com/air-verse/air@latest       # live reload
 go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest`;
@@ -113,11 +113,11 @@ go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest`;
 รัน `go env` เพื่อดู environment variable ของ Go ทั้งหมด หรือ `go env GOPATH` เพื่อดูทีละค่า คุณแทบไม่ต้องแก้ค่าพวกนี้เลย — `go mod` ทำให้ module cache โปร่งใสอยู่แล้ว
 
 ```bash
-# diagnostics ที่มีประโยชน์
-go env          # แสดง Go environment variable ทั้งหมด
-go env GOPATH   # แสดงแค่ GOPATH
-go version      # แสดง Go version ที่ติดตั้ง
-go doc fmt      # อ่าน docs ของ fmt package ในเทอร์มินัล
+# useful diagnostics
+go env          # print all Go environment variables
+go env GOPATH   # print just GOPATH
+go version      # print installed Go version
+go doc fmt      # read the fmt package docs in the terminal
 ```
 
 </GoOnly>

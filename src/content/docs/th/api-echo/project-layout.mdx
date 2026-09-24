@@ -31,16 +31,16 @@ export const goLayout = `// Echo project tree
 books-api/
   go.mod
   go.sum
-  main.go                  // entry point; เชื่อมทุกอย่างที่นี่
+  main.go                  // entry point; wire everything here
   internal/
     handler/
-      books.go             // HTTP handler (parse, validate, เรียก service)
+      books.go             // HTTP handlers (parse, validate, call service)
     service/
       books.go             // business logic
     store/
-      books.go             // database query
+      books.go             // database queries
   model/
-    book.go                // struct / domain type ที่ใช้ร่วมกัน`;
+    book.go                // shared structs / domain types`;
 
 <TsGo ts={tsLayout} go={goLayout} />
 
@@ -107,11 +107,11 @@ func main() {
     e.Use(middleware.RequestLogger())
     e.Use(middleware.Recover())
 
-    // Dependency wiring (manual, ไม่มี container)
+    // Dependency wiring (manual, no container)
     bookStore := store.NewBookStore()
     bookHandler := handler.NewBookHandler(bookStore)
 
-    // Route
+    // Routes
     api := e.Group("/api")
     api.GET("/books", bookHandler.List)
     api.POST("/books", bookHandler.Create)
@@ -131,7 +131,7 @@ func main() {
 
 ```go
 sc := echo.StartConfig{Address: ":1323", GracefulTimeout: 10 * time.Second}
-if err := sc.Start(ctx, e); err != nil {   // คืนค่าเมื่อ ctx ถูก cancel
+if err := sc.Start(ctx, e); err != nil {   // returns when ctx is cancelled
     slog.Error("server stopped", "err", err)
 }
 ```

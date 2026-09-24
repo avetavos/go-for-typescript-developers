@@ -38,7 +38,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.27"
-          cache: true            # cache module download cache
+          cache: true            # caches the module download cache
 
       - name: Download dependencies
         run: go mod download
@@ -143,11 +143,11 @@ jobs:
       - run: npm run build
 ```
 
-export const tsWorkflowCode = `# Node CI: ต้องการ setup-node + npm ci
-# Type-check: tsc --noEmit (step แยก)
-# Lint: ESLint (step แยก + config file)
-# Test: Jest (step แยก + config)
-# Build: tsc/webpack output เป็นไฟล์ JS
+export const tsWorkflowCode = `# Node CI: needs setup-node + npm ci
+# Type-check: tsc --noEmit (separate step)
+# Lint: ESLint (separate step + config file)
+# Test: Jest (separate step + config)
+# Build: tsc/webpack output is JS files
 
 steps:
   - uses: actions/setup-node@v4
@@ -160,8 +160,8 @@ steps:
   - run: npx jest --coverage
   - run: npm run build`;
 
-export const goWorkflowCode = `# Go CI: ต้องการ setup-go + go mod download
-# Type-check: อยู่ใน go build/vet แล้ว
+export const goWorkflowCode = `# Go CI: needs setup-go + go mod download
+# Type-check: already part of go build/vet
 # Lint: go vet + golangci-lint-action
 # Test: go test -race (built-in)
 # Build: single static binary
@@ -184,22 +184,22 @@ steps:
 ## go test flags ที่ควรรู้ใน CI
 
 ```bash
-# รัน tests ทั้งหมดพร้อม race detector
+# Run all tests with race detector
 go test -race ./...
 
-# รันพร้อม coverage และเขียนลงไฟล์
+# Run with coverage and write to file
 go test -race -coverprofile=coverage.out -covermode=atomic ./...
 
-# แสดง coverage summary ใน stdout
+# Print coverage summary to stdout
 go tool cover -func=coverage.out
 
-# Fail ถ้า coverage ต่ำกว่า threshold (มีประโยชน์ใน CI)
+# Fail if coverage drops below a threshold (useful in CI)
 go test ./... && go tool cover -func=coverage.out | tail -1 | awk '{if ($3+0 < 80) exit 1}'
 
-# รันเฉพาะ tests ที่ตรงกับ pattern
+# Run only tests matching a pattern
 go test ./... -run TestUser
 
-# รัน tests พร้อม verbose output
+# Run tests with verbose output
 go test -v ./...
 ```
 

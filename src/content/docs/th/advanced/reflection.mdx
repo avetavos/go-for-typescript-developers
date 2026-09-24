@@ -15,12 +15,12 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 Go เป็นภาษา compile เหมือนกัน แต่ต่างจาก TypeScript ตรงที่เก็บข้อมูล type ไว้ครบที่ runtime ผ่าน `reflect` package ทุกค่าใน Go รู้ type ของตัวเองตอน runtime — ไม่ต้องมี annotation ไม่ต้องตั้ง build flag
 
-export const tsReflectCode = `// TypeScript — ต้องใช้ reflect-metadata + decorator compiler flags
+export const tsReflectCode = `// TypeScript — needs reflect-metadata + decorator compiler flags
 import 'reflect-metadata';
 
 function Column(target: any, key: string) {
   const type = Reflect.getMetadata('design:type', target, key);
-  console.log(\`\${key}: \${type.name}\`);
+  console.log(key + ": " + type.name);
 }
 
 class User {
@@ -28,7 +28,7 @@ class User {
   @Column age: number = 0;
 }`;
 
-export const goReflectCode = `// Go — built-in ไม่ต้องใช้ flags
+export const goReflectCode = `// Go — built-in, no flags needed
 import "reflect"
 
 type User struct {
@@ -52,7 +52,7 @@ for i := 0; i < t.NumField(); i++ {
 
 Struct tag คือ string literal ที่ฝังอยู่ในการประกาศ field มองไม่เห็นตอน compile time และอ่านได้เฉพาะตอน runtime ผ่าน `reflect` นี่คือวิธีที่ `encoding/json`, scanner ของ `database/sql` และ validation library อย่าง `go-playground/validator` รู้ว่า JSON key ไหน map กับ field ไหน
 
-export const tsTagCode = `// TypeScript — class-validator ใช้ decorators
+export const tsTagCode = `// TypeScript — class-validator uses decorators
 import { IsEmail, IsString, Min } from 'class-validator';
 
 class CreateUserDto {
@@ -66,15 +66,15 @@ class CreateUserDto {
   age: number;
 }`;
 
-export const goTagCode = `// Go — struct tags (plain strings อ่านผ่าน reflect)
+export const goTagCode = `// Go — struct tags (plain strings, read via reflect)
 type CreateUserDTO struct {
     Name  string \`json:"name"  validate:"required"\`
     Email string \`json:"email" validate:"required,email"\`
     Age   int    \`json:"age"   validate:"min=0"\`
 }
 
-// encoding/json ใช้ "json" tag อัตโนมัติ
-// Validator libraries อ่าน "validate" ที่ runtime`;
+// encoding/json uses the "json" tag automatically.
+// Validator libraries read "validate" at runtime.`;
 
 <TsGo ts={tsTagCode} go={goTagCode} />
 
@@ -113,7 +113,7 @@ v := reflect.ValueOf(u)
 fmt.Println(v.Field(0))     // Alice
 fmt.Println(v.Field(1))     // 30
 
-// Mutation ต้องใช้ pointer และ CanSet()
+// Mutation requires a pointer and CanSet()
 vp := reflect.ValueOf(&u).Elem()
 vp.Field(0).SetString("Bob")
 fmt.Println(u.Name) // Bob

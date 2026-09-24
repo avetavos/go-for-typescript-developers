@@ -21,7 +21,7 @@ The `go` keyword launches a function in a new goroutine — a lightweight, indep
 
 export const tsAsyncCode = `// TypeScript — async/await (event loop, single thread)
 async function fetchUser(id: number): Promise<User> {
-  const res = await fetch(\`/users/\${id}\`);
+  const res = await fetch("/users/" + id);
   return res.json();
 }
 

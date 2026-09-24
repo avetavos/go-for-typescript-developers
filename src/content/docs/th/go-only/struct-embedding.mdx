@@ -23,7 +23,7 @@ export const tsExtendsCode = `// TypeScript — class inheritance
 class Animal {
   name: string;
   constructor(name: string) { this.name = name; }
-  speak(): string { return \`\${this.name} makes a sound\`; }
+  speak(): string { return this.name + " makes a sound"; }
 }
 
 class Dog extends Animal {
@@ -32,7 +32,7 @@ class Dog extends Animal {
     super(name);
     this.breed = breed;
   }
-  speak(): string { return \`\${this.name} barks\`; }
+  speak(): string { return this.name + " barks"; }
 }
 
 const d = new Dog("Rex", "Labrador");
@@ -47,12 +47,12 @@ func (a Animal) Speak() string {
 }
 
 type Dog struct {
-    Animal          // embedded — ไม่มีชื่อ field
+    Animal          // embedded — no field name
     Breed  string
 }
 
 func (d Dog) Speak() string {
-    return d.Name + " barks" // d.Name promote มาจาก Animal
+    return d.Name + " barks" // d.Name promoted from Animal
 }
 
 func main() {
@@ -68,7 +68,7 @@ func main() {
 
 เมื่อ method มีอยู่เฉพาะบน embedded type (ไม่ถูก override) Go จะ promote method นั้นขึ้นมาที่ method set ของ outer type ให้อัตโนมัติ ผลคือ outer type satisfy interface ที่ inner type implement ได้ไปด้วยเลย
 
-export const tsMixinCode = `// TypeScript — mixin pattern สำหรับ reuse
+export const tsMixinCode = `// TypeScript — mixin pattern for reuse
 type Serializable = {
   serialize(): string;
 };
@@ -85,11 +85,11 @@ func (l Logger) Log(msg string) {
 }
 
 type UserService struct {
-    Logger                  // promoted: UserService.Log() ทำงานได้
+    Logger                  // promoted: UserService.Log() works
     repo   UserRepository
 }
 
-// UserService มี .Log() โดยไม่ต้อง implement ใหม่
+// UserService now has .Log() without re-implementing it
 func (s UserService) CreateUser(name string) {
     s.Log("creating user: " + name)
     // ... business logic
@@ -101,7 +101,7 @@ func (s UserService) CreateUser(name string) {
 
 เพราะ promoted method นับเป็น method set ของ outer struct embedding จึงมักใช้เพื่อ satisfy interface โดยไม่ต้องเขียน delegation boilerplate
 
-export const tsInterfaceCode = `// TypeScript — implement interface แบบ manual
+export const tsInterfaceCode = `// TypeScript — implement interface manually
 interface Writer {
   write(data: string): void;
 }
@@ -109,7 +109,7 @@ class BufferedWriter implements Writer {
   private inner: Writer;
   constructor(inner: Writer) { this.inner = inner; }
   write(data: string) {
-    this.inner.write(data); // delegation แบบ manual
+    this.inner.write(data); // manual delegation
   }
 }`;
 
@@ -118,16 +118,16 @@ export const goInterfaceCode = `type Writer interface {
 }
 
 type CountingWriter struct {
-    io.Writer        // embed interface นั้นเอง!
+    io.Writer        // embed the interface itself!
     count int
 }
 
 func (cw *CountingWriter) Write(p []byte) (int, error) {
-    n, err := cw.Writer.Write(p)  // delegate ไปยัง embedded
+    n, err := cw.Writer.Write(p)  // delegate to embedded
     cw.count += n
     return n, err
 }
-// CountingWriter satisfy Writer อัตโนมัติ`;
+// CountingWriter satisfies Writer automatically`;
 
 <TsGo ts={tsInterfaceCode} go={goInterfaceCode} />
 
@@ -150,11 +150,11 @@ func (a Animal) Describe() string {
 }
 
 type Dog struct {
-	Animal        // embedding promote Name, Speak, Describe
+	Animal        // embedding promotes Name, Speak, Describe
 	Breed string
 }
 
-// Override Speak — Describe ยังคง promote มาจาก Animal
+// Override Speak — Describe is still promoted from Animal
 func (d Dog) Speak() string {
 	return d.Name + " barks"
 }
@@ -163,19 +163,19 @@ type Cat struct {
 	Animal
 }
 
-// Cat ไม่ override Speak — ใช้ version ที่ promote มา
+// Cat does not override Speak — uses promoted version
 
 func main() {
 	d := Dog{Animal: Animal{Name: "Rex"}, Breed: "Labrador"}
 	c := Cat{Animal: Animal{Name: "Whiskers"}}
 
 	fmt.Println(d.Speak())         // Dog override
-	fmt.Println(d.Animal.Speak())  // เรียก base อย่างชัดเจน
-	fmt.Println(d.Describe())      // promote มาจาก Animal
+	fmt.Println(d.Animal.Speak())  // explicit base call
+	fmt.Println(d.Describe())      // promoted from Animal
 	fmt.Println(d.Name)            // promoted field
-	fmt.Println(d.Breed)           // field ของ Dog เอง
+	fmt.Println(d.Breed)           // Dog's own field
 
-	fmt.Println(c.Speak())         // promote มาจาก Animal
+	fmt.Println(c.Speak())         // promoted from Animal
 }`;
 
 <Playground code={playgroundEmbedCode} />
@@ -191,9 +191,9 @@ func (a Animal) Speak() string { return a.Name + " sounds" }
 type Dog struct{ Animal }
 func (d Dog) Speak() string { return d.Name + " barks" }
 
-// สิ่งนี้ไม่ทำงานแบบ OOP polymorphism:
+// This does NOT work like OOP polymorphism:
 animals := []Animal{
-    // Dog{Animal: Animal{Name: "Rex"}} // compile error — Dog ไม่ใช่ Animal
+    // Dog{Animal: Animal{Name: "Rex"}} // compile error — Dog is not Animal
 }
 ```
 
@@ -235,8 +235,8 @@ o := Order{
     Audited:     Audited{UpdatedBy: "admin"},
     ID: 1, Total: 99.99,
 }
-fmt.Println(o.CreatedAt) // promote มาจาก Timestamped
-fmt.Println(o.UpdatedBy) // promote มาจาก Audited
+fmt.Println(o.CreatedAt) // promoted from Timestamped
+fmt.Println(o.UpdatedBy) // promoted from Audited
 ```
 
 </GoOnly>

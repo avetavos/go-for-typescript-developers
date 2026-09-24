@@ -43,10 +43,10 @@ func main() {
     }
     defer pprof.StopCPUProfile()
 
-    // ... โค้ดที่ต้องการทดสอบ ...
+    // ... your code under test ...
     doWork()
 
-    // --- Heap profile (เขียนตอนท้าย) ---
+    // --- Heap profile (write at the end) ---
     heapFile, err := os.Create("mem.out")
     if err != nil {
         log.Fatal(err)
@@ -65,12 +65,12 @@ package main
 
 import (
     "net/http"
-    _ "net/http/pprof" // blank import register routes /debug/pprof/
+    _ "net/http/pprof" // blank import registers /debug/pprof/ routes
     "log"
 )
 
 func main() {
-    // Application server ของคุณ
+    // Your application server
     go func() {
         log.Println(http.ListenAndServe(":6060", nil))
     }()
@@ -86,7 +86,7 @@ endpoint ที่มีให้:
 - `http://localhost:6060/debug/pprof/goroutine` — stack ของทุก goroutine
 - `http://localhost:6060/debug/pprof/trace?seconds=5` — execution trace
 
-export const nodeProfilingCode = `// Node.js — เครื่องมือหลายอย่าง ทั้งหมดภายนอก
+export const nodeProfilingCode = `// Node.js — several tools, all external
 // Option 1: built-in V8 profiler
 node --prof server.js
 node --prof-process isolate-*.log > report.txt
@@ -98,14 +98,14 @@ clinic flame  -- node server.js
 // Option 3: Chrome DevTools
 node --inspect server.js  // open chrome://inspect`;
 
-export const goProfilingCode = `// Go — เครื่องมือเดียว มาพร้อม toolchain
-// Collect CPU profile 30 วินาที จาก live server:
+export const goProfilingCode = `// Go — single tool, ships with the toolchain
+// Collect a 30-second CPU profile from a live server:
 go tool pprof http://localhost:6060/debug/pprof/profile?seconds=30
 
-// Collect จากไฟล์ที่เขียนโดย runtime/pprof:
+// Collect from a file written by runtime/pprof:
 go tool pprof cpu.out
 
-// เปิด interactive web UI (ต้องการ Graphviz):
+// Open an interactive web UI (needs Graphviz):
 go tool pprof -http=:8080 cpu.out`;
 
 <TsGo ts={nodeProfilingCode} go={goProfilingCode} />
@@ -113,16 +113,16 @@ go tool pprof -http=:8080 cpu.out`;
 ## อ่าน CPU profile
 
 ```bash
-# เริ่ม interactive pprof shell
+# Start interactive pprof shell
 go tool pprof cpu.out
 
-# ภายใน shell:
-(pprof) top10           # top 10 functions ตาม CPU time
-(pprof) list myFunc     # annotated source สำหรับ myFunc
-(pprof) web             # เปิด SVG flame graph ใน browser
-(pprof) pdf             # save เป็น PDF
+# Inside the shell:
+(pprof) top10           # top 10 functions by CPU time
+(pprof) list myFunc     # annotated source for myFunc
+(pprof) web             # open SVG flame graph in browser
+(pprof) pdf             # save as PDF
 
-# หรือเปิด web UI โดยตรง (flame graphs สวยกว่า)
+# Or open the web UI directly (nicer flame graphs)
 go tool pprof -http=:8080 cpu.out
 ```
 
@@ -148,7 +148,7 @@ Showing nodes accounting for 2.40s, 96.77% of 2.48s total
 ```bash
 go tool pprof mem.out
 
-(pprof) top10 -cum    # top allocators ตาม cumulative bytes
+(pprof) top10 -cum    # top allocators by cumulative bytes
 (pprof) list myFunc   # line-level allocation counts
 ```
 
@@ -159,10 +159,10 @@ heap profile แสดง:
 ## Benchmarks + pprof ด้วยกัน
 
 ```bash
-# เขียน CPU + memory profiles ระหว่าง benchmark run
+# Write CPU + memory profiles during a benchmark run
 go test -bench=BenchmarkFoo -cpuprofile=cpu.out -memprofile=mem.out ./...
 
-# แล้ว analyse
+# Then analyse
 go tool pprof cpu.out
 go tool pprof mem.out
 ```
@@ -191,7 +191,7 @@ if os.Getenv("DEBUG") == "true" {
 - **Goroutine leak profile** (experimental ใน 1.26, GA ใน 1.27): GC หา goroutine ที่ block บน primitive ที่ไม่มีใครปลุกได้อีกแล้ว
 
 ```bash
-# Go 1.27+: เฉพาะ goroutine ที่ไม่มีทางกลับมารันได้อีก
+# Go 1.27+: only goroutines that can never resume
 go tool pprof http://localhost:6060/debug/pprof/goroutineleak
 ```
 
@@ -200,10 +200,10 @@ go tool pprof http://localhost:6060/debug/pprof/goroutineleak
 ## Goroutine และ trace profiles
 
 ```bash
-# ตรวจสอบ goroutine leaks (ควร flat ตลอดเวลา)
+# Check for goroutine leaks (should stay flat over time)
 go tool pprof http://localhost:6060/debug/pprof/goroutine
 
-# Execution trace — แสดง scheduling, GC, goroutine lifecycle
+# Execution trace — shows scheduling, GC, goroutine lifecycle
 curl -s "http://localhost:6060/debug/pprof/trace?seconds=5" > trace.out
 go tool trace trace.out
 ```

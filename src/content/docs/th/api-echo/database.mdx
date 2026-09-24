@@ -38,7 +38,7 @@ import (
     "log"
     "os"
 
-    _ "github.com/lib/pq" // ลงทะเบียน driver ผ่าน side-effect import
+    _ "github.com/lib/pq" // register driver via side-effect import
 )
 
 func NewDB() *sql.DB {
@@ -155,10 +155,10 @@ api.POST("/books",    bookHandler.Create)
 ทุก method ใน `database/sql` มีเวอร์ชันที่รับ Context: `QueryContext`, `QueryRowContext`, `ExecContext` **ใช้เวอร์ชันที่รับ context เสมอ** และส่ง `c.Request().Context()` มาจาก handler ทำให้ database query ถูกยกเลิกได้หากเกิด client disconnect หรือ deadline หมดอายุ — กันงานเสียเปล่าใน connection pool
 
 ```go
-// ดี
+// Good
 rows, err := s.db.QueryContext(ctx, query, args...)
 
-// ไม่ดี — ไม่รับรู้การยกเลิก
+// Bad — ignores cancellation
 rows, err := s.db.Query(query, args...)
 ```
 

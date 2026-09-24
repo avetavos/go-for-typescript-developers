@@ -35,7 +35,7 @@ case msg := <-ch2:
 
 ## Select Statement พื้นฐาน
 
-export const tsRaceCode = `// TypeScript: Promise.race
+export const tsRaceCode = `// TypeScript: Promise.race for the first result
 async function withTimeout<T>(
   promise: Promise<T>,
   ms: number
@@ -46,7 +46,7 @@ async function withTimeout<T>(
   return Promise.race([promise, timeout]);
 }`;
 
-export const goSelectCode = `// Go: select สำหรับเลือก channel แรกที่พร้อม
+export const goSelectCode = `// Go: select picks the first ready channel
 package main
 
 import "fmt"
@@ -58,7 +58,7 @@ func main() {
     ch1 <- "one"
     ch2 <- "two"
 
-    // รับจาก ch1 ก่อน (deterministic เพราะใช้ select แยก)
+    // Use separate selects so output is deterministic
     select {
     case msg := <-ch1:
         fmt.Println("Received from ch1:", msg)
@@ -75,16 +75,15 @@ func main() {
 
 เพิ่ม branch `default` เพื่อให้ select คืนค่าทันทีเมื่อไม่มี channel ไหนพร้อม แทนที่จะ block:
 
-export const tsNonBlockCode = `// TypeScript: non-blocking check ด้วย Promise
+export const tsNonBlockCode = `// TypeScript: non-blocking check via Promise.race with null fallback
 async function tryReceive(): Promise<string | null> {
-  const result = await Promise.race([
+  return Promise.race([
     getMessage(),
-    Promise.resolve(null), // fallback ทันที
+    Promise.resolve(null), // resolves immediately
   ]);
-  return result;
 }`;
 
-export const goDefaultSelectCode = `// Go: non-blocking select ด้วย default
+export const goDefaultSelectCode = `// Go: non-blocking select with default
 package main
 
 import "fmt"
@@ -96,7 +95,7 @@ func main() {
     case msg := <-ch:
         fmt.Println("Got:", msg)
     default:
-        fmt.Println("No message available") // รันทันที
+        fmt.Println("No message available") // runs immediately
     }
 
     ch <- "hello"
@@ -115,15 +114,18 @@ func main() {
 
 การใช้ select ที่พบบ่อยที่สุดในงานจริงคือฟังทั้งงานที่เข้ามาและ cancellation signal จาก `context.Context` ไปพร้อมกัน:
 
-export const tsAbortCode = `// TypeScript: AbortController สำหรับ cancellation
-async function processWithAbort(signal: AbortSignal) {
+export const tsAbortCode = `// TypeScript: AbortController for cooperative cancellation
+async function processItems(
+  items: string[],
+  signal: AbortSignal
+) {
   for (const item of items) {
     if (signal.aborted) break;
     await processItem(item);
   }
 }`;
 
-export const goCtxSelectCode = `// Go: select กับ ctx.Done() สำหรับ cancellation
+export const goCtxSelectCode = `// Go: select listening to both a jobs channel and ctx.Done()
 package main
 
 import (
@@ -138,11 +140,11 @@ func worker(ctx context.Context, jobs <-chan int, wg *sync.WaitGroup) {
         select {
         case j, ok := <-jobs:
             if !ok {
-                return // channel ถูก close
+                return // channel was closed — no more work
             }
             fmt.Println("Processing job:", j)
         case <-ctx.Done():
-            fmt.Println("Worker cancelled")
+            fmt.Println("Worker cancelled:", ctx.Err())
             return
         }
     }
@@ -156,9 +158,9 @@ func worker(ctx context.Context, jobs <-chan int, wg *sync.WaitGroup) {
 
 ```go
 select {
-case msg := <-ch1: // อาจถูกเลือกหรือไม่ก็ได้
+case msg := <-ch1: // may or may not be chosen
     fmt.Println(msg)
-case msg := <-ch2: // อาจถูกเลือกหรือไม่ก็ได้
+case msg := <-ch2: // may or may not be chosen
     fmt.Println(msg)
 }
 ```
@@ -178,19 +180,19 @@ func main() {
 	ch1 <- "hello"
 	ch2 <- "world"
 
-	// รับจาก ch1 ก่อน
+	// Receive from ch1 first (deterministic: separate selects)
 	select {
 	case msg := <-ch1:
 		fmt.Println("ch1:", msg)
 	}
 
-	// รับจาก ch2
+	// Receive from ch2
 	select {
 	case msg := <-ch2:
 		fmt.Println("ch2:", msg)
 	}
 
-	// default case: non-blocking
+	// default: non-blocking — ch1 is empty now
 	select {
 	case msg := <-ch1:
 		fmt.Println("extra:", msg)

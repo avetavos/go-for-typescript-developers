@@ -23,13 +23,13 @@ Go ยุบทั้งหมดนี้ไว้ในเครื่อง�
 `gofmt` (หรือ alias `go fmt`) เขียนทับไฟล์ source ของคุณ in-place เพื่อให้ตรงกับ Go style หนึ่งเดียว ต่างจาก Prettier ตรงที่ **ไม่มี configuration ให้ปรับเลย** ไม่มี `.gofmtrc`, ไม่มี `printWidth`, ไม่มี option `singleQuote`
 
 ```bash
-# จัดรูปแบบทุก package ใน module
+# Format all packages in the module
 go fmt ./...
 
-# Preview ว่าจะเปลี่ยนอะไร (dry-run)
+# Preview what would change (dry-run)
 gofmt -d .
 
-# เขียนการเปลี่ยนแปลง in-place
+# Write changes in-place
 gofmt -w .
 ```
 
@@ -44,15 +44,15 @@ export const tsFmtCode = `// .prettierrc
   "trailingComma": "es5"
 }
 
-// รัน:
+// Run:
 // npx prettier --write src/`;
 
-export const goFmtCode = `# ไม่ต้องมี config file
-# รัน:
+export const goFmtCode = `# No config file needed.
+# Run:
 go fmt ./...
 
-# หรือเชื่อมกับ "format on save" ของ editor
-# ผลลัพธ์จะเหมือนกันเสมอไม่ว่าใครจะรัน`;
+# Or wire it into your editor's "format on save".
+# The result is always the same regardless of who runs it.`;
 
 <TsGo ts={tsFmtCode} go={goFmtCode} />
 
@@ -71,7 +71,7 @@ go vet ./...
 
 ให้นึกถึงเป็น subset ของ ESLint rule ที่จับความผิดพลาดจริง ๆ ไม่ใช่ preference ด้าน style
 
-export const tsVetCode = `// ESLint (ส่วนหนึ่งของ .eslintrc.json)
+export const tsVetCode = `// ESLint (partial .eslintrc.json)
 {
   "rules": {
     "no-unreachable": "error",
@@ -80,13 +80,13 @@ export const tsVetCode = `// ESLint (ส่วนหนึ่งของ .eslin
   }
 }
 
-// รัน:
+// Run:
 // npx eslint src --ext .ts`;
 
-export const goVetCode = `# ไม่ต้อง config
+export const goVetCode = `# No config needed.
 go vet ./...
 
-# ตัวอย่าง output เมื่อมีปัญหา:
+# Example output when something is wrong:
 # ./main.go:12:2: Printf format %d has arg name of wrong type string`;
 
 <TsGo ts={tsVetCode} go={goVetCode} />
@@ -101,11 +101,11 @@ go vet ./...
 
 ## go fix — ตัว modernize โค้ด (Go 1.26+)
 
-`--fix` ของ ESLint เขียนโค้ดใหม่ให้ตรง idiom รุ่นล่าสุด Go 1.26 สร้าง `go fix` ขึ้นใหม่บน analysis framework เดียวกับ `go vet` พร้อมชุด **modernizer**: loop ที่ควรเป็น `for range n`, `Min`/`Max` ที่เขียนเอง → built-in, `wg.Add(1); go f()` → `wg.Go(f)` (`waitgroupgo`), `sort.Slice` → `slices.SortFunc` และอื่น ๆ
+`--fix` ของ ESLint เขียนโค้ดใหม่ให้ตรง idiom รุ่นล่าสุด Go 1.26 สร้าง `go fix` ขึ้นใหม่บน analysis framework เดียวกับ `go vet` พร้อมชุด **modernizer**: loop ที่ควรเป็น `for range n`, `Min`/`Max` ที่เขียนเอง → built-in, `wg.Add(1); go f()` → `wg.Go(f)` (ชื่อ `waitgroup` ใน 1.26 เปลี่ยนชื่อเป็น `waitgroupgo` ใน 1.27), `sort.Slice` → `slices.SortFunc` และอื่น ๆ
 
 ```bash
-go fix ./...          # apply modernizer ทุกตัว
-go fix -diff ./...    # ดู diff ก่อน
+go fix ./...          # apply every modernizer
+go fix -diff ./...    # preview as a diff first
 ```
 
 คนเขียนไลบรารีก็ mark function ด้วย `//go:fix inline` ได้ เพื่อให้ผู้เรียกถูก migrate ไปใช้ตัวแทนอัตโนมัติ — เทียบเท่า codemod ที่ ship มากับ package ในโลก JS
@@ -120,14 +120,14 @@ go fix -diff ./...    # ดู diff ก่อน
 - **golangci-lint** — meta-linter ที่รัน linter หลายตัวพร้อมกัน รวมถึง `staticcheck`, `errcheck`, `gosimple` และอื่น ๆ
 
 ```bash
-# ติดตั้ง staticcheck
+# Install staticcheck
 go install honnef.co/go/tools/cmd/staticcheck@latest
 
-# รัน
+# Run it
 staticcheck ./...
 
-# หรือใช้ golangci-lint (แนะนำสำหรับ CI)
-# ติดตั้ง: https://golangci-lint.run/usage/install/
+# Or use golangci-lint (recommended for CI)
+# Install: https://golangci-lint.run/usage/install/
 golangci-lint run ./...
 ```
 

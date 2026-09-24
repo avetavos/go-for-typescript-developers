@@ -105,10 +105,7 @@ type R2 = IsString<number>;   // "no"
 // 2. Mapped types
 type Optional<T> = { [K in keyof T]?: T[K] };
 type User = { id: number; name: string };
-type PartialUser = Optional<User>; // { id?: number; name?: string }
-
-// 3. Template literal types
-type EventName = \`on\${Capitalize<string>}\`;`;
+type PartialUser = Optional<User>; // { id?: number; name?: string }`;
 
 export const goNoAdvancedCode = `// Go — none of these exist; alternatives:
 
@@ -118,13 +115,20 @@ export const goNoAdvancedCode = `// Go — none of these exist; alternatives:
 // 2. No mapped types — use struct embedding or code generation
 // go generate + text/template for mechanical transformations
 
-// 3. No template literal types — strings are just strings at runtime
-
 // Go's philosophy: if the type system cannot express it simply,
 // use code generation (go generate) or accept a small amount
 // of repetition. Explicitness over metaprogramming.`;
 
 <TsGo ts={tsAdvancedCode} go={goNoAdvancedCode} />
+
+A third feature TypeScript developers reach for is the template literal type — a type-level string pattern built from literal and mapped types:
+
+```ts
+type EventName = `on${Capitalize<string>}`;
+type ClickEvent = EventName; // any "on" + capitalized-string type
+```
+
+Go has no equivalent: strings are just strings at runtime, with no type-level templating.
 
 ## Generic Map and Filter functions
 

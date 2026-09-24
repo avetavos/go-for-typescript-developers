@@ -16,8 +16,8 @@ import GoOnly from '../../../../components/GoOnly.astro';
 export const tsHelloCode = `// hello.ts
 console.log("Hello, World!");
 
-// รันด้วย: npx ts-node hello.ts
-// หรือคอมไพล์: tsc hello.ts && node hello.js`;
+// run with: npx ts-node hello.ts
+// or compile: tsc hello.ts && node hello.js`;
 
 export const goHelloCode = `// hello.go
 package main
@@ -28,7 +28,7 @@ func main() {
     fmt.Println("Hello, World!")
 }
 
-// รันด้วย: go run hello.go`;
+// run with: go run hello.go`;
 
 <TsGo ts={tsHelloCode} go={goHelloCode} />
 
@@ -46,21 +46,21 @@ func main() {
 
 Function `main` คือ entry point ทุกโปรแกรม Go ที่รันได้ต้องมี `func main()` เพียงตัวเดียวใน package `main` และไม่รับ argument ใด ๆ — ถ้าต้องการ command-line argument ให้อ่านจาก `os.Args`
 
-export const tsEntryCode = `// TypeScript: หลาย entry style
+export const tsEntryCode = `// TypeScript: multiple entry styles
 // 1. Top-level code (scripts)
-console.log("รันทันที");
+console.log("runs immediately");
 
-// 2. "main" ใน package.json ชี้มาที่นี่
-// 3. Exported function ที่ framework เรียก`;
+// 2. "main" in package.json points here
+// 3. Exported function called by framework`;
 
-export const goEntryCode = `// Go: entry point เดียวเสมอ
+export const goEntryCode = `// Go: always one entry point
 package main
 
 import "fmt"
 
 func main() {
-    // โปรแกรมเริ่มที่นี่เสมอ
-    fmt.Println("รันก่อน")
+    // Program starts here, always.
+    fmt.Println("Runs first.")
 }`;
 
 <TsGo ts={tsEntryCode} go={goEntryCode} />
@@ -70,16 +70,16 @@ func main() {
 `fmt.Println` คือสิ่งที่ใกล้เคียง `console.log` ที่สุด นอกจากนี้ package `fmt` ยังมี `fmt.Printf` สำหรับ format string (เหมือน `printf` ใน C หรือ template literal ใน JS) และ `fmt.Sprintf` สำหรับสร้าง string โดยไม่ print ออกมา
 
 export const tsLogCode = `// TypeScript logging
-console.log("Hello");                    // ง่ายๆ
-console.log("Name:", name);             // หลาย arg
-console.log(\`Score: \${score}\`);         // template literal
-const msg = \`Hello, \${name}!\`;          // สร้าง string`;
+console.log("Hello");                    // simple
+console.log("Name:", name);             // multiple args
+console.log("Score: " + score);         // string concatenation
+const msg = "Hello, " + name + "!";     // build a string`;
 
 export const goFmtCode = `// Go fmt package
-fmt.Println("Hello")                    // ง่ายๆ
-fmt.Println("Name:", name)              // หลาย arg
+fmt.Println("Hello")                    // simple
+fmt.Println("Name:", name)              // multiple args
 fmt.Printf("Score: %d\\n", score)        // format verb
-msg := fmt.Sprintf("Hello, %s!", name)  // สร้าง string`;
+msg := fmt.Sprintf("Hello, %s!", name)  // build a string`;
 
 <TsGo ts={tsLogCode} go={goFmtCode} />
 
@@ -109,14 +109,14 @@ import (
 
 func main() {
     fmt.Println("hello")
-    // os ถูก import แต่ไม่ได้ใช้ — จะไม่คอมไพล์
+    // os is imported but never used — won't compile
 }
 ```
 
 วิธีแก้: ลบ import นั้นออก หรือใช้ blank identifier `_` เพื่อทำเป็น side-effect import (เจอไม่บ่อย ใช้เฉพาะเวลาต้องการ side effect จาก `init()` เท่านั้น):
 
 ```go
-import _ "github.com/lib/pq" // side-effect: register pq driver
+import _ "github.com/lib/pq" // side-effect: registers the pq driver
 ```
 
 Editor สำหรับ Go ส่วนใหญ่ (VS Code + gopls) จะลบ import ที่ไม่ได้ใช้ให้อัตโนมัติตอน save
@@ -132,12 +132,12 @@ import "fmt"
 func main() {
 	fmt.Println("Hello, World!")
 
-	// fmt.Printf ใช้ format verb — เหมือน template literal
+	// fmt.Printf uses format verbs — like template literals
 	name := "Gopher"
 	age := 3
 	fmt.Printf("Name: %s, Age: %d\\n", name, age)
 
-	// fmt.Sprintf สร้าง string โดยไม่ print
+	// fmt.Sprintf builds a string without printing
 	greeting := fmt.Sprintf("Welcome, %s!", name)
 	fmt.Println(greeting)
 }`;

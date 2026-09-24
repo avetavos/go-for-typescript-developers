@@ -29,16 +29,16 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 toolchain ของ Go ตั้งใจออกแบบมาให้มีทุกอย่างพร้อมในตัว คุณไม่ต้องไปหา benchmark runner ภายนอก, profiler plugin หรือ test framework จากเจ้าอื่น คำสั่ง `go test` ตัวเดียวรันได้ทั้ง unit test, integration test, benchmark และ fuzz test นี่คือการตัดสินใจออกแบบที่ตั้งใจ: workflow เดียว คำสั่งเดียว ไม่ผูกติดกับ framework ไหน
 
-export const tsBatteriesCode = `// TypeScript ต้องใช้เครื่องมือแยกกัน:
+export const tsBatteriesCode = `// TypeScript needs separate tools:
 import { describe, it, expect } from 'vitest';
 import Benchmark from 'benchmark';
 import { Profile } from 'clinic';`;
 
-export const goBatteriesCode = `// Go: คำสั่งเดียวจัดการทุกอย่าง
-// go test ./...         — รัน tests
-// go test -bench=.      — รัน benchmarks
-// go test -fuzz=Fuzz    — รัน fuzz tests
-// go tool pprof cpu.out — เปิด profiler`;
+export const goBatteriesCode = `// Go: one command rules them all
+// go test ./...         — runs tests
+// go test -bench=.      — runs benchmarks
+// go test -fuzz=Fuzz    — runs fuzz tests
+// go tool pprof cpu.out — opens profiler`;
 
 <TsGo ts={tsBatteriesCode} go={goBatteriesCode} />
 

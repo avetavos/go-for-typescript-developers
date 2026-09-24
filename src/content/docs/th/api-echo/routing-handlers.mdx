@@ -154,7 +154,7 @@ func (h *BookHandler) Get(c *echo.Context) error {
     return c.JSON(http.StatusOK, book)
 }
 
-// ลงทะเบียนใน main.go:
+// Registration in main.go:
 // bh := NewBookHandler(store)
 // e.GET("/books/:id", bh.Get)`;
 
@@ -165,10 +165,10 @@ func (h *BookHandler) Get(c *echo.Context) error {
 Echo รองรับ wildcard segment ด้วย `*`:
 
 ```go
-// จับ /static/css/app.css, /static/js/bundle.js ฯลฯ
+// Matches /static/css/app.css, /static/js/bundle.js, etc.
 e.GET("/static/*", staticHandler)
 
-// ภายใน handler:
+// Inside the handler:
 path := c.Param("*")   // "css/app.css"
 ```
 

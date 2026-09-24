@@ -15,37 +15,40 @@ import GoOnly from '../../../../components/GoOnly.astro';
 
 ```typescript
 let count = 0;
-// ปลอดภัยใน Node.js เพราะ single-threaded
+// safe in Node.js — only one callback runs at a time
 async function increment() { count++; }
 await Promise.all([increment(), increment()]);
-console.log(count); // 2 — ถูกต้องเสมอ
+console.log(count); // always 2
 ```
 
 ใน Go goroutine รันบน OS thread จริง goroutine สองตัวจึงอ่านและเขียน memory ตำแหน่งเดียวกันในจังหวะเดียวกันได้ ผลที่ได้คือ **data race** — undefined behavior เต็ม ๆ:
 
 ```go
-// อันตราย! Data race!
+// DANGEROUS — data race
 count := 0
 var wg sync.WaitGroup
 for i := 0; i < 100; i++ {
     wg.Add(1)
-    go func() { defer wg.Done(); count++ }() // race!
+    go func() {
+        defer wg.Done()
+        count++ // read-modify-write is NOT atomic
+    }()
 }
 wg.Wait()
-// count อาจไม่เท่ากับ 100
+// count may not equal 100
 ```
 
 ## Mutex — Mutual Exclusion Lock
 
 `sync.Mutex` รับประกันว่ามี goroutine เดียวเท่านั้นที่อยู่ใน critical section ได้ในแต่ละช่วงเวลา lock ก่อนเข้า unlock ก่อนออก (ใช้ `defer` เพื่อกันไม่ให้ early return ลืม unlock):
 
-export const tsLockCode = `// TypeScript: ไม่จำเป็นต้องใช้ mutex ใน event loop ปกติ
-// แต่ถ้าใช้ SharedArrayBuffer กับ Workers:
+export const tsLockCode = `// TypeScript: no mutex needed for normal async code
+// With SharedArrayBuffer + Workers, use Atomics instead:
 const sab = new SharedArrayBuffer(4);
 const view = new Int32Array(sab);
 Atomics.add(view, 0, 1); // atomic increment`;
 
-export const goMutexCode = `// Go: sync.Mutex ปกป้อง shared state
+export const goMutexCode = `// Go: sync.Mutex protects the critical section
 package main
 
 import (
@@ -59,8 +62,8 @@ type SafeCounter struct {
 }
 
 func (c *SafeCounter) Increment() {
-    c.mu.Lock()         // ล็อก
-    defer c.mu.Unlock() // ปลดล็อกเมื่อ function return
+    c.mu.Lock()         // acquire lock
+    defer c.mu.Unlock() // release on return — always
     c.count++
 }
 
@@ -68,11 +71,11 @@ func main() {
     var wg sync.WaitGroup
     counter := &SafeCounter{}
 
-    for range 100 {                 // Go 1.22+: range บน int
-        wg.Go(counter.Increment)    // Go 1.25+: Add + go + Done ในคำสั่งเดียว
+    for range 100 {                 // Go 1.22+: range over int
+        wg.Go(counter.Increment)    // Go 1.25+: Add + go + Done in one call
     }
     wg.Wait()
-    fmt.Println("Final count:", counter.count) // 100 เสมอ
+    fmt.Println("Final count:", counter.count) // always 100
 }`;
 
 <TsGo ts={tsLockCode} go={goMutexCode} />
@@ -94,10 +97,10 @@ playground ด้านล่างยังแสดงแบบเขียน
 
 เมื่อ data ถูกอ่านบ่อยแต่เขียนน้อย `sync.RWMutex` ให้ throughput ดีกว่า `Mutex` ธรรมดา หลาย goroutine ถือ read lock พร้อมกันได้ ส่วน write lock เป็น exclusive:
 
-export const tsReadWriteCode = `// TypeScript: ไม่มี built-in RWMutex concept
-// ใน Workers ต้องใช้ message passing แทน`;
+export const tsReadWriteCode = `// TypeScript: no built-in RWMutex concept
+// In Worker Threads you use message-passing instead of shared locks`;
 
-export const goRWMutexCode = `// Go: RWMutex — readers พร้อมกัน, writer exclusive
+export const goRWMutexCode = `// Go: RWMutex — concurrent reads, exclusive writes
 package main
 
 import (
@@ -111,15 +114,21 @@ type Cache struct {
 }
 
 func (c *Cache) Get(key string) string {
-    c.mu.RLock()         // หลาย goroutines อ่านพร้อมกันได้
+    c.mu.RLock()         // many goroutines can hold RLock at once
     defer c.mu.RUnlock()
     return c.data[key]
 }
 
 func (c *Cache) Set(key, value string) {
-    c.mu.Lock()         // เขียน: exclusive lock
+    c.mu.Lock()         // exclusive — all readers must finish first
     defer c.mu.Unlock()
     c.data[key] = value
+}
+
+func main() {
+    cache := &Cache{data: make(map[string]string)}
+    cache.Set("lang", "Go")
+    fmt.Println(cache.Get("lang")) // Go
 }`;
 
 <TsGo ts={tsReadWriteCode} go={goRWMutexCode} />
@@ -137,9 +146,10 @@ go test -race ./...
 
 ```
 WARNING: DATA RACE
-Write at 0x... by goroutine 7:
+Write at 0x00c0000b4010 by goroutine 7:
   main.main.func1()
-Read at 0x... by goroutine 8:
+
+Previous read at 0x00c0000b4010 by goroutine 8:
   main.main.func1()
 ```
 
